@@ -1,8 +1,8 @@
-using System.Reflection;
 using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
+using MinionLib.Initialization;
 using Logger = MegaCrit.Sts2.Core.Logging.Logger;
 
 namespace MinionLib;
@@ -20,13 +20,7 @@ public partial class MainFile : Node
         Harmony harmony = new(ModId);
 
         harmony.PatchAll();
-        TryLookupScriptsInAssembly();
-    }
-
-    private static void TryLookupScriptsInAssembly()
-    {
-        var bridgeType = Type.GetType("MegaCrit.Sts2.Core.Modding.ScriptManagerBridge, sts2");
-        var lookupMethod = bridgeType?.GetMethod("LookupScriptsInAssembly", BindingFlags.Public | BindingFlags.Static);
-        lookupMethod?.Invoke(null, [typeof(MainFile).Assembly]);
+        
+        MinionHookInitializer.Initialize();
     }
 }
