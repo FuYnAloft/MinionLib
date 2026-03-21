@@ -28,7 +28,8 @@ public sealed class SummonAttackakaCard() : CustomCardModel(0, CardType.Power, C
         _ = await MinionCmd.AddMinion<AttackakaMonster>(Owner, new MinionSummonOptions(
             DynamicVars.Summon.BaseValue,
             DynamicVars["StrengthPower"].BaseValue,
-            Source: this));
+            Source: this,
+            Position: MinionPosition.FrontUpper));
     }
 
     protected override void OnUpgrade()

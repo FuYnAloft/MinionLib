@@ -13,7 +13,7 @@ namespace MinionLib.Example.Actions;
 
 public sealed class PetDefensePoint : CustomActionModel
 {
-    public override TargetType TargetType => MinionTargetTypes.AnyMinion;
+    public override TargetType TargetType => MinionTargetTypes.AnyMinionOrOwner;
 
     public override bool AutoRemoveAtTurnEnd => true;
 

@@ -32,14 +32,6 @@ public sealed class SummonDefenseakaCard() : CustomCardModel(0, CardType.Power, 
             DynamicVars["DexterityPower"].BaseValue,
             Source: this));
 
-        using (var accessor = new PetsOrderAccessor(Owner))
-        {
-            var pets = accessor.Pets!;
-            var last = pets.Last();
-            pets.RemoveAt(pets.Count - 1);
-            pets.Insert(0, last);
-        }
-
         // Mirror Osty's shield visualization: defender minion displays owner's block ring/status.
         NCombatRoom.Instance?.GetCreatureNode(pet)?.TrackBlockStatus(Owner.Creature);
     }
