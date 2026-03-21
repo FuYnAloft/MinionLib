@@ -9,16 +9,6 @@ public static class MinionPositioningHelper
 {
     private static readonly Vector2 MinionSize = new(150f, 200f);
 
-    private static readonly IReadOnlyDictionary<MinionPosition, Vector2> PositionOffsets =
-        new Dictionary<MinionPosition, Vector2>
-        {
-            [MinionPosition.Front] = new(200f, 0),
-            [MinionPosition.Back] = new(-200f, 0),
-            [MinionPosition.FrontUpper] = new(200f, -450f),
-            [MinionPosition.BackUpper] = new(-200f, -450f),
-            [MinionPosition.Upper] = new(0, -450f)
-        };
-
     private static IReadOnlyList<Vector2> GenerateGridPoints(MinionPosition position, int count)
     {
         if (count <= 0) return [];
@@ -36,21 +26,19 @@ public static class MinionPositioningHelper
         }
         else
         {
-            if (count == 1) return [new Vector2(0f, 0f)];
-
             var isFront = position is MinionPosition.Front or MinionPosition.FrontUpper;
             var turningPoint = isFront ? 3f : 1.5f;
             var slope = isFront ? 0.75f : 0.25f;
 
-            var fullWidth = (count - 1) * 0.5f;
+            var fullWidth = (count + 1) * 0.5f;
             var width = fullWidth <= turningPoint
                 ? fullWidth
                 : turningPoint + slope * MathF.Log((fullWidth - turningPoint) / slope + 1);
             var last = 0f;
             var first = isFront ? width : -width;
-            result = Enumerable.Range(0, count)
+            result = Enumerable.Range(2, count)
                 .Select(i => new Vector2(
-                    float.Lerp(first, last, (float)i / (count - 1)),
+                    float.Lerp(first, last, (float)i / (count  + 1)),
                     -i % 2)).ToList();
         }
 
@@ -81,19 +69,44 @@ public static class MinionPositioningHelper
         return result;
     }
 
+    private static Vector2 CalculateBaseOffset(MinionPosition minionPosition,
+        ILookup<MinionPosition,NCreature> lookup)
+    {
+        switch (minionPosition)
+        {
+            case MinionPosition.Front:
+                if (lookup.Contains(MinionPosition.FrontUpper) && lookup[MinionPosition.Front].Count() > 1) 
+                    return new(200f, 50f);
+                return new(200f, 0f);
+            case MinionPosition.Back:
+                if (lookup.Contains(MinionPosition.BackUpper) && lookup[MinionPosition.Back].Count() > 1) 
+                    return new(-200f, 50f);
+                return new(-200f, 0f);
+            case MinionPosition.FrontUpper:
+                return new(200f, -350f);
+            case MinionPosition.BackUpper:
+                return new(-200f, -350f);
+            case MinionPosition.Upper:
+                return new(0, -450f);
+            default:
+                return Vector2.Zero;
+        }
+    }
+
     public static IReadOnlyList<MinionNodePosition> CalculateMinionPositions(NCombatRoom room)
     {
         return GetMinionOwnerNodePairs(room).SelectMany(pair =>
         {
             var (ownerNode, minionNodes) = pair;
 
-            var grouped = minionNodes.GroupBy(c => ((MinionModel)c.Entity.Monster!).Position);
+            var grouped = minionNodes.ToLookup(c => ((MinionModel)c.Entity.Monster!).Position);
 
             var nodePositions = grouped.SelectMany(g =>
             {
                 var minionPosition = g.Key;
+                var offset = CalculateBaseOffset(minionPosition, grouped);
                 var positions = GenerateGridPoints(minionPosition, g.Count())
-                    .Select(v => v * MinionSize + PositionOffsets[minionPosition] + ownerNode.Position);
+                    .Select(v => v * MinionSize + offset + ownerNode.Position);
                 return g.Zip(positions, (node, position) => new MinionNodePosition(node, position));
             });
 
