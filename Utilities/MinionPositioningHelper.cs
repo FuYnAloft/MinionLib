@@ -75,16 +75,20 @@ public static class MinionPositioningHelper
         switch (minionPosition)
         {
             case MinionPosition.Front:
-                if (lookup.Contains(MinionPosition.FrontUpper) && lookup[MinionPosition.Front].Count() > 1) 
+                if (lookup.Contains(MinionPosition.FrontUpper) && lookup[MinionPosition.Front].Count() >= 2) 
                     return new(200f, 50f);
                 return new(200f, 0f);
             case MinionPosition.Back:
-                if (lookup.Contains(MinionPosition.BackUpper) && lookup[MinionPosition.Back].Count() > 1) 
+                if (lookup.Contains(MinionPosition.BackUpper) && lookup[MinionPosition.Back].Count() >= 2) 
                     return new(-200f, 50f);
                 return new(-200f, 0f);
             case MinionPosition.FrontUpper:
+                if (lookup[MinionPosition.Upper].Count() <= 2)
+                    return new(100f + 50f * lookup[MinionPosition.Upper].Count(), -350f);
                 return new(200f, -350f);
             case MinionPosition.BackUpper:
+                if (lookup[MinionPosition.Upper].Count() <= 2)
+                    return new(-100f - 50f * lookup[MinionPosition.Upper].Count(), -350f);
                 return new(-200f, -350f);
             case MinionPosition.Upper:
                 return new(0, -450f);
