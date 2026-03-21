@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" uid="uid://cghtlla3sw0po" path="res://src/Core/Nodes/Combat/NCreatureVisuals.cs" id="1_ncreature"]
+[ext_resource type="Texture2D" path="res://Example/MinionTest/image.png" id="2_attackaka"]
+
+[node name="MinionLibAttackaka" type="Node2D"]
+script = ExtResource("1_ncreature")
+metadata/_edit_group_ = true
+
+[node name="Visuals" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -56)
+scale = Vector2(0.28, 0.28)
+texture = ExtResource("2_attackaka")
+self_modulate = Color(1, 0.85, 0.85, 1)
+
+[node name="Bounds" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+offset_left = -64.0
+offset_top = -146.0
+offset_right = 64.0
+mouse_filter = 2
+
+[node name="CenterPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -82)
+
+[node name="IntentPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -166)
