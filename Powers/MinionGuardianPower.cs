@@ -13,11 +13,11 @@ public sealed class MinionGuardianPower : CustomPowerModel
 
     public override PowerStackType StackType => PowerStackType.Single;
 
-    public override string CustomPackedIconPath => "res://Example/MinionTest/orb.png";
+    public override string CustomPackedIconPath => "res://images/powers/minion_guardian_power_packed.png";
 
-    public override string CustomBigIconPath => "res://Example/MinionTest/orb.png";
+    public override string CustomBigIconPath => "res://images/powers/minion_guardian_power.png";
 
-    public override string CustomBigBetaIconPath => "res://Example/MinionTest/orb.png";
+    public override string CustomBigBetaIconPath => "res://images/powers/minion_guardian_power.png";
 
     public override Creature ModifyUnblockedDamageTarget(Creature target, decimal amount, ValueProp props,
         Creature? dealer)

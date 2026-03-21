@@ -98,6 +98,7 @@
         <None Include="MinionLib.json"/>
         <None Include="project.godot"/>
         <None Include="MinionLib/**"/>
+        <None Include="images/**"/>
     </ItemGroup>
 
     <ItemGroup>
