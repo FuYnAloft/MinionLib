@@ -55,7 +55,7 @@ public static class MinionAnimCmd
         await room.ToSignal(tween, Tween.SignalName.Finished);
     }
 
-    public static async Task PlayBumpAttackAsync(Creature attacker, Creature target)
+    public static async Task PlayBumpAttackAsync(Creature attacker, Creature target, Action? onHit = null)
     {
         var room = NCombatRoom.Instance;
         var attackerNode = room?.GetCreatureNode(attacker);
@@ -77,15 +77,20 @@ public static class MinionAnimCmd
 
         var tween = sprite.CreateTween();
 
-        tween.TweenProperty(sprite, "global_position", pullBackPos, 0.1f)
+        tween.TweenProperty(sprite, "global_position", pullBackPos, 0.15f)
             .SetTrans(Tween.TransitionType.Sine)
             .SetEase(Tween.EaseType.Out);
 
-        tween.TweenProperty(sprite, "global_position", impact, 0.05f)
+        tween.TweenProperty(sprite, "global_position", impact, 0.10f)
             .SetTrans(Tween.TransitionType.Expo)
             .SetEase(Tween.EaseType.In);
 
-        tween.TweenProperty(sprite, "global_position", start, 0.2f)
+        if (onHit != null)
+        {
+            tween.TweenCallback(Callable.From(onHit));
+        }
+
+        tween.TweenProperty(sprite, "global_position", start, 0.3f)
             .SetTrans(Tween.TransitionType.Back)
             .SetEase(Tween.EaseType.Out);
 

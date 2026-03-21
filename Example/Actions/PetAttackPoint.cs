@@ -29,9 +29,8 @@ public sealed class PetAttackPoint : CustomActionModel
     protected override async Task OnAct(PlayerChoiceContext choiceContext, Creature actor, Creature? target)
     {
         if (target == null) return;
-
-        await MinionAnimCmd.PlayBumpAttackAsync(actor, target);
-        await CreatureCmd.Damage(choiceContext, target, 0m, ValueProp.Move, actor, null);
+        await MinionAnimCmd.PlayBumpAttackAsync(actor, target,
+            () => CreatureCmd.Damage(choiceContext, target, 0m, ValueProp.Move, actor, null));
         await PowerCmd.Decrement(this);
     }
 }
