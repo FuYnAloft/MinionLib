@@ -41,7 +41,7 @@ public static class MinionGuardianOverkillPatch
 
         if (!props.HasFlag(ValueProp.Move) || props.HasFlag(ValueProp.Unpowered)) return false;
 
-        return target.Pets.Any(p => p.IsAlive && p.GetPower<MinionGuardianPower>() != null);
+        return target.Pets.Any(p => p.IsAlive && IsFrontGuardian(p));
     }
 
     private static async Task<IEnumerable<DamageResult>> HandleWithOverkillRedirect(PlayerChoiceContext choiceContext,
@@ -55,8 +55,7 @@ public static class MinionGuardianOverkillPatch
                 return await CreatureCmd.Damage(choiceContext, targets, amount, props, dealer, cardSource);
 
             var guardianOrder = PetOrderSnapshotManager.GetSnapshot(owner.Player, false)
-                .Where(p => p.GetPower<MinionGuardianPower>() != null && p.CombatId.HasValue)
-                .Where(p => !(p.Monster is MinionModel minion && minion.Position != MinionPosition.Front))
+                .Where(p => IsFrontGuardian(p) && p.CombatId.HasValue)
                 .Select(p => p.CombatId!.Value)
                 .ToList();
 
@@ -79,10 +78,10 @@ public static class MinionGuardianOverkillPatch
             var firstGuardianResult = initialResults.FirstOrDefault(r =>
                 r.Receiver != owner &&
                 r.Receiver.PetOwner == owner.Player &&
-                (r.Receiver.GetPower<MinionGuardianPower>() != null ||
+                (IsFrontGuardian(r.Receiver) ||
                  (r.Receiver.CombatId is uint receiverId && guardianOrder.Contains(receiverId))));
 
-            if (firstGuardianResult == null || firstGuardianResult.OverkillDamage <= 0 ||
+            if (firstGuardianResult is not { OverkillDamage: > 0 } ||
                 !firstGuardianResult.Receiver.CombatId.HasValue) return initialResults;
 
             List<DamageResult> redirectedResults = [];
@@ -111,7 +110,7 @@ public static class MinionGuardianOverkillPatch
                 if (remaining <= 0m) break;
 
                 var defender = owner.CombatState.GetCreature(guardianId);
-                if (defender == null || !defender.IsAlive || defender.GetPower<MinionGuardianPower>() == null) continue;
+                if (defender is not { IsAlive: true } || !IsFrontGuardian(defender)) continue;
 
                 var defenderResult =
                     (await CreatureCmd.Damage(choiceContext, [defender], remaining, directProps, dealer, cardSource))
@@ -137,5 +136,11 @@ public static class MinionGuardianOverkillPatch
         {
             IsHandling.Value = false;
         }
+    }
+
+    private static bool IsFrontGuardian(Creature creature)
+    {
+        return creature.GetPower<MinionGuardianPower>() != null &&
+               (creature.Monster is not MinionModel minion || minion.Position == MinionPosition.Front);
     }
 }
