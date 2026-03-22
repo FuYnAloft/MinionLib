@@ -32,7 +32,7 @@ public abstract class CustomActionModel : CustomPowerModel
     {
         if (target is not { IsAlive: true }) return false;
 
-        if (CustomTargetTypeManager.TryGetCustomTargetType(TargetType, out var customType) && customType != null)
+        if (CustomTargetTypeManager.TryGetCustomTargetType(TargetType, out var customType))
             return customType.ActionPredicate(target, this, pet);
 
         return false;
@@ -53,6 +53,8 @@ public abstract class CustomActionModel : CustomPowerModel
         if (TargetType == TargetType.None)
         {
             await OnAct(choiceContext, pet, null);
+            if (CombatManager.Instance.IsInProgress)
+                await CombatManager.Instance.CheckWinCondition();
             return true;
         }
 
@@ -61,12 +63,16 @@ public abstract class CustomActionModel : CustomPowerModel
             if (!IsValidTarget(combatState, pet, target)) return false;
 
             await OnAct(choiceContext, pet, target);
+            if (CombatManager.Instance.IsInProgress)
+                await CombatManager.Instance.CheckWinCondition();
             return true;
         }
 
         if (GetValidTargets(pet, combatState).Count == 0) return false;
 
         await OnAct(choiceContext, pet, null);
+        if (CombatManager.Instance.IsInProgress)
+            await CombatManager.Instance.CheckWinCondition();
         return true;
     }
 
