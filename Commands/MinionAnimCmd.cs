@@ -8,14 +8,14 @@ namespace MinionLib.Commands;
 
 public static class MinionAnimCmd
 {
-    public static async Task Rearrange(bool animated = true)
+    public static async Task Rearrange(bool animated = true, float duration = 0.25f)
     {
         var room = NCombatRoom.Instance;
         if (room == null) return;
 
         var dst = CalculateMinionPositions(room);
         if (animated)
-            await AnimatedMove(dst);
+            await AnimatedMove(dst, duration);
         else
             InstantMove(dst);
     }
@@ -29,7 +29,7 @@ public static class MinionAnimCmd
     
     
     private static Tween? _activeTween;
-    public static async Task AnimatedMove(IReadOnlyList<MinionNodePosition> nodePositions)
+    public static async Task AnimatedMove(IReadOnlyList<MinionNodePosition> nodePositions, float duration = 0.25f)
     {
         var room = NCombatRoom.Instance;
         if (room == null) return;
@@ -45,10 +45,9 @@ public static class MinionAnimCmd
         foreach (var (index, (node, position)) in nodePositions.Index())
             if (GodotObject.IsInstanceValid(node))
             {
-                tween.TweenProperty(node, "position", position, 0.25f)
+                tween.TweenProperty(node, "position", position, duration)
                     .SetTrans(Tween.TransitionType.Quad)
-                    .SetEase(Tween.EaseType.Out)
-                    .SetDelay(index * 0.02f);
+                    .SetEase(Tween.EaseType.Out);
             }
         _activeTween = tween;
         
