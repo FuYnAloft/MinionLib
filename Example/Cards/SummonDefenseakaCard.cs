@@ -8,14 +8,14 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MinionLib.Commands;
-using MinionLib.Example.Monsters;
+using MinionLib.Example.Minions;
 using MinionLib.Models;
 using MinionLib.Utilities;
 
 namespace MinionLib.Example.Cards;
 
-[Pool(typeof(IroncladCardPool))]
-public sealed class SummonDefenseakaCard() : CustomCardModel(0, CardType.Power, CardRarity.Rare, TargetType.Self)
+[Pool(typeof(ColorlessCardPool))]
+public sealed class SummonDefenseakaCard() : CustomCardModel(0, CardType.Power, CardRarity.Rare, TargetType.Self, false)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new SummonVar(6m), new PowerVar<DexterityPower>(4m)];
@@ -27,7 +27,7 @@ public sealed class SummonDefenseakaCard() : CustomCardModel(0, CardType.Power, 
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var pet = await MinionCmd.AddMinion<DefenseakaMonster>(Owner, new MinionSummonOptions(
+        var pet = await MinionCmd.AddMinion<DefenseakaMinion>(Owner, new MinionSummonOptions(
             DynamicVars.Summon.BaseValue,
             DynamicVars["DexterityPower"].BaseValue,
             Source: this));

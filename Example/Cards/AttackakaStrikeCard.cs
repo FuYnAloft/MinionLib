@@ -31,9 +31,9 @@ public sealed class AttackakaStrikeCard()
         var minion = ResolveBoundMinion();
         if (minion is not { IsAlive: true }) return;
 
-        await MinionAnimCmd.PlayBumpAttackAsync(minion, cardPlay.Target);
-        await CreatureCmd.Damage(choiceContext, cardPlay.Target, DynamicVars["BoundPetDamage"].BaseValue,
-            ValueProp.Move, minion, this);
+        await MinionAnimCmd.PlayBumpAttackAsync(minion, cardPlay.Target,
+            () => CreatureCmd.Damage(choiceContext, cardPlay.Target, DynamicVars["BoundPetDamage"].BaseValue,
+                ValueProp.Move, minion, this));
     }
 
     protected override void OnUpgrade()

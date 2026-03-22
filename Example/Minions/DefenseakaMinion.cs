@@ -8,9 +8,9 @@ using MinionLib.Example.Powers;
 using MinionLib.Models;
 using MinionLib.Powers;
 
-namespace MinionLib.Example.Monsters;
+namespace MinionLib.Example.Minions;
 
-public sealed class DefenseakaMonster : MinionModel
+public sealed class DefenseakaMinion : MinionModel
 {
     public override int MinInitialHp => 6;
 
@@ -51,6 +51,5 @@ public sealed class DefenseakaMonster : MinionModel
 
         await PowerCmd.Apply<PetDefenderPower>(self, 1m, owner.Creature, options.Source);
         await PowerCmd.Apply<MinionGuardianPower>(self, 1m, owner.Creature, options.Source);
-        await PowerCmd.Apply<DefenseakaGiftPower>(self, 1m, owner.Creature, options.Source);
     }
 }

@@ -12,7 +12,7 @@ using MinionLib.Targeting;
 namespace MinionLib.Example.Cards;
 
 [Pool(typeof(ColorlessCardPool))]
-public sealed class PetEmpowerCard() : CustomCardModel(0, CardType.Skill, CardRarity.Rare, MinionTargetTypes.AnyMinion)
+public sealed class PetEmpowerCard() : CustomCardModel(0, CardType.Skill, CardRarity.Rare, MinionTargetTypes.AnyMinion, false)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new PowerVar<StrengthPower>(999m), new PowerVar<DexterityPower>(999m)];

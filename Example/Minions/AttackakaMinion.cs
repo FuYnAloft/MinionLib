@@ -7,9 +7,9 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MinionLib.Example.Powers;
 using MinionLib.Models;
 
-namespace MinionLib.Example.Monsters;
+namespace MinionLib.Example.Minions;
 
-public sealed class AttackakaMonster : MinionModel
+public sealed class AttackakaMinion : MinionModel
 {
     public override int MinInitialHp => 6;
 
@@ -49,5 +49,6 @@ public sealed class AttackakaMonster : MinionModel
             await PowerCmd.Apply<StrengthPower>(self, strength, owner.Creature, options.Source);
 
         await PowerCmd.Apply<PetAttackerPower>(self, 1m, owner.Creature, options.Source);
+        await PowerCmd.Apply<AttackakaGiftPower>(self, 1m, owner.Creature, options.Source);
     }
 }
