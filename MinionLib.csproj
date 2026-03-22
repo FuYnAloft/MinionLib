@@ -112,9 +112,8 @@
         <Content Include="LICENSE" />
         <Content Include="project-memory.md"/>
         <Content Include="README.md"/>
-        <Content Include="docs\**\*.md"/>
-        <Content Include="Example\MinionTest\scenes\creature_visuals\pettest_attackaka.tscn"/>
-        <Content Include="Example\MinionTest\scenes\creature_visuals\pettest_defenseaka.tscn"/>
+        <Content Include="docs/**/*.md"/>
+        <Content Include="Example/MinionTest/**"/>
     </ItemGroup>
 
     <Target Name="CheckDependencyPaths">
