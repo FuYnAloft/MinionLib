@@ -11,6 +11,8 @@
   "MINIONLIB-ATTACKAKA_STRIKE_CARD.description": "Make the bound minion [gold]{BoundMinionName}[/gold] deal {BoundPetDamage:diff()} damage to an enemy.",
   "MINIONLIB-DEFENSEAKA_GUARD_CARD.title": "Defenseaka Guard",
   "MINIONLIB-DEFENSEAKA_GUARD_CARD.description": "Gain {BoundPetBlock:diff()} [gold]Block[/gold] from the bound minion [gold]{BoundMinionName}[/gold], based on its [gold]Dexterity[/gold] and [gold]Strength[/gold].",
+  "MINIONLIB-MINION_ADVANCE_CARD.title": "Advance Minion",
+  "MINIONLIB-MINION_ADVANCE_CARD.description": "Choose a minion to rise/fall and advance.",
   "MINIONLIB-PET_EMPOWER_CARD.title": "Pet Empower",
   "MINIONLIB-PET_EMPOWER_CARD.description": "Give a pet {StrengthPower:diff()} [gold]Strength[/gold] and {DexterityPower:diff()} [gold]Dexterity[/gold].",
   "bound_minion_dead_suffix": " (Dead)"

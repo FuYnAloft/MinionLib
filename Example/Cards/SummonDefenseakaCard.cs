@@ -23,8 +23,6 @@ public sealed class SummonDefenseakaCard() : CustomCardModel(0, CardType.Power, 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
         [HoverTipFactory.Static(StaticHoverTip.SummonDynamic, DynamicVars.Summon)];
 
-    public override string? CustomPortraitPath => "res://Example/MinionTest/image.png";
-
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var pet = await MinionCmd.AddMinion<DefenseakaMinion>(Owner, new MinionSummonOptions(

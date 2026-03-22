@@ -25,8 +25,6 @@ public sealed class DefenseakaGuardCard()
 
     public override bool GainsBlock => true;
 
-    public override string? CustomPortraitPath => "res://Example/MinionTest/image.png";
-
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var minion = ResolveBoundMinion();

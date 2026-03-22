@@ -22,8 +22,6 @@ public sealed class AttackakaStrikeCard()
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new BoundMinionDamageVar("BoundPetDamage", 0m, ValueProp.Move)];
 
-    public override string? CustomPortraitPath => "res://Example/MinionTest/image.png";
-
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));

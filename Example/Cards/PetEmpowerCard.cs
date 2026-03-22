@@ -17,8 +17,6 @@ public sealed class PetEmpowerCard() : CustomCardModel(0, CardType.Skill, CardRa
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new PowerVar<StrengthPower>(999m), new PowerVar<DexterityPower>(999m)];
 
-    public override string CustomPortraitPath => "res://Example/MinionTest/image.png";
-
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         if (cardPlay.Target is not { Monster: MinionModel }) return;

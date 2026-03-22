@@ -21,8 +21,6 @@ public sealed class SummonAttackakaCard() : CustomCardModel(0, CardType.Power, C
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
         [HoverTipFactory.Static(StaticHoverTip.SummonDynamic, DynamicVars.Summon)];
 
-    public override string? CustomPortraitPath => "res://Example/MinionTest/image.png";
-
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         _ = await MinionCmd.AddMinion<AttackakaMinion>(Owner, new MinionSummonOptions(
