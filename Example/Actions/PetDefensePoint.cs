@@ -7,7 +7,6 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Action;
 using MinionLib.Targeting;
-using MinionLib.Utilities;
 
 namespace MinionLib.Example.Actions;
 
@@ -33,6 +32,5 @@ public sealed class PetDefensePoint : CustomActionModel
 
         var block = actor.GetPowerAmount<DexterityPower>();
         await CreatureCmd.GainBlock(target, block, ValueProp.Move, null);
-        await PowerCmd.Decrement(this);
     }
 }

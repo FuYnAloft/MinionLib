@@ -6,7 +6,6 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Commands;
 using MinionLib.Action;
-using MinionLib.Targeting;
 
 namespace MinionLib.Example.Actions;
 
@@ -31,6 +30,5 @@ public sealed class PetAttackPoint : CustomActionModel
         if (target == null) return;
         await MinionAnimCmd.PlayBumpAttackAsync(actor, target,
             () => CreatureCmd.Damage(choiceContext, target, 0m, ValueProp.Move, actor, null));
-        await PowerCmd.Decrement(this);
     }
 }

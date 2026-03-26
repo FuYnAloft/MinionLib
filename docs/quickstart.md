@@ -86,7 +86,6 @@ public sealed class MyAttackAction : CustomActionModel
 
 		await MinionAnimCmd.PlayBumpAttackAsync(actor, target);                             // 播放撞击动画（在 MinionAnimCmd 中定义）
 		await CreatureCmd.Damage(choiceContext, target, 4m, ValueProp.Move, actor, null);   // 造成伤害
-		await PowerCmd.Decrement(this);                                                     // 使用后减少1层
 	}
 }
 ```

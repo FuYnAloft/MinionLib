@@ -20,6 +20,8 @@ public abstract class CustomActionModel : CustomPowerModel
 
     public virtual bool AutoRemoveAtTurnEnd => false;
 
+    public virtual bool DecrementAfterAct => true;
+
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
         [ActionHoverTip];
 
@@ -52,9 +54,7 @@ public abstract class CustomActionModel : CustomPowerModel
 
         if (TargetType == TargetType.None)
         {
-            await OnAct(choiceContext, pet, null);
-            if (CombatManager.Instance.IsInProgress)
-                await CombatManager.Instance.CheckWinCondition();
+            await ExecuteAct(choiceContext, pet, null);
             return true;
         }
 
@@ -62,18 +62,23 @@ public abstract class CustomActionModel : CustomPowerModel
         {
             if (!IsValidTarget(combatState, pet, target)) return false;
 
-            await OnAct(choiceContext, pet, target);
-            if (CombatManager.Instance.IsInProgress)
-                await CombatManager.Instance.CheckWinCondition();
+            await ExecuteAct(choiceContext, pet, target);
             return true;
         }
 
         if (GetValidTargets(pet, combatState).Count == 0) return false;
 
-        await OnAct(choiceContext, pet, null);
+        await ExecuteAct(choiceContext, pet, null);
+        return true;
+    }
+
+    private async Task ExecuteAct(PlayerChoiceContext choiceContext, Creature actor, Creature? target)
+    {
+        await OnAct(choiceContext, actor, target);
+        if (DecrementAfterAct)
+            await PowerCmd.Decrement(this);
         if (CombatManager.Instance.IsInProgress)
             await CombatManager.Instance.CheckWinCondition();
-        return true;
     }
 
     public override async Task BeforeTurnEnd(PlayerChoiceContext choiceContext, CombatSide side)
