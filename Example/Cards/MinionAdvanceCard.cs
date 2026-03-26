@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.CardPools;
+using MinionLib.Commands;
 using MinionLib.Models;
 using MinionLib.Targeting;
 using MinionLib.Utilities;
@@ -32,7 +33,8 @@ public sealed class MinionAdvanceCard() : CustomCardModel(0, CardType.Skill, Car
         };
         accessor.Pets.Remove(target);
         accessor.Pets.Insert(0, target);
-        _ =  accessor.Rearrage(0.5f);
+        _ = MinionAnimCmd.Rearrange(duration:0.5f);
+        accessor.SetManualRearranged();
     }
 }
 
