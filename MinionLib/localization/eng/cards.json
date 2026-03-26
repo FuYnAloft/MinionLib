@@ -15,5 +15,7 @@
   "MINIONLIB-MINION_ADVANCE_CARD.description": "Choose a minion to rise/fall and advance.",
   "MINIONLIB-PET_EMPOWER_CARD.title": "Pet Empower",
   "MINIONLIB-PET_EMPOWER_CARD.description": "Give a pet {StrengthPower:diff()} [gold]Strength[/gold] and {DexterityPower:diff()} [gold]Dexterity[/gold].",
+  "MINIONLIB-AWAIT_CARD.title": "Await",
+  "MINIONLIB-AWAIT_CARD.description": "Wait for 3 seconds.",
   "bound_minion_dead_suffix": " (Dead)"
 }

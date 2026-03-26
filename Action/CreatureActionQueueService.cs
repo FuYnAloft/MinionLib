@@ -14,7 +14,7 @@ internal static class CreatureActionQueueService
         if (!CombatManager.Instance.IsInProgress || actor.CombatId == null)
             return false;
 
-        if (CreatureActionDebounceGate.IsBlocked(actor.CombatId.Value))
+        if (!CreatureActionQueueThreshold.TryReserve(actor, action))
             return false;
 
         var owner = ResolveQueueOwner(actor);
@@ -24,8 +24,6 @@ internal static class CreatureActionQueueService
         var queuedAction = new ExecuteCreatureActionGameAction(owner, actor, action, target);
 
         RunManager.Instance.ActionQueueSynchronizer.RequestEnqueue(queuedAction);
-
-        CreatureActionDebounceGate.MarkBlocked(actor.CombatId.Value);
         return true;
     }
 

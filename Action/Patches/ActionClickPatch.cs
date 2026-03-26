@@ -66,24 +66,32 @@ public static class ActionClickPatch
 
         if (!CombatManager.Instance.IsInProgress || CombatManager.Instance.PlayerActionsDisabled) return;
 
-        if (CreatureActionDebounceGate.IsBlocked(actor.CombatId.Value))
-        {
-            Log.Warn($"[MinionLib][MinionAction] Ignore click for {actor.Name} due to debounce window");
-            return;
-        }
-
         if (actor.PetOwner != null && !LocalContext.IsMe(actor.PetOwner)) return;
 
         if (actor.CombatState == null || actor.CombatState.CurrentSide != actor.Side) return;
 
         var combatState = actor.CombatState;
-        var actionPower = preferredAction;
-        if (actionPower == null || actionPower.Owner != actor)
-            actionPower = actor.Powers.OfType<CustomActionModel>().FirstOrDefault();
+        CustomActionModel? actionPower;
+        if (preferredAction != null && preferredAction.Owner == actor)
+        {
+            if (CreatureActionQueueThreshold.IsExhausted(actor, preferredAction))
+            {
+                Log.Warn($"[MinionLib][MinionAction] {actor.Name} action {preferredAction.Id.Entry} exhausted in queue threshold");
+                return;
+            }
+
+            actionPower = preferredAction;
+        }
+        else
+        {
+            actionPower = actor.Powers
+                .OfType<CustomActionModel>()
+                .FirstOrDefault(power => !CreatureActionQueueThreshold.IsExhausted(actor, power));
+        }
 
         if (actionPower == null)
         {
-            Log.Warn($"[MinionLib][MinionAction] {actor.Name} clicked with no action power");
+            Log.Warn($"[MinionLib][MinionAction] {actor.Name} clicked but all actions are exhausted by queue threshold");
             return;
         }
 

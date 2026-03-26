@@ -6,38 +6,38 @@ using MegaCrit.Sts2.Core.Multiplayer.Serialization;
 
 namespace MinionLib.Action.GameActions;
 
-public struct NetExecuteCreatureActionGameAction : INetAction, IPacketSerializable
+public struct NetExecuteCreatureActionGameAction : INetAction
 {
-    public uint actorCombatId;
+    public uint ActorCombatId;
 
-    public ModelId actionModelId;
+    public ModelId ActionModelId;
 
-    public uint? targetCombatId;
+    public uint? TargetCombatId;
 
     public GameAction ToGameAction(Player player)
     {
-        return new ExecuteCreatureActionGameAction(player, actorCombatId, actionModelId, targetCombatId);
+        return new ExecuteCreatureActionGameAction(player, ActorCombatId, ActionModelId, TargetCombatId);
     }
 
     public void Serialize(PacketWriter writer)
     {
-        writer.WriteUInt(actorCombatId, 6);
-        writer.WriteModelEntry(actionModelId);
-        writer.WriteBool(targetCombatId.HasValue);
-        if (targetCombatId.HasValue)
-            writer.WriteUInt(targetCombatId.Value, 6);
+        writer.WriteUInt(ActorCombatId, 6);
+        writer.WriteModelEntry(ActionModelId);
+        writer.WriteBool(TargetCombatId.HasValue);
+        if (TargetCombatId.HasValue)
+            writer.WriteUInt(TargetCombatId.Value, 6);
     }
 
     public void Deserialize(PacketReader reader)
     {
-        actorCombatId = reader.ReadUInt(6);
-        actionModelId = reader.ReadModelIdAssumingType<PowerModel>();
-        targetCombatId = reader.ReadBool() ? reader.ReadUInt(6) : null;
+        ActorCombatId = reader.ReadUInt(6);
+        ActionModelId = reader.ReadModelIdAssumingType<PowerModel>();
+        TargetCombatId = reader.ReadBool() ? reader.ReadUInt(6) : null;
     }
 
     public override string ToString()
     {
-        return $"{nameof(NetExecuteCreatureActionGameAction)} actor={actorCombatId} action={actionModelId.Entry} target={targetCombatId?.ToString() ?? "null"}";
+        return $"{nameof(NetExecuteCreatureActionGameAction)} actor={ActorCombatId} action={ActionModelId.Entry} target={TargetCombatId?.ToString() ?? "null"}";
     }
 }
 
