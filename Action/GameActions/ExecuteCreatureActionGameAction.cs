@@ -4,13 +4,14 @@ using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 
 namespace MinionLib.Action.GameActions;
 
 public sealed class ExecuteCreatureActionGameAction : GameAction
 {
+    private const string Module = "MinionAction";
+
     public override ulong OwnerId => Owner.NetId;
 
     public override GameActionType ActionType => GameActionType.CombatPlayPhaseOnly;
@@ -59,7 +60,7 @@ public sealed class ExecuteCreatureActionGameAction : GameAction
             var actor = combatState.GetCreature(ActorCombatId);
             if (actor is not { IsAlive: true })
             {
-                Log.Warn($"[MinionLib][MinionAction] Cancel queued action {ActionModelId.Entry} because actor no longer valid");
+                Debug(Module, $"Cancel queued action {ActionModelId.Entry} because actor no longer valid");
                 Cancel();
                 return;
             }
@@ -67,14 +68,14 @@ public sealed class ExecuteCreatureActionGameAction : GameAction
             var action = actor.Powers.OfType<CustomActionModel>().FirstOrDefault(power => power.Id == ActionModelId);
             if (action == null || action.Owner != actor)
             {
-                Log.Warn($"[MinionLib][MinionAction] Cancel queued action {ActionModelId.Entry} because action power no longer exists");
+                Debug(Module, $"Cancel queued action {ActionModelId.Entry} because action power no longer exists");
                 Cancel();
                 return;
             }
 
             if (!action.CanAct(actor, combatState))
             {
-                Log.Warn($"[MinionLib][MinionAction] Cancel queued action {ActionModelId.Entry} because CanAct failed");
+                Debug(Module, $"Cancel queued action {ActionModelId.Entry} because CanAct failed");
                 Cancel();
                 return;
             }
@@ -90,14 +91,14 @@ public sealed class ExecuteCreatureActionGameAction : GameAction
 
                 if (!action.IsValidTarget(combatState, actor, target))
                 {
-                    Log.Warn($"[MinionLib][MinionAction] Cancel queued action {ActionModelId.Entry} because target is no longer valid");
+                    Debug(Module, $"Cancel queued action {ActionModelId.Entry} because target is no longer valid");
                     Cancel();
                     return;
                 }
             }
             else if (action.TargetType != TargetType.None && action.GetValidTargets(actor, combatState).Count == 0)
             {
-                Log.Warn($"[MinionLib][MinionAction] Cancel queued action {ActionModelId.Entry} because no valid targets remain");
+                Debug(Module, $"Cancel queued action {ActionModelId.Entry} because no valid targets remain");
                 Cancel();
                 return;
             }
@@ -105,7 +106,7 @@ public sealed class ExecuteCreatureActionGameAction : GameAction
             var didAct = await action.TryAct(new GameActionPlayerChoiceContext(this), actor, target);
             if (!didAct)
             {
-                Log.Warn($"[MinionLib][MinionAction] Cancel queued action {ActionModelId.Entry} because TryAct returned false");
+                Debug(Module, $"Cancel queued action {ActionModelId.Entry} because TryAct returned false");
                 Cancel();
             }
         }

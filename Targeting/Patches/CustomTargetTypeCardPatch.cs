@@ -4,7 +4,6 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Helpers;
-using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
@@ -16,6 +15,8 @@ namespace MinionLib.Targeting.Patches;
 [HarmonyPatch]
 public static class CustomTargetTypeCardPatch
 {
+    private const string Module = "Targeting";
+
     private static readonly AccessTools.FieldRef<NTargetManager, TargetType> ValidTargetsTypeRef =
         AccessTools.FieldRefAccess<NTargetManager, TargetType>("_validTargetsType");
 
@@ -44,7 +45,7 @@ public static class CustomTargetTypeCardPatch
         if (!TryGetCustomCardTargetType(targetType, out var customType) || customType == null) return;
 
         __result = customType.IsSingleTarget;
-        Log.Warn($"[MinionLib][Targeting] IsSingleTarget {targetType} -> {__result}");
+        Debug(Module, $"IsSingleTarget {targetType} -> {__result}");
     }
 
     [HarmonyPatch(typeof(NTargetManager), "AllowedToTargetCreature")]
@@ -55,7 +56,7 @@ public static class CustomTargetTypeCardPatch
         if (!TryGetCustomCardTargetType(targetType, out var customType) || customType == null) return true;
 
         __result = customType.GeneralPredicate(creature);
-        Log.Warn($"[MinionLib][Targeting] AllowedToTargetCreature {targetType} {creature.Name} -> {__result}");
+        Debug(Module, $"AllowedToTargetCreature {targetType} {creature.Name} -> {__result}");
         return false;
     }
 
@@ -68,8 +69,8 @@ public static class CustomTargetTypeCardPatch
         __result = customType.IsSingleTarget
             ? target != null && customType.CardPredicate(target, __instance)
             : target == null || customType.CardPredicate(target, __instance);
-        Log.Warn(
-            $"[MinionLib][Targeting] CardModel.IsValidTarget card={__instance.Id.Entry} target={target?.Name ?? "null"} -> {__result}");
+        Debug(Module,
+            $"CardModel.IsValidTarget card={__instance.Id.Entry} target={target?.Name ?? "null"} -> {__result}");
         return false;
     }
 
@@ -84,8 +85,8 @@ public static class CustomTargetTypeCardPatch
         if (customType.IsSingleTarget && target == null)
         {
             __instance.CancelPlayCard();
-            Log.Warn(
-                $"[MinionLib][Targeting] TryPlayCard canceled: custom single-target card={card.Id.Entry} but target is null");
+            Debug(Module,
+                $"TryPlayCard canceled: custom single-target card={card.Id.Entry} but target is null");
             return false;
         }
 
@@ -93,24 +94,24 @@ public static class CustomTargetTypeCardPatch
         if (!card.CanPlayTargeting(resolvedTarget))
         {
             __instance.CancelPlayCard();
-            Log.Warn(
-                $"[MinionLib][Targeting] TryPlayCard CanPlayTargeting failed card={card.Id.Entry} target={resolvedTarget?.Name ?? "null"}");
+            Debug(Module,
+                $"TryPlayCard CanPlayTargeting failed card={card.Id.Entry} target={resolvedTarget?.Name ?? "null"}");
             return false;
         }
 
         if (!card.TryManualPlay(resolvedTarget))
         {
             __instance.CancelPlayCard();
-            Log.Warn(
-                $"[MinionLib][Targeting] TryPlayCard TryManualPlay failed card={card.Id.Entry} target={resolvedTarget?.Name ?? "null"}");
+            Debug(Module,
+                $"TryPlayCard TryManualPlay failed card={card.Id.Entry} target={resolvedTarget?.Name ?? "null"}");
             return false;
         }
 
         CardPlayCleanupMethod?.Invoke(__instance, null);
         __instance.EmitSignal(NCardPlay.SignalName.Finished, true);
         NCombatRoom.Instance?.Ui.Hand.TryGrabFocus();
-        Log.Warn(
-            $"[MinionLib][Targeting] TryPlayCard success card={card.Id.Entry} target={resolvedTarget?.Name ?? "null"}");
+        Debug(Module,
+            $"TryPlayCard success card={card.Id.Entry} target={resolvedTarget?.Name ?? "null"}");
         return false;
     }
 
@@ -136,8 +137,8 @@ public static class CustomTargetTypeCardPatch
         foreach (var validTarget in validTargets)
             NCombatRoom.Instance?.GetCreatureNode(validTarget)?.ShowMultiselectReticle();
 
-        Log.Warn(
-            $"[MinionLib][Targeting] ShowMultiCreatureTargetingVisuals custom {card.TargetType}, targets={validTargets.Count}");
+        Debug(Module,
+            $"ShowMultiCreatureTargetingVisuals custom {card.TargetType}, targets={validTargets.Count}");
     }
 
     [HarmonyPatch(typeof(NMouseCardPlay), "MultiCreatureTargeting")]
@@ -155,11 +156,11 @@ public static class CustomTargetTypeCardPatch
         {
             __result = Task.CompletedTask;
             __instance.CancelPlayCard();
-            Log.Warn("[MinionLib][Targeting] Mouse single-target method missing; canceled");
+            Debug(Module, "Mouse single-target method missing; canceled");
             return false;
         }
 
-        Log.Warn($"[MinionLib][Targeting] Mouse MultiCreatureTargeting -> Single {card.TargetType}");
+        Debug(Module, $"Mouse MultiCreatureTargeting -> Single {card.TargetType}");
         __result = (Task)MouseSingleCreatureTargeting.Invoke(__instance, [targetMode, card.TargetType])!;
         return false;
     }
@@ -177,11 +178,11 @@ public static class CustomTargetTypeCardPatch
         if (ControllerSingleCreatureTargeting == null)
         {
             __instance.CancelPlayCard();
-            Log.Warn("[MinionLib][Targeting] Controller single-target method missing; canceled");
+            Debug(Module, "Controller single-target method missing; canceled");
             return false;
         }
 
-        Log.Warn($"[MinionLib][Targeting] Controller MultiCreatureTargeting -> Single {card.TargetType}");
+        Debug(Module, $"Controller MultiCreatureTargeting -> Single {card.TargetType}");
         TaskHelper.RunSafely((Task)ControllerSingleCreatureTargeting.Invoke(__instance, [card.TargetType])!);
         return false;
     }
@@ -224,7 +225,7 @@ public static class CustomTargetTypeCardPatch
             .Where(c => c.IsAlive && customType.CardPredicate(c, card))
             .ToList();
 
-        Log.Warn($"[MinionLib][Targeting] Controller targetType={targetType}, validTargets={validTargets.Count}");
+        Debug(Module, $"Controller targetType={targetType}, validTargets={validTargets.Count}");
 
         if (validTargets.Count == 0)
         {

@@ -4,7 +4,6 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
-using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Combat;
@@ -20,6 +19,8 @@ namespace MinionLib.Targeting.Patches;
 [HarmonyPatch]
 public static class CustomTargetTypePotionPatch
 {
+    private const string Module = "Targeting";
+
     private static readonly MethodInfo? TargetNodeMethod =
         AccessTools.Method(typeof(NPotionHolder), "TargetNode");
 
@@ -79,7 +80,7 @@ public static class CustomTargetTypePotionPatch
     {
         if (TargetNodeMethod == null)
         {
-            Log.Warn("[MinionLib][Targeting] NPotionHolder.TargetNode method missing; canceled custom potion targeting");
+            Debug(Module, "NPotionHolder.TargetNode method missing; canceled custom potion targeting");
             holder.TryGrabFocus();
             return;
         }

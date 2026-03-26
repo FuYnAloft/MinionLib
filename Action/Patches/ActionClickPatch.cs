@@ -5,7 +5,6 @@ using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.ControllerInput;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Helpers;
-using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MinionLib.Targeting;
 
@@ -14,6 +13,8 @@ namespace MinionLib.Action.Patches;
 [HarmonyPatch(typeof(NCreature), nameof(NCreature._Ready))]
 public static class ActionClickPatch
 {
+    private const string Module = "MinionAction";
+
     private static readonly HashSet<uint> TargetingActors = [];
 
     [HarmonyPostfix]
@@ -22,7 +23,7 @@ public static class ActionClickPatch
         __instance.Hitbox.Connect(Control.SignalName.GuiInput,
             Callable.From<InputEvent>(inputEvent => OnGuiInput(__instance, inputEvent)));
 
-        Log.Warn($"[MinionLib][MinionAction] Connected input handler for creature {__instance.Entity.Name}");
+        Debug(Module, $"Connected input handler for creature {__instance.Entity.Name}");
     }
 
     private static void OnGuiInput(NCreature actorNode, InputEvent inputEvent)
@@ -45,7 +46,7 @@ public static class ActionClickPatch
         if (triggeredByMouse && targetManager.LastTargetingFinishedFrame == actorNode.GetTree().GetFrame())
         {
             // Ignore the same-frame release that just confirmed another creature's targeting selection.
-            Log.Warn($"[MinionLib][MinionAction] Ignore chained click on {actorNode.Entity.Name}");
+            Debug(Module, $"Ignore chained click on {actorNode.Entity.Name}");
             return;
         }
 
@@ -76,7 +77,7 @@ public static class ActionClickPatch
         {
             if (CreatureActionQueueThreshold.IsExhausted(actor, preferredAction))
             {
-                Log.Warn($"[MinionLib][MinionAction] {actor.Name} action {preferredAction.Id.Entry} exhausted in queue threshold");
+                Debug(Module, $"{actor.Name} action {preferredAction.Id.Entry} exhausted in queue threshold");
                 return;
             }
 
@@ -91,13 +92,13 @@ public static class ActionClickPatch
 
         if (actionPower == null)
         {
-            Log.Warn($"[MinionLib][MinionAction] {actor.Name} clicked but all actions are exhausted by queue threshold");
+            Debug(Module, $"{actor.Name} clicked but all actions are exhausted by queue threshold");
             return;
         }
 
         if (!actionPower.CanAct(actor, combatState))
         {
-            Log.Warn($"[MinionLib][MinionAction] {actor.Name} action {actionPower.Id.Entry} cannot act");
+            Debug(Module, $"{actor.Name} action {actionPower.Id.Entry} cannot act");
             return;
         }
 
@@ -105,13 +106,13 @@ public static class ActionClickPatch
         var singleTarget = targetType.IsSingleTarget();
         var validTargets = actionPower.GetValidTargets(actor, combatState);
 
-        Log.Warn(
-            $"[MinionLib][MinionAction] {actor.Name} using action {actionPower.Id.Entry}, targetType={targetType}, single={singleTarget}, targets={validTargets.Count}");
+        Debug(Module,
+            $"{actor.Name} using action {actionPower.Id.Entry}, targetType={targetType}, single={singleTarget}, targets={validTargets.Count}");
 
         if (targetType == TargetType.None)
         {
             var enqueuedNone = CreatureActionQueueService.TryEnqueue(actor, actionPower, null);
-            Log.Warn($"[MinionLib][MinionAction] {actor.Name} enqueue no-target action result={enqueuedNone}");
+            Debug(Module, $"{actor.Name} enqueue no-target action result={enqueuedNone}");
             return;
         }
 
@@ -119,12 +120,12 @@ public static class ActionClickPatch
         {
             if (validTargets.Count == 0)
             {
-                Log.Warn($"[MinionLib][MinionAction] {actor.Name} has no valid multi-targets");
+                Debug(Module, $"{actor.Name} has no valid multi-targets");
                 return;
             }
 
             var enqueuedAll = CreatureActionQueueService.TryEnqueue(actor, actionPower, null);
-            Log.Warn($"[MinionLib][MinionAction] {actor.Name} enqueue multi-target action result={enqueuedAll}");
+            Debug(Module, $"{actor.Name} enqueue multi-target action result={enqueuedAll}");
             return;
         }
 
@@ -132,13 +133,13 @@ public static class ActionClickPatch
         if (targetType == TargetType.Self)
         {
             var enqueuedSelf = CreatureActionQueueService.TryEnqueue(actor, actionPower, actor);
-            Log.Warn($"[MinionLib][MinionAction] {actor.Name} enqueue self-target action result={enqueuedSelf}");
+            Debug(Module, $"{actor.Name} enqueue self-target action result={enqueuedSelf}");
             return;
         }
 
         if (validTargets.Count == 0)
         {
-            Log.Warn($"[MinionLib][MinionAction] {actor.Name} has no valid single-targets");
+            Debug(Module, $"{actor.Name} has no valid single-targets");
             return;
         }
 
@@ -150,8 +151,8 @@ public static class ActionClickPatch
             var targetMode = useController ? TargetMode.Controller : TargetMode.ClickMouseToTarget;
             var startPosition = overrideStartPosition ?? actorNode.Hitbox.GlobalPosition + actorNode.Hitbox.Size / 2f;
 
-            Log.Warn(
-                $"[MinionLib][MinionAction] Start targeting for {actor.Name}, mode={targetMode}, targetType={targetType}");
+            Debug(Module,
+                $"Start targeting for {actor.Name}, mode={targetMode}, targetType={targetType}");
             actionPower.StartPulsing();
 
             if (CustomTargetTypeManager.IsCustomTargetType(targetType) &&
@@ -170,19 +171,19 @@ public static class ActionClickPatch
             var selectedNode = await NTargetManager.Instance.SelectionFinished();
             if (selectedNode is not NCreature targetNode)
             {
-                Log.Warn("[MinionLib][MinionAction] Targeting canceled");
+                Debug(Module, "Targeting canceled");
                 return;
             }
 
             var target = targetNode.Entity;
             if (!actionPower.IsValidTarget(combatState, actor, target))
             {
-                Log.Warn($"[MinionLib][MinionAction] Invalid selected target {target.Name}");
+                Debug(Module, $"Invalid selected target {target.Name}");
                 return;
             }
 
             var enqueued = CreatureActionQueueService.TryEnqueue(actor, actionPower, target);
-            Log.Warn($"[MinionLib][MinionAction] {actor.Name} targeted {target.Name}, enqueued={enqueued}");
+            Debug(Module, $"{actor.Name} targeted {target.Name}, enqueued={enqueued}");
         }
         finally
         {
