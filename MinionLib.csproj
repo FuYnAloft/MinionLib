@@ -109,8 +109,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Content Include=".agent/*" />
         <Content Include="LICENSE" />
-        <Content Include="project-memory.md"/>
         <Content Include="README.md"/>
         <Content Include="docs/**/*"/>
         <Content Include="Example/MinionTest/**"/>

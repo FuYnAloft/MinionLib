@@ -7,5 +7,5 @@ riderModule.iml
 .vs/
 .godot/
 *.user
-project-memory.md
+.agent/
 docs/images/
