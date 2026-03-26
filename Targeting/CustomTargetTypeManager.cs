@@ -19,17 +19,18 @@ public static class CustomTargetTypeManager
         CustomTypeDefinitions.Add(targetType, customTargetType);
         return targetType;
     }
-
-    // 原版机制 Patch 应该只用 CustomTargetType，不应该用 BuiltIn 的目标类型应该直接放过让原版游戏处理
+    
     public static bool IsCustomTargetType(TargetType targetType)
     {
         return RegisteredCustomTypes.Contains(targetType);
     }
-
-    // 在部分情况下，可以拿模仿实现的 BuiltIn 目标选择器
+    
     public static bool TryGetCustomTargetType(TargetType targetType,
-        [MaybeNullWhen(false)] out CustomTargetType customTargetType)
+        [MaybeNullWhen(false)] out CustomTargetType customTargetType, bool includeBuiltin = true)
     {
-        return CustomTypeDefinitions.TryGetValue(targetType, out customTargetType);
+        if (includeBuiltin || IsCustomTargetType(targetType))
+            return CustomTypeDefinitions.TryGetValue(targetType, out customTargetType);
+        customTargetType = null;
+        return false;
     }
 }

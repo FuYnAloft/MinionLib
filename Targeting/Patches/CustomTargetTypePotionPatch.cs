@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
@@ -16,6 +17,8 @@ using MegaCrit.Sts2.Core.Runs;
 
 namespace MinionLib.Targeting.Patches;
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 [HarmonyPatch]
 public static class CustomTargetTypePotionPatch
 {
@@ -35,7 +38,7 @@ public static class CustomTargetTypePotionPatch
     private static bool UsePotionPrefix(NPotionHolder __instance, ref Task __result)
     {
         var potion = __instance.Potion?.Model;
-        if (potion == null || !TryGetCustomPotionTargetType(potion.TargetType, out var customType) || customType == null)
+        if (potion == null || !CustomTargetTypeManager.TryGetCustomTargetType(potion.TargetType, out var customType, includeBuiltin:false))
             return true;
 
         if (!customType.IsSingleTarget)
@@ -55,7 +58,7 @@ public static class CustomTargetTypePotionPatch
     private static bool TargetNodePrefix(NPotionHolder __instance, TargetType targetType, ref Task __result)
     {
         var potion = __instance.Potion?.Model;
-        if (potion == null || !TryGetCustomPotionTargetType(targetType, out var customType) || customType == null)
+        if (potion == null || !CustomTargetTypeManager.TryGetCustomTargetType(targetType, out var customType, includeBuiltin:false))
             return true;
 
         __result = TargetNodeCustom(__instance, potion, targetType, customType);
@@ -67,7 +70,7 @@ public static class CustomTargetTypePotionPatch
     private static void PopupReadyPostfix(NPotionPopup __instance)
     {
         var potion = AccessTools.Property(typeof(NPotionPopup), "Potion")?.GetValue(__instance) as PotionModel;
-        if (potion == null || !TryGetCustomPotionTargetType(potion.TargetType, out var customType) || customType == null)
+        if (potion == null || !CustomTargetTypeManager.TryGetCustomTargetType(potion.TargetType, out var customType, includeBuiltin:false))
             return;
 
         var useButton = UseButtonRef(__instance);
@@ -203,15 +206,6 @@ public static class CustomTargetTypePotionPatch
             return playerState.Player.Creature;
 
         return null;
-    }
-
-    private static bool TryGetCustomPotionTargetType(TargetType targetType, out CustomTargetType? customType)
-    {
-        customType = null;
-        if (!CustomTargetTypeManager.IsCustomTargetType(targetType))
-            return false;
-
-        return CustomTargetTypeManager.TryGetCustomTargetType(targetType, out customType);
     }
 }
 

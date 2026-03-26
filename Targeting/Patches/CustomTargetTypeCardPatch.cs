@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Godot;
 using HarmonyLib;
@@ -12,6 +13,8 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 
 namespace MinionLib.Targeting.Patches;
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 [HarmonyPatch]
 public static class CustomTargetTypeCardPatch
 {
@@ -42,7 +45,7 @@ public static class CustomTargetTypeCardPatch
     [HarmonyPostfix]
     private static void IsSingleTargetPostfix(TargetType targetType, ref bool __result)
     {
-        if (!TryGetCustomCardTargetType(targetType, out var customType) || customType == null) return;
+        if (!CustomTargetTypeManager.TryGetCustomTargetType(targetType, out var customType, includeBuiltin:false)) return;
 
         __result = customType.IsSingleTarget;
         Debug(Module, $"IsSingleTarget {targetType} -> {__result}");
@@ -53,7 +56,7 @@ public static class CustomTargetTypeCardPatch
     private static bool AllowedToTargetCreaturePrefix(NTargetManager __instance, Creature creature, ref bool __result)
     {
         var targetType = ValidTargetsTypeRef(__instance);
-        if (!TryGetCustomCardTargetType(targetType, out var customType) || customType == null) return true;
+        if (!CustomTargetTypeManager.TryGetCustomTargetType(targetType, out var customType, includeBuiltin:false)) return true;
 
         __result = customType.GeneralPredicate(creature);
         Debug(Module, $"AllowedToTargetCreature {targetType} {creature.Name} -> {__result}");
@@ -64,7 +67,7 @@ public static class CustomTargetTypeCardPatch
     [HarmonyPrefix]
     private static bool IsValidTargetPrefix(CardModel __instance, Creature? target, ref bool __result)
     {
-        if (!TryGetCustomCardTargetType(__instance.TargetType, out var customType) || customType == null) return true;
+        if (!CustomTargetTypeManager.TryGetCustomTargetType(__instance.TargetType, out var customType, includeBuiltin:false)) return true;
 
         __result = customType.IsSingleTarget
             ? target != null && customType.CardPredicate(target, __instance)
@@ -79,8 +82,7 @@ public static class CustomTargetTypeCardPatch
     private static bool TryPlayCardPrefix(NCardPlay __instance, Creature? target)
     {
         var card = GetCurrentCard(__instance);
-        if (card == null || !TryGetCustomCardTargetType(card.TargetType, out var customType) ||
-            customType == null) return true;
+        if (card == null || !CustomTargetTypeManager.TryGetCustomTargetType(card.TargetType, out var customType, includeBuiltin:false)) return true;
 
         if (customType.IsSingleTarget && target == null)
         {
@@ -120,8 +122,7 @@ public static class CustomTargetTypeCardPatch
     private static void ShowMultiCreatureTargetingVisualsPostfix(NCardPlay __instance)
     {
         var card = GetCurrentCard(__instance);
-        if (card?.CombatState == null || !TryGetCustomCardTargetType(card.TargetType, out var customType) ||
-            customType == null || customType.IsSingleTarget) return;
+        if (card?.CombatState == null || !CustomTargetTypeManager.TryGetCustomTargetType(card.TargetType, out var customType, includeBuiltin:false) || customType.IsSingleTarget) return;
 
         var cardNode = __instance.Holder.CardNode;
         if (cardNode == null) return;
@@ -147,8 +148,7 @@ public static class CustomTargetTypeCardPatch
         ref Task __result)
     {
         var card = GetCurrentCard(__instance);
-        if (card == null || !TryGetCustomCardTargetType(card.TargetType, out var customType) ||
-            customType == null) return true;
+        if (card == null || !CustomTargetTypeManager.TryGetCustomTargetType(card.TargetType, out var customType, includeBuiltin:false)) return true;
 
         if (!customType.IsSingleTarget) return true;
 
@@ -170,8 +170,7 @@ public static class CustomTargetTypeCardPatch
     private static bool ControllerMultiCreatureTargetingPrefix(NControllerCardPlay __instance)
     {
         var card = GetCurrentCard(__instance);
-        if (card == null || !TryGetCustomCardTargetType(card.TargetType, out var customType) ||
-            customType == null) return true;
+        if (card == null || !CustomTargetTypeManager.TryGetCustomTargetType(card.TargetType, out var customType, includeBuiltin:false)) return true;
 
         if (!customType.IsSingleTarget) return true;
 
@@ -192,7 +191,7 @@ public static class CustomTargetTypeCardPatch
     private static bool ControllerSingleCreatureTargetingPrefix(NControllerCardPlay __instance, TargetType targetType,
         ref Task __result)
     {
-        if (!TryGetCustomCardTargetType(targetType, out _)) return true;
+        if (!CustomTargetTypeManager.TryGetCustomTargetType(targetType, out _, includeBuiltin:false)) return true;
 
         __result = ControllerSingleCustomTargeting(__instance, targetType);
         return false;
@@ -204,7 +203,7 @@ public static class CustomTargetTypeCardPatch
         var cardNode = cardPlay.Holder.CardNode;
         var room = NCombatRoom.Instance;
         if (card == null || cardNode == null || room == null || card.CombatState == null ||
-            !TryGetCustomCardTargetType(targetType, out var customType) || customType == null)
+            !CustomTargetTypeManager.TryGetCustomTargetType(targetType, out var customType, includeBuiltin:false))
         {
             cardPlay.CancelPlayCard();
             return;
@@ -253,14 +252,6 @@ public static class CustomTargetTypeCardPatch
             TryPlayCardMethod.Invoke(cardPlay, [creatureNode.Entity]);
         else
             cardPlay.CancelPlayCard();
-    }
-
-    private static bool TryGetCustomCardTargetType(TargetType targetType, out CustomTargetType? customType)
-    {
-        customType = null;
-        if (!CustomTargetTypeManager.IsCustomTargetType(targetType)) return false;
-
-        return CustomTargetTypeManager.TryGetCustomTargetType(targetType, out customType);
     }
 
     private static CardModel? GetCurrentCard(NCardPlay cardPlay)
