@@ -4,9 +4,8 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
-using MinionLib.Models;
 
-namespace MinionLib.Patches;
+namespace MinionLib.Action.Patches;
 
 [HarmonyPatch(typeof(NPower), nameof(NPower._Ready))]
 public static class ActionPowerIconClickPatch

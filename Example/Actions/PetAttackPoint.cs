@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Commands;
-using MinionLib.Models;
+using MinionLib.Action;
 using MinionLib.Targeting;
 
 namespace MinionLib.Example.Actions;

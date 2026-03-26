@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MinionLib.Targeting;
 
-namespace MinionLib.Models;
+namespace MinionLib.Action;
 
 public abstract class CustomActionModel : CustomPowerModel
 {

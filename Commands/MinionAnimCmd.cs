@@ -54,7 +54,7 @@ public static class MinionAnimCmd
         await room.ToSignal(tween, Tween.SignalName.Finished);
     }
 
-    public static async Task PlayBumpAttackAsync(Creature attacker, Creature target, Action? onHit = null)
+    public static async Task PlayBumpAttackAsync(Creature attacker, Creature target, global::System.Action? onHit = null)
     {
         var room = NCombatRoom.Instance;
         var attackerNode = room?.GetCreatureNode(attacker);

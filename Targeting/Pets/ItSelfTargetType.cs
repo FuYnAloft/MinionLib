@@ -1,5 +1,5 @@
 using MegaCrit.Sts2.Core.Entities.Creatures;
-using MinionLib.Models;
+using MinionLib.Action;
 
 namespace MinionLib.Targeting.Pets;
 

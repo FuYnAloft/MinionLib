@@ -4,14 +4,12 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.ControllerInput;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Nodes.Combat;
-using MinionLib.Models;
 using MinionLib.Targeting;
 
-namespace MinionLib.Patches;
+namespace MinionLib.Action.Patches;
 
 [HarmonyPatch(typeof(NCreature), nameof(NCreature._Ready))]
 public static class ActionClickPatch
@@ -68,6 +66,12 @@ public static class ActionClickPatch
 
         if (!CombatManager.Instance.IsInProgress || CombatManager.Instance.PlayerActionsDisabled) return;
 
+        if (CreatureActionDebounceGate.IsBlocked(actor.CombatId.Value))
+        {
+            Log.Warn($"[MinionLib][MinionAction] Ignore click for {actor.Name} due to debounce window");
+            return;
+        }
+
         if (actor.PetOwner != null && !LocalContext.IsMe(actor.PetOwner)) return;
 
         if (actor.CombatState == null || actor.CombatState.CurrentSide != actor.Side) return;
@@ -98,8 +102,8 @@ public static class ActionClickPatch
 
         if (targetType == TargetType.None)
         {
-            var actedNone = await actionPower.TryAct(new BlockingPlayerChoiceContext(), actor, null);
-            Log.Warn($"[MinionLib][MinionAction] {actor.Name} no-target action result={actedNone}");
+            var enqueuedNone = CreatureActionQueueService.TryEnqueue(actor, actionPower, null);
+            Log.Warn($"[MinionLib][MinionAction] {actor.Name} enqueue no-target action result={enqueuedNone}");
             return;
         }
 
@@ -111,16 +115,16 @@ public static class ActionClickPatch
                 return;
             }
 
-            var actedAll = await actionPower.TryAct(new BlockingPlayerChoiceContext(), actor, null);
-            Log.Warn($"[MinionLib][MinionAction] {actor.Name} multi-target action result={actedAll}");
+            var enqueuedAll = CreatureActionQueueService.TryEnqueue(actor, actionPower, null);
+            Log.Warn($"[MinionLib][MinionAction] {actor.Name} enqueue multi-target action result={enqueuedAll}");
             return;
         }
 
         // For self-target actions, avoid opening the targeting UI and execute immediately.
         if (targetType == TargetType.Self)
         {
-            var actedSelf = await actionPower.TryAct(new BlockingPlayerChoiceContext(), actor, actor);
-            Log.Warn($"[MinionLib][MinionAction] {actor.Name} self-target action result={actedSelf}");
+            var enqueuedSelf = CreatureActionQueueService.TryEnqueue(actor, actionPower, actor);
+            Log.Warn($"[MinionLib][MinionAction] {actor.Name} enqueue self-target action result={enqueuedSelf}");
             return;
         }
 
@@ -169,8 +173,8 @@ public static class ActionClickPatch
                 return;
             }
 
-            var acted = await actionPower.TryAct(new BlockingPlayerChoiceContext(), actor, target);
-            Log.Warn($"[MinionLib][MinionAction] {actor.Name} targeted {target.Name}, acted={acted}");
+            var enqueued = CreatureActionQueueService.TryEnqueue(actor, actionPower, target);
+            Log.Warn($"[MinionLib][MinionAction] {actor.Name} targeted {target.Name}, enqueued={enqueued}");
         }
         finally
         {
