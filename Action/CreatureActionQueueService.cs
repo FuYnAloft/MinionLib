@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Runs;
 using MinionLib.Action.GameActions;
@@ -14,16 +15,29 @@ internal static class CreatureActionQueueService
         if (!CombatManager.Instance.IsInProgress || actor.CombatId == null)
             return false;
 
-        if (!CreatureActionQueueThreshold.TryReserve(actor, action))
+        var queueSynchronizer = RunManager.Instance.ActionQueueSynchronizer;
+        if (queueSynchronizer.CombatState != ActionSynchronizerCombatState.PlayPhase)
             return false;
 
         var owner = ResolveQueueOwner(actor);
         if (owner == null)
             return false;
 
+        if (!CreatureActionQueueThreshold.TryReserve(actor, action))
+            return false;
+
         var queuedAction = new ExecuteCreatureActionGameAction(owner, actor, action, target);
 
-        RunManager.Instance.ActionQueueSynchronizer.RequestEnqueue(queuedAction);
+        try
+        {
+            queueSynchronizer.RequestEnqueue(queuedAction);
+        }
+        catch
+        {
+            CreatureActionQueueThreshold.Release(actor.CombatId.Value, action.Id);
+            throw;
+        } 
+
         return true;
     }
 
