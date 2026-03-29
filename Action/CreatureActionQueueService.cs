@@ -1,8 +1,6 @@
 using MegaCrit.Sts2.Core.Combat;
-using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
-using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Runs;
 using MinionLib.Action.GameActions;
 
@@ -10,23 +8,20 @@ namespace MinionLib.Action;
 
 internal static class CreatureActionQueueService
 {
-    public static bool TryEnqueue(Creature actor, CustomActionModel action, Creature? target)
+    public static bool TryEnqueue(CustomActionModel action, Creature? target)
     {
+        var actor = action.Owner;
         if (!CombatManager.Instance.IsInProgress || actor.CombatId == null)
             return false;
 
         var queueSynchronizer = RunManager.Instance.ActionQueueSynchronizer;
         if (queueSynchronizer.CombatState != ActionSynchronizerCombatState.PlayPhase)
             return false;
-
-        var owner = ResolveQueueOwner(actor);
-        if (owner == null)
+        
+        if (!CreatureActionQueueThreshold.TryReserve(action))
             return false;
 
-        if (!CreatureActionQueueThreshold.TryReserve(actor, action))
-            return false;
-
-        var queuedAction = new ExecuteCreatureActionGameAction(owner, actor, action, target);
+        var queuedAction = new ExecuteCreatureActionGameAction(action, target);
 
         try
         {
@@ -39,20 +34,6 @@ internal static class CreatureActionQueueService
         } 
 
         return true;
-    }
-
-    private static Player? ResolveQueueOwner(Creature actor)
-    {
-        if (actor.PetOwner != null)
-            return actor.PetOwner;
-
-        if (actor.Player != null)
-            return actor.Player;
-
-        if (actor.CombatState != null)
-            return LocalContext.GetMe(actor.CombatState);
-
-        return null;
     }
 }
 

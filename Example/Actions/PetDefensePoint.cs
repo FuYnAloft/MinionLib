@@ -26,10 +26,11 @@ public sealed class PetDefensePoint : CustomActionModel
 
     public override string CustomBigBetaIconPath => "res://Example/MinionTest/orb.png";
 
-    protected override async Task OnAct(PlayerChoiceContext choiceContext, Creature actor, Creature? target)
+    protected override async Task OnAct(PlayerChoiceContext choiceContext, Creature? target)
     {
         if (target == null) return;
 
+        var actor = Owner;
         var block = actor.GetPowerAmount<DexterityPower>();
         await CreatureCmd.GainBlock(target, block, ValueProp.Move, null);
     }

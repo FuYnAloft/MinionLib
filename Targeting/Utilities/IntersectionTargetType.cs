@@ -31,8 +31,8 @@ public class IntersectionTargetType(
         return targetTypeA.PotionPredicate(target, potion) && targetTypeB.PotionPredicate(target, potion);
     }
 
-    public override bool ActionPredicate(Creature target, CustomActionModel action, Creature actor)
+    public override bool ActionPredicate(Creature target, CustomActionModel action)
     {
-        return targetTypeA.ActionPredicate(target, action, actor) && targetTypeB.ActionPredicate(target, action, actor);
+        return targetTypeA.ActionPredicate(target, action) && targetTypeB.ActionPredicate(target, action);
     }
 }

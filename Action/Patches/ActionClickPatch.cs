@@ -87,7 +87,7 @@ public static class ActionClickPatch
         CustomActionModel? actionPower;
         if (preferredAction != null && preferredAction.Owner == actor)
         {
-            if (CreatureActionQueueThreshold.IsExhausted(actor, preferredAction))
+            if (CreatureActionQueueThreshold.IsExhausted(preferredAction))
             {
                 Debug(Module, $"{actor.Name} action {preferredAction.Id.Entry} exhausted in queue threshold");
                 return;
@@ -100,7 +100,7 @@ public static class ActionClickPatch
             actionPower = actor.Powers
                 .OfType<CustomActionModel>()
                 .FirstOrDefault(power =>
-                    !CreatureActionQueueThreshold.IsExhausted(actor, power) &&
+                    !CreatureActionQueueThreshold.IsExhausted(power) &&
                     (triggeredFromIcon || !power.OnlyRespondIconClick));
         }
 
@@ -110,7 +110,7 @@ public static class ActionClickPatch
             return;
         }
 
-        if (!actionPower.CanAct(actor, combatState))
+        if (!actionPower.CanAct(combatState))
         {
             Debug(Module, $"{actor.Name} action {actionPower.Id.Entry} cannot act");
             return;
@@ -118,7 +118,7 @@ public static class ActionClickPatch
 
         var targetType = actionPower.TargetType;
         var singleTarget = targetType.IsSingleTarget();
-        var validTargets = actionPower.GetValidTargets(actor, combatState);
+        var validTargets = actionPower.GetValidTargets(combatState);
 
         Debug(Module,
             $"{actor.Name} using action {actionPower.Id.Entry}, targetType={targetType}, single={singleTarget}, targets={validTargets.Count}");
@@ -126,7 +126,7 @@ public static class ActionClickPatch
         if (targetType == TargetType.None)
         {
             actionPower.Flash();
-            var enqueuedNone = CreatureActionQueueService.TryEnqueue(actor, actionPower, null);
+            var enqueuedNone = CreatureActionQueueService.TryEnqueue(actionPower, null);
             Debug(Module, $"{actor.Name} enqueue no-target action result={enqueuedNone}");
             return;
         }
@@ -140,7 +140,7 @@ public static class ActionClickPatch
             }
 
             actionPower.Flash();
-            var enqueuedAll = CreatureActionQueueService.TryEnqueue(actor, actionPower, null);
+            var enqueuedAll = CreatureActionQueueService.TryEnqueue(actionPower, null);
             Debug(Module, $"{actor.Name} enqueue multi-target action result={enqueuedAll}");
             return;
         }
@@ -148,7 +148,7 @@ public static class ActionClickPatch
         // For self-target actions, avoid opening the targeting UI and execute immediately.
         if (targetType == TargetType.Self)
         {
-            var enqueuedSelf = CreatureActionQueueService.TryEnqueue(actor, actionPower, actor);
+            var enqueuedSelf = CreatureActionQueueService.TryEnqueue(actionPower, null);
             Debug(Module, $"{actor.Name} enqueue self-target action result={enqueuedSelf}");
             return;
         }
@@ -178,7 +178,7 @@ public static class ActionClickPatch
                     {
                         if (node is not NCreature creatureNode) return false;
                         var target = creatureNode.Entity;
-                        return customTargetType.ActionPredicate(target, actionPower, actor);
+                        return customTargetType.ActionPredicate(target, actionPower);
                     });
             else
                 NTargetManager.Instance.StartTargeting(targetType, startPosition, targetMode,
@@ -192,13 +192,13 @@ public static class ActionClickPatch
             }
 
             var target = targetNode.Entity;
-            if (!actionPower.IsValidTarget(combatState, actor, target))
+            if (!actionPower.IsValidTarget(combatState, target))
             {
                 Debug(Module, $"Invalid selected target {target.Name}");
                 return;
             }
 
-            var enqueued = CreatureActionQueueService.TryEnqueue(actor, actionPower, target);
+            var enqueued = CreatureActionQueueService.TryEnqueue(actionPower, target);
             Debug(Module, $"{actor.Name} targeted {target.Name}, enqueued={enqueued}");
         }
         finally

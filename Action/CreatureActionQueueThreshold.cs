@@ -1,4 +1,3 @@
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Models;
 
 namespace MinionLib.Action;
@@ -7,16 +6,18 @@ internal static class CreatureActionQueueThreshold
 {
     private static readonly Dictionary<(uint actorCombatId, ModelId actionId), int> QueuedCount = [];
 
-    public static bool IsExhausted(Creature actor, CustomActionModel action)
+    public static bool IsExhausted(CustomActionModel action)
     {
+        var actor = action.Owner;
         if (actor.CombatId == null)
             return true;
 
         return action.Amount <= GetQueuedCount(actor.CombatId.Value, action.Id);
     }
 
-    public static bool TryReserve(Creature actor, CustomActionModel action)
+    public static bool TryReserve(CustomActionModel action)
     {
+        var actor = action.Owner;
         if (actor.CombatId == null)
             return false;
 

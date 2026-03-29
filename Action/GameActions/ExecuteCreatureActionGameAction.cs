@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Context;
 
 namespace MinionLib.Action.GameActions;
 
@@ -24,10 +25,14 @@ public sealed class ExecuteCreatureActionGameAction : GameAction
 
     private ModelId ActionModelId { get; }
 
-    public ExecuteCreatureActionGameAction(Player owner, Creature actor, CustomActionModel action, Creature? target)
+    public ExecuteCreatureActionGameAction(CustomActionModel action, Creature? target)
     {
+        var actor = action.Owner;
         if (actor.CombatId == null)
             throw new InvalidOperationException("Cannot enqueue creature action without actor combat id.");
+
+        var owner = ResolveQueueOwner(actor) ??
+                    throw new InvalidOperationException("Cannot enqueue creature action without queue owner.");
 
         if (target != null && target.CombatId == null)
             throw new InvalidOperationException("Cannot enqueue creature action with target that has no combat id.");
@@ -44,6 +49,20 @@ public sealed class ExecuteCreatureActionGameAction : GameAction
         ActorCombatId = actorCombatId;
         ActionModelId = actionModelId;
         TargetCombatId = targetCombatId;
+    }
+
+    private static Player? ResolveQueueOwner(Creature actor)
+    {
+        if (actor.PetOwner != null)
+            return actor.PetOwner;
+
+        if (actor.Player != null)
+            return actor.Player;
+
+        if (actor.CombatState != null)
+            return LocalContext.GetMe(actor.CombatState);
+
+        return null;
     }
 
     protected override async Task ExecuteAction()
@@ -73,7 +92,7 @@ public sealed class ExecuteCreatureActionGameAction : GameAction
                 return;
             }
 
-            if (!action.CanAct(actor, combatState))
+            if (!action.CanAct(combatState))
             {
                 Debug(Module, $"Cancel queued action {ActionModelId.Entry} because CanAct failed");
                 Cancel();
@@ -89,21 +108,21 @@ public sealed class ExecuteCreatureActionGameAction : GameAction
                 if (action.TargetType == TargetType.Self && target == null)
                     target = actor;
 
-                if (!action.IsValidTarget(combatState, actor, target))
+                if (!action.IsValidTarget(combatState, target))
                 {
                     Debug(Module, $"Cancel queued action {ActionModelId.Entry} because target is no longer valid");
                     Cancel();
                     return;
                 }
             }
-            else if (action.TargetType != TargetType.None && action.GetValidTargets(actor, combatState).Count == 0)
+            else if (action.TargetType != TargetType.None && action.GetValidTargets(combatState).Count == 0)
             {
                 Debug(Module, $"Cancel queued action {ActionModelId.Entry} because no valid targets remain");
                 Cancel();
                 return;
             }
 
-            var didAct = await action.TryAct(new GameActionPlayerChoiceContext(this), actor, target);
+            var didAct = await action.TryAct(new GameActionPlayerChoiceContext(this), target);
             if (!didAct)
             {
                 Debug(Module, $"Cancel queued action {ActionModelId.Entry} because TryAct returned false");

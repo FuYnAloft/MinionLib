@@ -25,8 +25,9 @@ public class AnyMinionOrOwnerTargetType : CustomTargetType
         return GeneralPredicate(target) && (target.PetOwner == potion.Owner || target.Player == potion.Owner);
     }
 
-    public override bool ActionPredicate(Creature target, CustomActionModel action, Creature actor)
+    public override bool ActionPredicate(Creature target, CustomActionModel action)
     {
+        var actor = action.Owner;
         return GeneralPredicate(target) && (target == actor || target.PetOwner == actor.Player ||
                                             target.Player == actor.PetOwner || target.PetOwner == actor.PetOwner);
     }

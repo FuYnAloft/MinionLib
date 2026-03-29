@@ -25,9 +25,10 @@ public sealed class PetAttackPoint : CustomActionModel
 
     public override string CustomBigBetaIconPath => "res://Example/MinionTest/orb.png";
 
-    protected override async Task OnAct(PlayerChoiceContext choiceContext, Creature actor, Creature? target)
+    protected override async Task OnAct(PlayerChoiceContext choiceContext, Creature? target)
     {
         if (target == null) return;
+        var actor = Owner;
         await MinionAnimCmd.PlayBumpAttackAsync(actor, target,
             () => CreatureCmd.Damage(choiceContext, target, 0m, ValueProp.Move, actor, null));
     }

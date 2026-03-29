@@ -32,56 +32,58 @@ public abstract class CustomActionModel : CustomPowerModel
         base.Flash();
     }
 
-    public virtual bool CanAct(Creature pet, CombatState combatState)
+    public virtual bool CanAct(CombatState combatState)
     {
-        return Amount > 0m && pet.IsAlive && pet.CombatState == combatState;
+        var actor = Owner;
+        return Amount > 0m && actor.IsAlive && actor.CombatState == combatState;
     }
 
-    public bool IsValidTarget(CombatState combatState, Creature pet, Creature? target)
+    public bool IsValidTarget(CombatState combatState, Creature? target)
     {
         if (target is not { IsAlive: true }) return false;
 
         if (CustomTargetTypeManager.TryGetCustomTargetType(TargetType, out var customType))
-            return customType.ActionPredicate(target, this, pet);
+            return customType.ActionPredicate(target, this);
 
         return false;
     }
 
-    public IReadOnlyList<Creature> GetValidTargets(Creature pet, CombatState combatState)
+    public IReadOnlyList<Creature> GetValidTargets(CombatState combatState)
     {
         return combatState.Creatures
-            .Where(target => IsValidTarget(combatState, pet, target))
+            .Where(target => IsValidTarget(combatState, target))
             .ToList();
     }
 
-    public async Task<bool> TryAct(PlayerChoiceContext choiceContext, Creature pet, Creature? target)
+    public async Task<bool> TryAct(PlayerChoiceContext choiceContext, Creature? target)
     {
-        var combatState = pet.CombatState;
-        if (combatState == null || !CanAct(pet, combatState)) return false;
+        var actor = Owner;
+        var combatState = actor.CombatState;
+        if (combatState == null || !CanAct(combatState)) return false;
 
         if (TargetType == TargetType.None)
         {
-            await ExecuteAct(choiceContext, pet, null);
+            await ExecuteAct(choiceContext, null);
             return true;
         }
 
         if (TargetType.IsSingleTarget())
         {
-            if (!IsValidTarget(combatState, pet, target)) return false;
+            if (!IsValidTarget(combatState, target)) return false;
 
-            await ExecuteAct(choiceContext, pet, target);
+            await ExecuteAct(choiceContext, target);
             return true;
         }
 
-        if (GetValidTargets(pet, combatState).Count == 0) return false;
+        if (GetValidTargets(combatState).Count == 0) return false;
 
-        await ExecuteAct(choiceContext, pet, null);
+        await ExecuteAct(choiceContext, null);
         return true;
     }
 
-    private async Task ExecuteAct(PlayerChoiceContext choiceContext, Creature actor, Creature? target)
+    private async Task ExecuteAct(PlayerChoiceContext choiceContext, Creature? target)
     {
-        await OnAct(choiceContext, actor, target);
+        await OnAct(choiceContext, target);
         if (DecrementAfterAct)
             await PowerCmd.Decrement(this);
         if (CombatManager.Instance.IsInProgress)
@@ -95,5 +97,5 @@ public abstract class CustomActionModel : CustomPowerModel
         await PowerCmd.Remove(this);
     }
 
-    protected abstract Task OnAct(PlayerChoiceContext choiceContext, Creature actor, Creature? target);
+    protected abstract Task OnAct(PlayerChoiceContext choiceContext, Creature? target);
 }

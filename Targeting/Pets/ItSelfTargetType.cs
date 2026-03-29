@@ -12,8 +12,8 @@ public class ItselfTargetType : CustomTargetType
         return false;
     }
 
-    public override bool ActionPredicate(Creature target, CustomActionModel action, Creature actor)
+    public override bool ActionPredicate(Creature target, CustomActionModel action)
     {
-        return target == actor;
+        return target == action.Owner;
     }
 }
