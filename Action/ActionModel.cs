@@ -6,11 +6,12 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Models;
 using MinionLib.Targeting;
 
 namespace MinionLib.Action;
 
-public abstract class CustomActionModel : CustomPowerModel
+public abstract class ActionModel : PowerModel
 {
     private static readonly IHoverTip ActionHoverTip = new HoverTip(
         new LocString("static_hover_tips", "action.title"),
@@ -98,4 +99,13 @@ public abstract class CustomActionModel : CustomPowerModel
     }
 
     protected abstract Task OnAct(PlayerChoiceContext choiceContext, Creature? target);
+}
+
+public abstract class CustomActionModel : ActionModel, ICustomPower
+{
+    public virtual string? CustomPackedIconPath => null;
+
+    public virtual string? CustomBigIconPath => null;
+
+    public virtual string? CustomBigBetaIconPath => null;
 }

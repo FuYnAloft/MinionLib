@@ -8,7 +8,7 @@ namespace MinionLib.Action;
 
 internal static class CreatureActionQueueService
 {
-    public static bool TryEnqueue(CustomActionModel action, Creature? target)
+    public static bool TryEnqueue(ActionModel action, Creature? target)
     {
         var actor = action.Owner;
         if (!CombatManager.Instance.IsInProgress || actor.CombatId == null)

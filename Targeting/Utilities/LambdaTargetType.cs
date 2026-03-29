@@ -9,7 +9,7 @@ public class LambdaTargetType(
     Func<Creature, bool> generalPredicate,
     Func<Creature, CardModel, bool>? cardPredicate = null,
     Func<Creature, PotionModel, bool>? potionPredicate = null,
-    Func<Creature, CustomActionModel, bool>? actionPredicate = null,
+    Func<Creature, ActionModel, bool>? actionPredicate = null,
     bool isRandomTarget = false
 ) : CustomTargetType
 {
@@ -32,7 +32,7 @@ public class LambdaTargetType(
         return potionPredicate?.Invoke(target, potion) ?? generalPredicate(target);
     }
 
-    public override bool ActionPredicate(Creature target, CustomActionModel action)
+    public override bool ActionPredicate(Creature target, ActionModel action)
     {
         return actionPredicate?.Invoke(target, action) ?? generalPredicate(target);
     }

@@ -28,7 +28,7 @@ public static class ActionPowerIconClickPatch
 
         if (NTargetManager.Instance.IsInSelection) return;
 
-        if (powerNode.Model is not CustomActionModel actionPower) return;
+        if (powerNode.Model is not ActionModel actionPower) return;
 
         var actorNode = NCombatRoom.Instance?.GetCreatureNode(actionPower.Owner);
         if (actorNode == null) return;

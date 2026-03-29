@@ -12,7 +12,7 @@ public class ItselfTargetType : CustomTargetType
         return false;
     }
 
-    public override bool ActionPredicate(Creature target, CustomActionModel action)
+    public override bool ActionPredicate(Creature target, ActionModel action)
     {
         return target == action.Owner;
     }

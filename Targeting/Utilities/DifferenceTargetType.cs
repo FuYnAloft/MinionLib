@@ -31,7 +31,7 @@ public class DifferenceTargetType(
         return original.PotionPredicate(target, potion) && !exclude.PotionPredicate(target, potion);
     }
 
-    public override bool ActionPredicate(Creature target, CustomActionModel action)
+    public override bool ActionPredicate(Creature target, ActionModel action)
     {
         return original.ActionPredicate(target, action) && !exclude.ActionPredicate(target, action);
     }

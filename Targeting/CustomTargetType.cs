@@ -22,7 +22,7 @@ public abstract class CustomTargetType
         return GeneralPredicate(target);
     }
 
-    public virtual bool ActionPredicate(Creature target, CustomActionModel action)
+    public virtual bool ActionPredicate(Creature target, ActionModel action)
     {
         return GeneralPredicate(target);
     }

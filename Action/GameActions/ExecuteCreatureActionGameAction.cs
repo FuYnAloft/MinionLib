@@ -25,7 +25,7 @@ public sealed class ExecuteCreatureActionGameAction : GameAction
 
     private ModelId ActionModelId { get; }
 
-    public ExecuteCreatureActionGameAction(CustomActionModel action, Creature? target)
+    public ExecuteCreatureActionGameAction(ActionModel action, Creature? target)
     {
         var actor = action.Owner;
         if (actor.CombatId == null)
@@ -84,7 +84,7 @@ public sealed class ExecuteCreatureActionGameAction : GameAction
                 return;
             }
 
-            var action = actor.Powers.OfType<CustomActionModel>().FirstOrDefault(power => power.Id == ActionModelId);
+            var action = actor.Powers.OfType<ActionModel>().FirstOrDefault(power => power.Id == ActionModelId);
             if (action == null || action.Owner != actor)
             {
                 Debug(Module, $"Cancel queued action {ActionModelId.Entry} because action power no longer exists");

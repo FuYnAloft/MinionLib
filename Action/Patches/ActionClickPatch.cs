@@ -56,13 +56,13 @@ public static class ActionClickPatch
         actorNode.GetViewport().SetInputAsHandled();
     }
 
-    public static Task TryUseActionFromIconAsync(NCreature actorNode, CustomActionModel actionPower, Vector2 position)
+    public static Task TryUseActionFromIconAsync(NCreature actorNode, ActionModel actionPower, Vector2 position)
     {
         return TryUseActionAsync(actorNode, false, actionPower, position);
     }
 
     private static async Task TryUseActionAsync(NCreature actorNode, bool useController,
-        CustomActionModel? preferredAction, Vector2? overrideStartPosition = null)
+        ActionModel? preferredAction, Vector2? overrideStartPosition = null)
     {
         var actor = actorNode.Entity;
         if (!actor.IsAlive || actor.CombatId == null) return;
@@ -84,7 +84,7 @@ public static class ActionClickPatch
 
         var combatState = actor.CombatState;
         var triggeredFromIcon = preferredAction != null;
-        CustomActionModel? actionPower;
+        ActionModel? actionPower;
         if (preferredAction != null && preferredAction.Owner == actor)
         {
             if (CreatureActionQueueThreshold.IsExhausted(preferredAction))
@@ -98,7 +98,7 @@ public static class ActionClickPatch
         else
         {
             actionPower = actor.Powers
-                .OfType<CustomActionModel>()
+                .OfType<ActionModel>()
                 .FirstOrDefault(power =>
                     !CreatureActionQueueThreshold.IsExhausted(power) &&
                     (triggeredFromIcon || !power.OnlyRespondIconClick));

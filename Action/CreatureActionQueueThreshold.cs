@@ -6,7 +6,7 @@ internal static class CreatureActionQueueThreshold
 {
     private static readonly Dictionary<(uint actorCombatId, ModelId actionId), int> QueuedCount = [];
 
-    public static bool IsExhausted(CustomActionModel action)
+    public static bool IsExhausted(ActionModel action)
     {
         var actor = action.Owner;
         if (actor.CombatId == null)
@@ -15,7 +15,7 @@ internal static class CreatureActionQueueThreshold
         return action.Amount <= GetQueuedCount(actor.CombatId.Value, action.Id);
     }
 
-    public static bool TryReserve(CustomActionModel action)
+    public static bool TryReserve(ActionModel action)
     {
         var actor = action.Owner;
         if (actor.CombatId == null)
