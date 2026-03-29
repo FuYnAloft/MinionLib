@@ -27,6 +27,11 @@ public abstract class CustomActionModel : CustomPowerModel
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
         [ActionHoverTip];
 
+    public new void Flash()
+    {
+        base.Flash();
+    }
+
     public virtual bool CanAct(Creature pet, CombatState combatState)
     {
         return Amount > 0m && pet.IsAlive && pet.CombatState == combatState;

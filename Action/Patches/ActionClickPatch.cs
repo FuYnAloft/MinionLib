@@ -125,6 +125,7 @@ public static class ActionClickPatch
 
         if (targetType == TargetType.None)
         {
+            actionPower.Flash();
             var enqueuedNone = CreatureActionQueueService.TryEnqueue(actor, actionPower, null);
             Debug(Module, $"{actor.Name} enqueue no-target action result={enqueuedNone}");
             return;
@@ -138,6 +139,7 @@ public static class ActionClickPatch
                 return;
             }
 
+            actionPower.Flash();
             var enqueuedAll = CreatureActionQueueService.TryEnqueue(actor, actionPower, null);
             Debug(Module, $"{actor.Name} enqueue multi-target action result={enqueuedAll}");
             return;
