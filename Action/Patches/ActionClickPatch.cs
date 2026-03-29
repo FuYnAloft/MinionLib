@@ -83,6 +83,7 @@ public static class ActionClickPatch
         if (actor.CombatState == null || actor.CombatState.CurrentSide != actor.Side) return;
 
         var combatState = actor.CombatState;
+        var triggeredFromIcon = preferredAction != null;
         CustomActionModel? actionPower;
         if (preferredAction != null && preferredAction.Owner == actor)
         {
@@ -98,7 +99,9 @@ public static class ActionClickPatch
         {
             actionPower = actor.Powers
                 .OfType<CustomActionModel>()
-                .FirstOrDefault(power => !CreatureActionQueueThreshold.IsExhausted(actor, power));
+                .FirstOrDefault(power =>
+                    !CreatureActionQueueThreshold.IsExhausted(actor, power) &&
+                    (triggeredFromIcon || !power.OnlyRespondIconClick));
         }
 
         if (actionPower == null)

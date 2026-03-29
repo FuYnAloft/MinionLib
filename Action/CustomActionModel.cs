@@ -22,6 +22,8 @@ public abstract class CustomActionModel : CustomPowerModel
 
     public virtual bool DecrementAfterAct => true;
 
+    public virtual bool OnlyRespondIconClick => false;
+
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
         [ActionHoverTip];
 
