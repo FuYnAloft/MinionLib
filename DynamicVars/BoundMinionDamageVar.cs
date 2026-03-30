@@ -19,7 +19,7 @@ public sealed class BoundMinionDamageVar(string name, decimal damage, ValueProp 
         bool runGlobalHooks)
     {
         var amount = BaseValue;
-        if (!runGlobalHooks || card is not CustomMinionBoundCardModel boundCard)
+        if (!runGlobalHooks || card is not IMinionBoundCard boundCard)
         {
             PreviewValue = amount;
             return;

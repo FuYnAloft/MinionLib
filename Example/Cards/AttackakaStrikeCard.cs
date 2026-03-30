@@ -15,7 +15,7 @@ namespace MinionLib.Example.Cards;
 public sealed class AttackakaStrikeCard()
     : CustomMinionBoundCardModel(0, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy)
 {
-    protected override bool ShouldGlowRedInternal => ResolveBoundMinion() is not { IsAlive: true };
+    protected override bool ShouldGlowRedInternal => this.ResolveBoundMinion() is not { IsAlive: true };
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust, CardKeyword.Ethereal];
 
@@ -26,7 +26,7 @@ public sealed class AttackakaStrikeCard()
     {
         ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 
-        var minion = ResolveBoundMinion();
+        var minion = this.ResolveBoundMinion();
         if (minion is not { IsAlive: true }) return;
 
         await MinionAnimCmd.PlayBumpAttackAsync(minion, cardPlay.Target,

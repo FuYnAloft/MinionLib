@@ -18,7 +18,7 @@ public sealed class BoundMinionBlockVar(string name, decimal value, ValueProp pr
     public override void UpdateCardPreview(CardModel card, CardPreviewMode previewMode, Creature? target,
         bool runGlobalHooks)
     {
-        if (card is not CustomMinionBoundCardModel boundCard)
+        if (card is not IMinionBoundCard boundCard)
         {
             PreviewValue = BaseValue;
             return;
