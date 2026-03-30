@@ -22,9 +22,13 @@
   "MINIONLIB-GRANT_HEAL_COMPONENT_CARD.title": "Infuse Heal",
   "MINIONLIB-GRANT_HEAL_COMPONENT_CARD.description": "Choose a card in your hand and grant it [gold]Heal 3[/gold].",
   "MINIONLIB-GRANT_HEAL_COMPONENT_CARD.selectionScreenPrompt": "Choose a hand card to infuse with heal",
+  "MINIONLIB-GRANT_DECK_DAMAGE_BLOCK_COMPONENT_CARD.title": "Infuse Deck: Strike Guard",
+  "MINIONLIB-GRANT_DECK_DAMAGE_BLOCK_COMPONENT_CARD.description": "Give every component-capable card in your [gold]Deck[/gold] [gold]Deal 1 damage, Gain 1 Block[/gold].",
   "bound_minion_dead_suffix": " (Dead)",
   
   
   "MinionLib-HealOwnerComponent.prefix": "[gold]Heal {amount}. [/gold]",
-  "MinionLib-HealOwnerComponent.postfix": ""
+  "MinionLib-HealOwnerComponent.postfix": "",
+  "MinionLib-DamageBlockComponent.prefix": "[gold]Deal {damage}, Gain {block} Block[/gold]",
+  "MinionLib-DamageBlockComponent.postfix": ""
 }

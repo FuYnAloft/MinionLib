@@ -18,9 +18,13 @@
   "MINIONLIB-GRANT_HEAL_COMPONENT_CARD.title": "注入治疗",
   "MINIONLIB-GRANT_HEAL_COMPONENT_CARD.description": "选择一张手牌，赋予其[gold]治疗3[/gold]。",
   "MINIONLIB-GRANT_HEAL_COMPONENT_CARD.selectionScreenPrompt": "选择1张可注入治疗的手牌",
+  "MINIONLIB-GRANT_DECK_DAMAGE_BLOCK_COMPONENT_CARD.title": "注入牌组：击防",
+  "MINIONLIB-GRANT_DECK_DAMAGE_BLOCK_COMPONENT_CARD.description": "使你[gold]牌组[/gold]中所有可挂组件的卡获得[gold]造成1点伤害并获得1点格挡[/gold]。",
   "bound_minion_dead_suffix": "（已死亡）",
   
   
   "MinionLib-HealOwnerComponent.prefix": "[gold]治疗{amount}。[/gold]",
-  "MinionLib-HealOwnerComponent.postfix": ""
+  "MinionLib-HealOwnerComponent.postfix": "",
+  "MinionLib-DamageBlockComponent.prefix": "[gold]造成{damage}点伤害，获得{block}点格挡[/gold]",
+  "MinionLib-DamageBlockComponent.postfix": ""
 }
