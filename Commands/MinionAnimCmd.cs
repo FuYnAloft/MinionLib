@@ -1,35 +1,34 @@
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
-using MinionLib.Utilities;
-using static MinionLib.Utilities.MinionPositioningHelper;
+using MinionLib.Positioning;
 
 namespace MinionLib.Commands;
 
 public static class MinionAnimCmd
 {
+    private static Tween? _activeTween;
+
     public static async Task Rearrange(bool animated = true, float duration = 0.25f)
     {
         var room = NCombatRoom.Instance;
         if (room == null) return;
 
-        var dst = CalculateMinionPositions(room);
+        var dst = MinionPositioningManager.CalculatePositions(room);
         if (animated)
             await AnimatedMove(dst, duration);
         else
             InstantMove(dst);
     }
 
-    public static void InstantMove(IReadOnlyList<MinionNodePosition> nodePositions)
+    public static void InstantMove(IEnumerable<MinionNodePosition> nodePositions)
     {
         foreach (var (node, position) in nodePositions)
             if (GodotObject.IsInstanceValid(node))
                 node.Position = position;
     }
-    
-    
-    private static Tween? _activeTween;
-    public static async Task AnimatedMove(IReadOnlyList<MinionNodePosition> nodePositions, float duration = 0.25f)
+
+    public static async Task AnimatedMove(IEnumerable<MinionNodePosition> nodePositions, float duration = 0.25f)
     {
         var room = NCombatRoom.Instance;
         if (room == null) return;
@@ -39,22 +38,20 @@ public static class MinionAnimCmd
             _activeTween.EmitSignal("finished");
             _activeTween.Kill();
         }
-        
+
         var tween = room.CreateTween();
         tween.SetParallel();
-        foreach (var (index, (node, position)) in nodePositions.Index())
+        foreach (var (node, position) in nodePositions)
             if (GodotObject.IsInstanceValid(node))
-            {
                 tween.TweenProperty(node, "position", position, duration)
                     .SetTrans(Tween.TransitionType.Quad)
                     .SetEase(Tween.EaseType.Out);
-            }
         _activeTween = tween;
-        
+
         await room.ToSignal(tween, Tween.SignalName.Finished);
     }
 
-    public static async Task PlayBumpAttackAsync(Creature attacker, Creature target, global::System.Action? onHit = null)
+    public static async Task PlayBumpAttackAsync(Creature attacker, Creature target, System.Action? onHit = null)
     {
         var room = NCombatRoom.Instance;
         var attackerNode = room?.GetCreatureNode(attacker);
@@ -84,10 +81,7 @@ public static class MinionAnimCmd
             .SetTrans(Tween.TransitionType.Expo)
             .SetEase(Tween.EaseType.In);
 
-        if (onHit != null)
-        {
-            tween.TweenCallback(Callable.From(onHit));
-        }
+        if (onHit != null) tween.TweenCallback(Callable.From(onHit));
 
         tween.TweenProperty(sprite, "global_position", start, 0.3f)
             .SetTrans(Tween.TransitionType.Back)

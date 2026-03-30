@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MinionLib.Commands;
 using MinionLib.Models;
-using MinionLib.Utilities;
+using MinionLib.Positioning;
 
 namespace MinionLib.Patches;
 
@@ -27,7 +27,7 @@ public static class MinionInteractablePatch
     [HarmonyPrefix]
     private static bool Prefix(NCombatRoom __instance, out IReadOnlyList<MinionNodePosition> __state)
     {
-        __state = MinionPositioningHelper.GetCurrentMinionPositions(__instance);
+        __state = MinionPositioningManager.GetCurrentMinionPositions(__instance);
         return true;
     }
 

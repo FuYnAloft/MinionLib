@@ -3,13 +3,19 @@ using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MinionLib.Models;
 
-namespace MinionLib.Utilities;
+namespace MinionLib.Positioning;
 
-public static class MinionPositioningHelper
+public class DefaultMinionsPositioner : IMinionPositioner
 {
-    private static readonly Vector2 MinionSize = new(150f, 200f);
+    public static readonly Vector2 MinionSize = new(150f, 200f);
+    public bool IsActive => true;
 
-    private static IReadOnlyList<Vector2> GenerateGridPoints(MinionPosition position, int count)
+    public IEnumerable<MinionNodePosition> CalculatePositions(NCombatRoom room)
+    {
+        return CalculateMinionPositions(room);
+    }
+
+    public static IReadOnlyList<Vector2> GenerateGridPoints(MinionPosition position, int count)
     {
         if (count <= 0) return [];
 
@@ -38,21 +44,16 @@ public static class MinionPositioningHelper
             var first = isFront ? width : -width;
             result = Enumerable.Range(2, count)
                 .Select(i => new Vector2(
-                    float.Lerp(first, last, (float)i / (count  + 1)),
+                    float.Lerp(first, last, (float)i / (count + 1)),
                     -i % 2)).ToList();
         }
 
         return result;
     }
 
-    private static bool IsMinionNode(NCreature node)
+    public static IReadOnlyList<OwnerWithMinionsNodes> GetMinionOwnerNodePairs(NCombatRoom room)
     {
-        return node.Entity is { Monster: MinionModel, IsAlive: true, PetOwner: not null };
-    }
-
-    private static IReadOnlyList<OwnerWithMinionsNodes> GetMinionOwnerNodePairs(NCombatRoom room)
-    {
-        var allMinions = room.CreatureNodes.Where(IsMinionNode);
+        var allMinions = room.CreatureNodes.Where(n => n.IsMinionNode());
         var grouped = allMinions.GroupBy(c => c.Entity.PetOwner!);
         var result = grouped.Select(g =>
             {
@@ -69,29 +70,29 @@ public static class MinionPositioningHelper
         return result;
     }
 
-    private static Vector2 CalculateBaseOffset(MinionPosition minionPosition,
-        ILookup<MinionPosition,NCreature> lookup)
+    public static Vector2 CalculateBaseOffset(MinionPosition minionPosition,
+        ILookup<MinionPosition, NCreature> lookup)
     {
         switch (minionPosition)
         {
             case MinionPosition.Front:
-                if (lookup.Contains(MinionPosition.FrontUpper) && lookup[MinionPosition.Front].Count() >= 2) 
-                    return new(200f, 50f);
-                return new(200f, 0f);
+                if (lookup.Contains(MinionPosition.FrontUpper) && lookup[MinionPosition.Front].Count() >= 2)
+                    return new Vector2(200f, 50f);
+                return new Vector2(200f, 0f);
             case MinionPosition.Back:
-                if (lookup.Contains(MinionPosition.BackUpper) && lookup[MinionPosition.Back].Count() >= 2) 
-                    return new(-200f, 50f);
-                return new(-200f, 0f);
+                if (lookup.Contains(MinionPosition.BackUpper) && lookup[MinionPosition.Back].Count() >= 2)
+                    return new Vector2(-200f, 50f);
+                return new Vector2(-200f, 0f);
             case MinionPosition.FrontUpper:
                 if (lookup[MinionPosition.Upper].Count() <= 2)
-                    return new(100f + 50f * lookup[MinionPosition.Upper].Count(), -350f);
-                return new(200f, -350f);
+                    return new Vector2(100f + 50f * lookup[MinionPosition.Upper].Count(), -350f);
+                return new Vector2(200f, -350f);
             case MinionPosition.BackUpper:
                 if (lookup[MinionPosition.Upper].Count() <= 2)
-                    return new(-100f - 50f * lookup[MinionPosition.Upper].Count(), -350f);
-                return new(-200f, -350f);
+                    return new Vector2(-100f - 50f * lookup[MinionPosition.Upper].Count(), -350f);
+                return new Vector2(-200f, -350f);
             case MinionPosition.Upper:
-                return new(0, -450f);
+                return new Vector2(0, -450f);
             default:
                 return Vector2.Zero;
         }
@@ -117,14 +118,4 @@ public static class MinionPositioningHelper
             return nodePositions;
         }).ToList();
     }
-
-    public static IReadOnlyList<MinionNodePosition> GetCurrentMinionPositions(NCombatRoom room)
-    {
-        var minions = room.CreatureNodes.Where(IsMinionNode);
-        return minions.Select(c => new MinionNodePosition(c, c.Position)).ToList();
-    }
 }
-
-public readonly record struct OwnerWithMinionsNodes(NCreature Owner, IReadOnlyList<NCreature> Minions);
-
-public readonly record struct MinionNodePosition(NCreature Node, Vector2 Position);
