@@ -153,9 +153,9 @@ public abstract class ComponentsCardModel(
         base.AddExtraArgsToDescription(description);
 
         EnsureComponentsInitialized();
-        var prefixText = string.Join("\n",
+        var prefixText = string.Join("\u200b",
             Components.Select(c => c.GetFormattedPrefix()).Where(s => !string.IsNullOrWhiteSpace(s)));
-        var postfixText = string.Join("\n",
+        var postfixText = string.Join("\u200b",
             Components.Select(c => c.GetFormattedPostfix()).Where(s => !string.IsNullOrWhiteSpace(s)));
         description.Add("CompPre", prefixText);
         description.Add("CompPost", postfixText);

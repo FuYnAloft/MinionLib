@@ -18,11 +18,13 @@
   "MINIONLIB-AWAIT_CARD.title": "Await",
   "MINIONLIB-AWAIT_CARD.description": "Wait for 3 seconds.",
   "MINIONLIB-HEAL_SELF_COMPONENT_CARD.title": "Heal Component",
-  "MINIONLIB-HEAL_SELF_COMPONENT_CARD.description": "{CompPre}",
-  "MinionLib-HealOwnerComponent.prefix": "[gold]Heal {amount}[/gold]",
-  "MinionLib-HealOwnerComponent.postfix": "",
+  "MINIONLIB-HEAL_SELF_COMPONENT_CARD.description": "Lorem{CompPre}Ipsum",
   "MINIONLIB-GRANT_HEAL_COMPONENT_CARD.title": "Infuse Heal",
   "MINIONLIB-GRANT_HEAL_COMPONENT_CARD.description": "Choose a card in your hand and grant it [gold]Heal 3[/gold].",
   "MINIONLIB-GRANT_HEAL_COMPONENT_CARD.selectionScreenPrompt": "Choose a hand card to infuse with heal",
-  "bound_minion_dead_suffix": " (Dead)"
+  "bound_minion_dead_suffix": " (Dead)",
+  
+  
+  "MinionLib-HealOwnerComponent.prefix": "[gold]Heal {amount}. [/gold]",
+  "MinionLib-HealOwnerComponent.postfix": ""
 }

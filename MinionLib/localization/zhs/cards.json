@@ -14,11 +14,13 @@
   "MINIONLIB-AWAIT_CARD.title": "等待",
   "MINIONLIB-AWAIT_CARD.description": "等待3秒。",
   "MINIONLIB-HEAL_SELF_COMPONENT_CARD.title": "治疗组件",
-  "MINIONLIB-HEAL_SELF_COMPONENT_CARD.description": "{CompPre}",
-  "MinionLib-HealOwnerComponent.prefix": "[gold]治疗{amount}[/gold]",
-  "MinionLib-HealOwnerComponent.postfix": "",
+  "MINIONLIB-HEAL_SELF_COMPONENT_CARD.description": "Lorem{CompPre}Ipsum",
   "MINIONLIB-GRANT_HEAL_COMPONENT_CARD.title": "注入治疗",
   "MINIONLIB-GRANT_HEAL_COMPONENT_CARD.description": "选择一张手牌，赋予其[gold]治疗3[/gold]。",
   "MINIONLIB-GRANT_HEAL_COMPONENT_CARD.selectionScreenPrompt": "选择1张可注入治疗的手牌",
-  "bound_minion_dead_suffix": "（已死亡）"
+  "bound_minion_dead_suffix": "（已死亡）",
+  
+  
+  "MinionLib-HealOwnerComponent.prefix": "[gold]治疗{amount}。[/gold]",
+  "MinionLib-HealOwnerComponent.postfix": ""
 }

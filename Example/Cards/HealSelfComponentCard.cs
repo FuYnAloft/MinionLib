@@ -10,5 +10,10 @@ namespace MinionLib.Example.Cards;
 public sealed class HealSelfComponentCard() : ComponentsCardModel(0, CardType.Skill, CardRarity.Common, TargetType.Self)
 {
     public override IEnumerable<ICardComponent> CanonicalComponents => [new HealOwnerComponent { Amount = 2 }];
+
+    protected override void OnUpgrade()
+    {
+        AddComponent(new HealOwnerComponent { Amount = 3 });
+    }
 }
 
