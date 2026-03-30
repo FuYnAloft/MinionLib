@@ -13,7 +13,11 @@ public interface IComponentsCardModel
 
     bool RemoveComponent<T>() where T : ICardComponent;
 
+    int RemoveComponents<T>() where T : ICardComponent;
+
     T? GetComponent<T>() where T : ICardComponent;
+
+    IEnumerable<T> GetComponents<T>() where T : ICardComponent;
 
     void EnsureComponentsInitialized();
 

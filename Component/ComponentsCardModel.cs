@@ -1,10 +1,7 @@
 using BaseLib.Abstracts;
-using BaseLib.Patches.Content;
-using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Saves.Runs;
 
 namespace MinionLib.Component;
@@ -69,16 +66,43 @@ public abstract class ComponentsCardModel(
         if (index < 0)
             return false;
 
-        InvokeNoArg(_components[index], "Detach");
+        _components[index].Detach();
         _components.RemoveAt(index);
         MarkComponentStateDirty();
         return true;
+    }
+
+    public int RemoveComponents<T>() where T : ICardComponent
+    {
+        EnsureComponentsInitialized();
+
+        var removed = 0;
+        for (var i = _components!.Count - 1; i >= 0; i--)
+        {
+            if (_components[i] is not T component)
+                continue;
+
+            component.Detach();
+            _components.RemoveAt(i);
+            removed++;
+        }
+
+        if (removed > 0)
+            MarkComponentStateDirty();
+
+        return removed;
     }
 
     public T? GetComponent<T>() where T : ICardComponent
     {
         EnsureComponentsInitialized();
         return _components!.OfType<T>().FirstOrDefault();
+    }
+
+    public IEnumerable<T> GetComponents<T>() where T : ICardComponent
+    {
+        EnsureComponentsInitialized();
+        return _components!.OfType<T>().ToArray();
     }
 
     public void EnsureComponentsInitialized()
@@ -262,12 +286,4 @@ public abstract class ComponentsCardModel(
         component.Attach(owner);
     }
 
-    private static void InvokeNoArg(object instance, string methodName)
-    {
-        var method = instance.GetType().GetMethod(methodName, System.Type.EmptyTypes)
-                     ?? throw new InvalidOperationException(
-                         $"Component {instance.GetType().FullName} missing {methodName}().");
-
-        method.Invoke(instance, null);
-    }
 }
