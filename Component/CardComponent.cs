@@ -28,7 +28,7 @@ public abstract class CardComponent : ICardComponent
         return CardComponentStateSerializer.DeepClone(this);
     }
 
-    public virtual ICardComponent MergeWith(ICardComponent other)
+    public virtual ICardComponent? MergeWith(ICardComponent other)
     {
         return other;
     }
@@ -45,14 +45,14 @@ public abstract class CardComponent : ICardComponent
 
     public virtual string GetFormattedPrefix()
     {
-        var prefix = new LocString("components", ComponentId + ".prefix");
+        var prefix = new LocString("cards", ComponentId + ".prefix");
         prefix.Add("amount", Amount);
         return prefix.Exists() ? prefix.GetFormattedText() : string.Empty;
     }
 
     public virtual string GetFormattedPostfix()
     {
-        var postfix = new LocString("components", ComponentId + ".postfix");
+        var postfix = new LocString("cards", ComponentId + ".postfix");
         postfix.Add("amount", Amount);
         return postfix.Exists() ? postfix.GetFormattedText() : string.Empty;
     }

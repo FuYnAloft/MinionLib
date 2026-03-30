@@ -1,3 +1,6 @@
+using BaseLib.Abstracts;
+using BaseLib.Patches.Content;
+using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
@@ -11,8 +14,10 @@ public abstract class ComponentsCardModel(
     CardType type,
     CardRarity rarity,
     TargetType targetType,
-    bool shouldShowInCardLibrary = true)
-    : CardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary), IComponentsCardModel
+    bool shouldShowInCardLibrary = true,
+    bool autoAdd = true)
+    : CustomCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary, autoAdd),
+        IComponentsCardModel
 {
     private const int MaxPhaseTransitions = 32;
 
@@ -82,8 +87,8 @@ public abstract class ComponentsCardModel(
             return;
 
         _components = string.IsNullOrWhiteSpace(_componentStateBlob)
-             ? BuildComponentsFromCanonical()
-             : CardComponentStateSerializer.Deserialize(_componentStateBlob, this);
+            ? BuildComponentsFromCanonical()
+            : CardComponentStateSerializer.Deserialize(_componentStateBlob, this);
 
         foreach (var component in _components)
             Attach(component, this);
@@ -97,7 +102,9 @@ public abstract class ComponentsCardModel(
 
         var componentContext = new ComponentContext(ComponentPhase.Init);
 
-        for (var transitions = 0; transitions < MaxPhaseTransitions && componentContext.Phase != ComponentPhase.Final; transitions++)
+        for (var transitions = 0;
+             transitions < MaxPhaseTransitions && componentContext.Phase != ComponentPhase.Final;
+             transitions++)
         {
             componentContext.MoveNextPhase();
 
@@ -123,10 +130,12 @@ public abstract class ComponentsCardModel(
         }
 
         if (componentContext.Phase != ComponentPhase.Final)
-            throw new InvalidOperationException($"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+            throw new InvalidOperationException(
+                $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
     }
 
-    public virtual Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
+    public virtual Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay,
+        ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
             return OnPlay(choiceContext, cardPlay, componentContext);
@@ -144,8 +153,10 @@ public abstract class ComponentsCardModel(
         base.AddExtraArgsToDescription(description);
 
         EnsureComponentsInitialized();
-        var prefixText = string.Join("\n", Components.Select(c => c.GetFormattedPrefix()).Where(s => !string.IsNullOrWhiteSpace(s)));
-        var postfixText = string.Join("\n", Components.Select(c => c.GetFormattedPostfix()).Where(s => !string.IsNullOrWhiteSpace(s)));
+        var prefixText = string.Join("\n",
+            Components.Select(c => c.GetFormattedPrefix()).Where(s => !string.IsNullOrWhiteSpace(s)));
+        var postfixText = string.Join("\n",
+            Components.Select(c => c.GetFormattedPostfix()).Where(s => !string.IsNullOrWhiteSpace(s)));
         description.Add("CompPre", prefixText);
         description.Add("CompPost", postfixText);
     }
@@ -236,7 +247,8 @@ public abstract class ComponentsCardModel(
     private static void InvokeNoArg(object instance, string methodName)
     {
         var method = instance.GetType().GetMethod(methodName, System.Type.EmptyTypes)
-            ?? throw new InvalidOperationException($"Component {instance.GetType().FullName} missing {methodName}().");
+                     ?? throw new InvalidOperationException(
+                         $"Component {instance.GetType().FullName} missing {methodName}().");
 
         method.Invoke(instance, null);
     }
