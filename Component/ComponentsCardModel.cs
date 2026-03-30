@@ -214,6 +214,8 @@ public abstract class ComponentsCardModel(
             var merged = existing.MergeWith(incoming);
             if (merged == null)
                 result.RemoveAt(existingIndex);
+            else if (ReferenceEquals(merged, KeepsTwo.Instance))
+                result.Add(incoming);
             else
                 result[existingIndex] = merged;
         }
@@ -233,6 +235,14 @@ public abstract class ComponentsCardModel(
 
         var existing = _components[existingIndex];
         var merged = existing.MergeWith(incoming);
+
+        if (ReferenceEquals(merged, KeepsTwo.Instance))
+        {
+            incoming.Attach(this);
+            _components.Add(incoming);
+            return incoming;
+        }
+
         existing.Detach();
         incoming.Detach();
 
