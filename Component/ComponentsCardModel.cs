@@ -112,11 +112,19 @@ public abstract class ComponentsCardModel(
             {
                 case ComponentPhase.Prefix:
                     foreach (var component in Components.ToArray())
+                    {
                         await component.OnPlayPrefix(choiceContext, cardPlay, componentContext);
+                        if (componentContext.Phase != ComponentPhase.Prefix) break;
+                    }
+
                     break;
                 case ComponentPhase.Postfix:
                     foreach (var component in Components.ToArray())
+                    {
                         await component.OnPlayPostfix(choiceContext, cardPlay, componentContext);
+                        if (componentContext.Phase != ComponentPhase.Postfix) break;
+                    }
+
                     break;
                 case ComponentPhase.Prime:
                 case ComponentPhase.Core:
