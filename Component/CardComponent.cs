@@ -9,7 +9,7 @@ public abstract class CardComponent : ICardComponent
     public string ComponentId => CardComponentRegistry.GetComponentId(GetType());
 
     [ComponentState]
-    public virtual int Amount { get; set; }
+    public virtual decimal Amount { get; set; }
 
     public IComponentsCardModel? Card { get; private set; }
 

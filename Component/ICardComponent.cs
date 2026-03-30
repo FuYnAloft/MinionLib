@@ -7,8 +7,6 @@ public interface ICardComponent
 {
     string ComponentId { get; }
 
-    int Amount { get; set; }
-
     IComponentsCardModel? Card { get; }
 
     void Attach(IComponentsCardModel card);
