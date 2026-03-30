@@ -53,7 +53,7 @@ public abstract class ComponentsCardModel(
 
     public virtual IEnumerable<ICardComponent> CanonicalComponents => [];
 
-    public ICardComponent AddComponent(ICardComponent component)
+    public T AddComponent<T>(T component) where T : ICardComponent
     {
         EnsureComponentsInitialized();
         var finalComponent = AddOrMergeComponent(component);
@@ -75,7 +75,7 @@ public abstract class ComponentsCardModel(
         return true;
     }
 
-    public T? GetComponent<T>() where T : class, ICardComponent
+    public T? GetComponent<T>() where T : ICardComponent
     {
         EnsureComponentsInitialized();
         return _components!.OfType<T>().FirstOrDefault();
@@ -221,9 +221,9 @@ public abstract class ComponentsCardModel(
         return result;
     }
 
-    private ICardComponent AddOrMergeComponent(ICardComponent incoming)
+    private T AddOrMergeComponent<T>(T incoming) where T : ICardComponent
     {
-        var existingIndex = _components!.FindIndex(c => c.GetType() == incoming.GetType());
+        var existingIndex = _components!.FindIndex(c => c is T);
         if (existingIndex < 0)
         {
             incoming.Attach(this);
@@ -244,7 +244,7 @@ public abstract class ComponentsCardModel(
 
         merged.Attach(this);
         _components[existingIndex] = merged;
-        return merged;
+        return (T)merged;
     }
 
     private static void Attach(ICardComponent component, IComponentsCardModel owner)

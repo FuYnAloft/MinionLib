@@ -9,11 +9,11 @@ public interface IComponentsCardModel
 
     IEnumerable<ICardComponent> CanonicalComponents { get; }
 
-    ICardComponent AddComponent(ICardComponent component);
+    T AddComponent<T>(T component) where T : ICardComponent;
 
     bool RemoveComponent<T>() where T : ICardComponent;
 
-    T? GetComponent<T>() where T : class, ICardComponent;
+    T? GetComponent<T>() where T : ICardComponent;
 
     void EnsureComponentsInitialized();
 

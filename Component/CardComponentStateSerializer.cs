@@ -104,7 +104,8 @@ public static class CardComponentStateSerializer
                 }
                 catch (Exception ex)
                 {
-                    Debug("Component", $"Failed to deserialize property {componentType.Name}.{property.Name}: {ex.Message}");
+                    Debug("Component",
+                        $"Failed to deserialize property {componentType.Name}.{property.Name}: {ex.Message}");
                     continue;
                 }
 
@@ -137,7 +138,8 @@ public static class CardComponentStateSerializer
     {
         var property = component.GetType().GetProperty("ComponentId", BindingFlags.Instance | BindingFlags.Public);
         if (property?.PropertyType != typeof(string))
-            throw new InvalidOperationException($"Component {component.GetType().FullName} does not expose string ComponentId.");
+            throw new InvalidOperationException(
+                $"Component {component.GetType().FullName} does not expose string ComponentId.");
 
         return (string)(property.GetValue(component) ?? string.Empty);
     }
@@ -183,10 +185,11 @@ public static class CardComponentStateSerializer
         public IReadOnlyList<ICardComponent> Components => [];
         public IEnumerable<ICardComponent> CanonicalComponents => [];
 
-        public ICardComponent AddComponent(ICardComponent component) => component;
+        public T AddComponent<T>(T component) where T : ICardComponent => component;
         public bool RemoveComponent<T>() where T : ICardComponent => false;
-        public T? GetComponent<T>() where T : class, ICardComponent => null;
+        public T? GetComponent<T>() where T : ICardComponent => default;
         public void EnsureComponentsInitialized() { }
-        public Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext) => Task.CompletedTask;
+        public Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay,
+            ComponentContext componentContext) => Task.CompletedTask;
     }
 }
