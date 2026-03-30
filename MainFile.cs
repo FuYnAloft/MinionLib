@@ -18,6 +18,7 @@ public partial class MainFile : Node
 
         harmony.PatchAll();
 
+
         MinionHookInitializer.Initialize();
 
         Debug("Init", $"{ModId} initialized");
