@@ -33,7 +33,7 @@ public abstract class ComponentsCardModel(
 
             return _componentStateBlob;
         }
-        private set
+        set
         {
             _componentStateBlob = value ?? string.Empty;
             _components = null;
