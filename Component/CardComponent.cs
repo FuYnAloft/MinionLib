@@ -30,7 +30,10 @@ public abstract class CardComponent : ICardComponent
 
     public virtual ICardComponent? MergeWith(ICardComponent other)
     {
-        return other;
+        if (other is not CardComponent component) return this;
+
+        Amount += component.Amount;
+        return this;
     }
 
     public virtual Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
