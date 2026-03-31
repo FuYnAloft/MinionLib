@@ -49,12 +49,12 @@ public static class SmartDynamicVarsLocArgs
         if (generatorType == null)
             return null;
 
-        var generateMethod = generatorType.GetMethod("Generate", BindingFlags.Public | BindingFlags.Static,
+        var generateMethod = generatorType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static,
             binder: null, [typeof(string), typeof(object[])], modifiers: null);
 
         if (generateMethod == null || !typeof(DynamicVar).IsAssignableFrom(generateMethod.ReturnType))
             throw new InvalidOperationException(
-                $"DynamicVar generator {generatorType.FullName} must define public static DynamicVar Generate(string, object[]).");
+                $"DynamicVar generator {generatorType.FullName} must define public static DynamicVar Create(string, object[]). ");
 
         return generateMethod;
     }
