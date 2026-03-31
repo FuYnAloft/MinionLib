@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Helpers;
+using MinionLib.Component.Interfaces;
 
-namespace MinionLib.Component;
+namespace MinionLib.Component.Core;
 
 public static class CardComponentRegistry
 {

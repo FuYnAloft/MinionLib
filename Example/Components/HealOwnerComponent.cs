@@ -4,6 +4,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MinionLib.Component;
+using MinionLib.Component.Core;
+using MinionLib.Component.Interfaces;
 
 namespace MinionLib.Example.Components;
 

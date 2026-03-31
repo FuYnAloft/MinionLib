@@ -4,7 +4,9 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Component;
+using MinionLib.Component.Core;
 using MinionLib.Component.DynamicVarGenerate;
+using MinionLib.Component.Interfaces;
 
 namespace MinionLib.Example.Components;
 

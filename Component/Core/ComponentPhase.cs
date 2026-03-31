@@ -1,4 +1,4 @@
-namespace MinionLib.Component;
+namespace MinionLib.Component.Core;
 
 public enum ComponentPhase
 {

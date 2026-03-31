@@ -2,6 +2,7 @@ using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MinionLib.Component;
+using MinionLib.Component.Interfaces;
 using MinionLib.Example.Components;
 
 namespace MinionLib.Example.Cards;

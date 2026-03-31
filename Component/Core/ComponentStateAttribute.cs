@@ -1,6 +1,6 @@
 using MinionLib.Component.DynamicVarGenerate;
 
-namespace MinionLib.Component;
+namespace MinionLib.Component.Core;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class ComponentStateAttribute : Attribute

@@ -3,6 +3,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Saves.Runs;
+using MinionLib.Component.Core;
+using MinionLib.Component.Interfaces;
 
 namespace MinionLib.Component;
 
@@ -21,7 +23,7 @@ public abstract class ComponentsCardModel(
     private List<ICardComponent>? _components;
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
-    public string MinionLib_ComponentStateBlob
+    public string MinionLibComponentStateBlob
     {
         get
         {
@@ -32,7 +34,7 @@ public abstract class ComponentsCardModel(
         }
         set
         {
-            _componentStateBlob = value ?? string.Empty;
+            _componentStateBlob = value ?? "";
             _components = null;
         }
     }
@@ -166,20 +168,6 @@ public abstract class ComponentsCardModel(
                 $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
     }
 
-    public virtual Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay,
-        ComponentContext componentContext)
-    {
-        if (componentContext.Phase == ComponentPhase.Core)
-            return OnPlay(choiceContext, cardPlay, componentContext);
-
-        return Task.CompletedTask;
-    }
-
-    public virtual Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-
     protected override void AddExtraArgsToDescription(LocString description)
     {
         base.AddExtraArgsToDescription(description);
@@ -286,4 +274,17 @@ public abstract class ComponentsCardModel(
         component.Attach(owner);
     }
 
+    public virtual Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay,
+        ComponentContext componentContext)
+    {
+        if (componentContext.Phase == ComponentPhase.Core)
+            return OnPlay(choiceContext, cardPlay, componentContext);
+
+        return Task.CompletedTask;
+    }
+
+    public virtual Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
 }

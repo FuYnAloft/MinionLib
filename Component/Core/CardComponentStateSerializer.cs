@@ -3,8 +3,9 @@ using System.Text.Json;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Saves.Runs;
+using MinionLib.Component.Interfaces;
 
-namespace MinionLib.Component;
+namespace MinionLib.Component.Core;
 
 public static class CardComponentStateSerializer
 {
