@@ -1,3 +1,4 @@
+using System.Buffers;
 using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -117,52 +118,6 @@ public abstract class ComponentsCardModel(
         _componentStateBlob = CardComponentStateSerializer.Serialize(_components);
     }
 
-    protected sealed override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-    {
-        EnsureComponentsInitialized();
-
-        var componentContext = new ComponentContext(ComponentPhase.Init);
-
-        for (var transitions = 0;
-             transitions < MaxPhaseTransitions && componentContext.Phase != ComponentPhase.Final;
-             transitions++)
-        {
-            componentContext.MoveNextPhase();
-
-            switch (componentContext.Phase)
-            {
-                case ComponentPhase.Prefix:
-                    foreach (var component in Components.ToArray())
-                    {
-                        await component.OnPlayPrefix(choiceContext, cardPlay, componentContext);
-                        if (componentContext.Phase != ComponentPhase.Prefix) break;
-                    }
-
-                    break;
-                case ComponentPhase.Postfix:
-                    foreach (var component in Components.ToArray())
-                    {
-                        await component.OnPlayPostfix(choiceContext, cardPlay, componentContext);
-                        if (componentContext.Phase != ComponentPhase.Postfix) break;
-                    }
-
-                    break;
-                case ComponentPhase.Prime:
-                case ComponentPhase.Core:
-                case ComponentPhase.Final:
-                    await OnPlayPhased(choiceContext, cardPlay, componentContext);
-                    break;
-                case ComponentPhase.Init:
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        if (componentContext.Phase != ComponentPhase.Final)
-            throw new InvalidOperationException(
-                $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
-    }
-
     protected override void AddExtraArgsToDescription(LocString description)
     {
         base.AddExtraArgsToDescription(description);
@@ -262,10 +217,74 @@ public abstract class ComponentsCardModel(
     {
         component.Attach(owner);
     }
-    
+
     public virtual Task ComponentCallBack(string name, params object[] args)
     {
         return Task.CompletedTask;
+    }
+
+    protected sealed override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        EnsureComponentsInitialized();
+
+        var componentContext = new ComponentContext(ComponentPhase.Init);
+        
+        var count = Components.Count;
+        var snapshot = ArrayPool<ICardComponent>.Shared.Rent(count);
+        for (var i = 0; i < count; i++)
+        {
+            snapshot[i] = Components[i];
+        }
+        
+        try
+        {
+            for (var transitions = 0;
+                 transitions < MaxPhaseTransitions && componentContext.Phase != ComponentPhase.Final;
+                 transitions++)
+            {
+                componentContext.MoveNextPhase();
+
+                switch (componentContext.Phase)
+                {
+                    case ComponentPhase.Prefix:
+                        for(var i = 0; i < count; i++)
+                        {
+                            var component = snapshot[i];
+                            if (component.Card != this) continue;
+                            await component.OnPlayPrefix(choiceContext, cardPlay, componentContext);
+                            if (componentContext.Phase != ComponentPhase.Prefix) break;
+                        }
+
+                        break;
+                    case ComponentPhase.Postfix:
+                        for(var i = 0; i < count; i++)
+                        {
+                            var component = snapshot[i];
+                            if(component.Card != this) continue;
+                            await component.OnPlayPostfix(choiceContext, cardPlay, componentContext);
+                            if (componentContext.Phase != ComponentPhase.Postfix) break;
+                        }
+
+                        break;
+                    case ComponentPhase.Prime:
+                    case ComponentPhase.Core:
+                    case ComponentPhase.Final:
+                        await OnPlayPhased(choiceContext, cardPlay, componentContext);
+                        break;
+                    case ComponentPhase.Init:
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            if (componentContext.Phase != ComponentPhase.Final)
+                throw new InvalidOperationException(
+                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+        }
+        finally
+        {
+            ArrayPool<ICardComponent>.Shared.Return(snapshot, clearArray: true);
+        }
     }
 
     public virtual Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay,

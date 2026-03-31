@@ -30,6 +30,7 @@ public static class ComponentPhaseExtensions
 public sealed class ComponentContext(ComponentPhase phase)
 {
     public ComponentPhase Phase { get; set; } = phase;
+    public Dictionary<string, object> State { get; } = new();
 
     public void MoveNextPhase()
     {
