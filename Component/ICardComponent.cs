@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace MinionLib.Component;
 
@@ -17,6 +18,12 @@ public interface ICardComponent
 
     ICardComponent? MergeWith(ICardComponent other);
 
+    DynamicVarSet DynamicVars { get; }
+
+    string GetFormattedPrefix();
+
+    string GetFormattedPostfix();
+
     Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
     {
         return Task.CompletedTask;
@@ -27,10 +34,6 @@ public interface ICardComponent
     {
         return Task.CompletedTask;
     }
-
-    string GetFormattedPrefix();
-
-    string GetFormattedPostfix();
 }
 
 /// <summary>
@@ -61,10 +64,12 @@ public sealed class KeepsTwo : ICardComponent
         return Instance;
     }
 
-    public ICardComponent? MergeWith(ICardComponent other)
+    public ICardComponent MergeWith(ICardComponent other)
     {
         return Instance;
     }
+
+    public DynamicVarSet DynamicVars => null!;
 
     public string GetFormattedPrefix()
     {

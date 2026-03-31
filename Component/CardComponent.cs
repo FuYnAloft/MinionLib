@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace MinionLib.Component;
 
@@ -36,6 +37,37 @@ public abstract class CardComponent : ICardComponent
         return this;
     }
 
+    public virtual DynamicVarSet DynamicVars { get; } = new([]);
+
+    protected LocString SmartPrefix()
+    {
+        var loc = new LocString("cards", ComponentId + ".prefix");
+        DynamicVars.AddTo(loc);
+        return loc;
+    }
+    
+    protected LocString SmartPostfix()
+    {
+        var loc = new LocString("cards", ComponentId + ".postfix");
+        DynamicVars.AddTo(loc);
+        return loc;
+    }
+    
+    
+    public virtual string GetFormattedPrefix()
+    {
+        var prefix = SmartPrefix();
+        prefix.Add("amount", Amount);
+        return prefix.Exists() ? prefix.GetFormattedText() : string.Empty;
+    }
+
+    public virtual string GetFormattedPostfix()
+    {
+        var postfix = SmartPostfix();
+        postfix.Add("amount", Amount);
+        return postfix.Exists() ? postfix.GetFormattedText() : string.Empty;
+    }
+
     public virtual Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
     {
         return Task.CompletedTask;
@@ -44,19 +76,5 @@ public abstract class CardComponent : ICardComponent
     public virtual Task OnPlayPostfix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
     {
         return Task.CompletedTask;
-    }
-
-    public virtual string GetFormattedPrefix()
-    {
-        var prefix = new LocString("cards", ComponentId + ".prefix");
-        prefix.Add("amount", Amount);
-        return prefix.Exists() ? prefix.GetFormattedText() : string.Empty;
-    }
-
-    public virtual string GetFormattedPostfix()
-    {
-        var postfix = new LocString("cards", ComponentId + ".postfix");
-        postfix.Add("amount", Amount);
-        return postfix.Exists() ? postfix.GetFormattedText() : string.Empty;
     }
 }
