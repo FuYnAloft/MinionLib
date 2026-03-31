@@ -9,7 +9,7 @@ public abstract class CardComponent : ICardComponent
 {
     protected CardComponent()
     {
-        DynamicVars = CardComponentStateSerializer.GenerateDynamicVars(this);
+        DynamicVars = SmartDynamicVarsLocArgs.GenerateDynamicVars(this);
     }
     
     public string ComponentId => CardComponentRegistry.GetComponentId(GetType());
@@ -48,7 +48,7 @@ public abstract class CardComponent : ICardComponent
     {
         var loc = new LocString("cards", ComponentId + ".prefix");
         DynamicVars.AddTo(loc);
-        CardComponentStateSerializer.SmartAddArgs(this, loc);
+        SmartDynamicVarsLocArgs.SmartAddArgs(this, loc);
         return loc;
     }
     
@@ -56,7 +56,7 @@ public abstract class CardComponent : ICardComponent
     {
         var loc = new LocString("cards", ComponentId + ".postfix");
         DynamicVars.AddTo(loc);
-        CardComponentStateSerializer.SmartAddArgs(this, loc);
+        SmartDynamicVarsLocArgs.SmartAddArgs(this, loc);
         return loc;
     }
     
