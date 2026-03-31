@@ -1,4 +1,4 @@
-using MinionLib.Component.DynamicVarGenerate;
+using MinionLib.Component.DynamicVarFactories;
 
 namespace MinionLib.Component.Core;
 
@@ -22,4 +22,4 @@ public class ComponentStateAttribute : Attribute
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class ComponentStateAttribute<T>(params object[] parameters)
     : ComponentStateAttribute(typeof(T), parameters)
-    where T : IDynamicVarGenerator;
+    where T : IDynamicVarFactory;

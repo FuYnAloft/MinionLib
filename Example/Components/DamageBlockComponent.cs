@@ -5,14 +5,14 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Component;
 using MinionLib.Component.Core;
-using MinionLib.Component.DynamicVarGenerate;
+using MinionLib.Component.DynamicVarFactories;
 using MinionLib.Component.Interfaces;
 
 namespace MinionLib.Example.Components;
 
 public sealed class DamageBlockComponent : CardComponent
 {
-    [ComponentState<DamageVarGen>]
+    [ComponentState<DamageVarFactory>]
     public int Damage
     {
         get;
@@ -23,7 +23,7 @@ public sealed class DamageBlockComponent : CardComponent
         }
     }
 
-    [ComponentState<BlockVarGen>]
+    [ComponentState<BlockVarFactory>]
     public int Block
     {
         get;
