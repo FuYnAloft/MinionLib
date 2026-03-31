@@ -34,13 +34,6 @@ public sealed class DamageBlockComponent : CardComponent
         }
     }
 
-    // This component uses DamageAmount/BlockAmount as its state and ignores base Amount.
-    public override decimal Amount
-    {
-        get => 0m;
-        set { }
-    }
-
     public override async Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay,
         ComponentContext componentContext)
     {

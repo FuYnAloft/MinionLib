@@ -9,9 +9,10 @@ using MinionLib.Component.Interfaces;
 
 namespace MinionLib.Example.Components;
 
-public sealed class HealOwnerComponent : CardComponent
+public sealed class HealOwnerComponent : AmountCardComponent
 {
-    public override async Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
+    public override async Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay,
+        ComponentContext componentContext)
     {
         if (Card is not CardModel componentCard) return;
 
@@ -23,7 +24,6 @@ public sealed class HealOwnerComponent : CardComponent
         if (other is not HealOwnerComponent heal) return this;
 
         Amount += heal.Amount;
-        return this;
+        return Amount <= 0 ? null : this;
     }
 }
-

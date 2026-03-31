@@ -65,7 +65,7 @@ public sealed class KeepsTwo : ICardComponent
         return Instance;
     }
 
-    public ICardComponent MergeWith(ICardComponent other)
+    public ICardComponent? MergeWith(ICardComponent other)
     {
         return Instance;
     }

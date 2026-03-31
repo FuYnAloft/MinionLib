@@ -13,11 +13,8 @@ public abstract class CardComponent : ICardComponent
     {
         DynamicVars = SmartDynamicVarsLocArgs.GenerateDynamicVars(this);
     }
-    
-    public string ComponentId => CardComponentRegistry.GetComponentId(GetType());
 
-    [ComponentState]
-    public virtual decimal Amount { get; set; }
+    public string ComponentId => CardComponentRegistry.GetComponentId(GetType());
 
     public IComponentsCardModel? Card { get; private set; }
 
@@ -38,49 +35,57 @@ public abstract class CardComponent : ICardComponent
 
     public virtual ICardComponent? MergeWith(ICardComponent other)
     {
-        if (other is not CardComponent component) return this;
-
-        Amount += component.Amount;
-        return this;
+        return other;
     }
 
-    public virtual DynamicVarSet DynamicVars { get; private set; } = new([]);
+    public virtual DynamicVarSet DynamicVars { get; } = new([]);
 
-    protected LocString SmartPrefix()
+    private LocString SmartPrefix()
     {
         var loc = new LocString("cards", ComponentId + ".prefix");
         DynamicVars.AddTo(loc);
         SmartDynamicVarsLocArgs.SmartAddArgs(this, loc);
         return loc;
     }
-    
-    protected LocString SmartPostfix()
+
+    private LocString SmartPostfix()
     {
         var loc = new LocString("cards", ComponentId + ".postfix");
         DynamicVars.AddTo(loc);
         SmartDynamicVarsLocArgs.SmartAddArgs(this, loc);
         return loc;
     }
+
+    protected virtual string FormatPrefix(LocString loc)
+    {
+        return loc.GetFormattedText();
+    }
+
+    protected virtual string FormatPostfix(LocString loc)
+    {
+        return loc.GetFormattedText();
+    }
     
-    
-    public virtual string GetFormattedPrefix()
+    public string GetFormattedPrefix()
     {
         var prefix = SmartPrefix();
-        return prefix.Exists() ? prefix.GetFormattedText() : string.Empty;
+        return prefix.Exists() ? FormatPrefix(prefix) : "";
     }
 
-    public virtual string GetFormattedPostfix()
+    public string GetFormattedPostfix()
     {
         var postfix = SmartPostfix();
-        return postfix.Exists() ? postfix.GetFormattedText() : string.Empty;
+        return postfix.Exists() ? FormatPostfix(postfix) : "";
     }
 
-    public virtual Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
+    public virtual Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay,
+        ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
 
-    public virtual Task OnPlayPostfix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
+    public virtual Task OnPlayPostfix(PlayerChoiceContext choiceContext, CardPlay cardPlay,
+        ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
