@@ -1,20 +1,36 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Component;
+using MinionLib.Component.DynamicVarGenerate;
 
 namespace MinionLib.Example.Components;
 
 public sealed class DamageBlockComponent : CardComponent
 {
-    [ComponentState]
-    public int DamageAmount { get; set; }
+    [ComponentState<DamageVarGen>]
+    public int Damage
+    {
+        get;
+        set
+        {
+            field = value;
+            DynamicVars["Damage"].BaseValue = value;
+        }
+    }
 
-    [ComponentState]
-    public int BlockAmount { get; set; }
+    [ComponentState<BlockVarGen>]
+    public int Block
+    {
+        get;
+        set
+        {
+            field = value;
+            DynamicVars["Block"].BaseValue = value;
+        }
+    }
 
     // This component uses DamageAmount/BlockAmount as its state and ignores base Amount.
     public override decimal Amount
@@ -23,15 +39,17 @@ public sealed class DamageBlockComponent : CardComponent
         set { }
     }
 
-    public override async Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
+    public override async Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay,
+        ComponentContext componentContext)
     {
         if (Card is not CardModel componentCard)
             return;
 
         if (cardPlay.Target != null)
-            await CreatureCmd.Damage(choiceContext, cardPlay.Target, DamageAmount, ValueProp.Move, componentCard.Owner.Creature, componentCard);
+            await CreatureCmd.Damage(choiceContext, cardPlay.Target, Damage, ValueProp.Move,
+                componentCard.Owner.Creature, componentCard);
 
-        await CreatureCmd.GainBlock(componentCard.Owner.Creature, BlockAmount, ValueProp.Move, cardPlay);
+        await CreatureCmd.GainBlock(componentCard.Owner.Creature, Block, ValueProp.Move, cardPlay);
     }
 
     public override ICardComponent? MergeWith(ICardComponent other)
@@ -39,17 +57,8 @@ public sealed class DamageBlockComponent : CardComponent
         if (other is not DamageBlockComponent damageBlock)
             return this;
 
-        DamageAmount += damageBlock.DamageAmount;
-        BlockAmount += damageBlock.BlockAmount;
+        Damage += damageBlock.Damage;
+        Block += damageBlock.Block;
         return this;
     }
-
-    public override string GetFormattedPrefix()
-    {
-        var prefix = new LocString("cards", ComponentId + ".prefix");
-        prefix.Add("damage", DamageAmount);
-        prefix.Add("block", BlockAmount);
-        return prefix.Exists() ? prefix.GetFormattedText() : string.Empty;
-    }
 }
-

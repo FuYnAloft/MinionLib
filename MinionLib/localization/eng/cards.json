@@ -27,8 +27,8 @@
   "bound_minion_dead_suffix": " (Dead)",
   
   
-  "MinionLib-HealOwnerComponent.prefix": "[gold]Heal {amount}. [/gold]",
+  "MinionLib-HealOwnerComponent.prefix": "[gold]Heal {Amount}. [/gold]",
   "MinionLib-HealOwnerComponent.postfix": "",
-  "MinionLib-DamageBlockComponent.prefix": "[gold]Deal {damage}, Gain {block} Block[/gold]",
+  "MinionLib-DamageBlockComponent.prefix": "[gold]Deal {Damage}, Gain {Block} Block[/gold]",
   "MinionLib-DamageBlockComponent.postfix": ""
 }
