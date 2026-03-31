@@ -2,6 +2,8 @@ using System.Reflection;
 using System.Text.Json;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Saves.Runs;
 
 namespace MinionLib.Component;
@@ -190,8 +192,24 @@ public static class CardComponentStateSerializer
         public int RemoveComponents<T>() where T : ICardComponent => 0;
         public T? GetComponent<T>() where T : ICardComponent => default;
         public IEnumerable<T> GetComponents<T>() where T : ICardComponent => [];
-        public void EnsureComponentsInitialized() { }
+
+        public void EnsureComponentsInitialized()
+        {
+        }
+
         public Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay,
             ComponentContext componentContext) => Task.CompletedTask;
+    }
+
+
+    public static DynamicVarSet GenerateDynamicVars(ICardComponent component)
+    {
+        // TODO: 实现依据特性自动生成，如果在[ComponentState]中指定了DynamicVar生成器，则生成，名字为属性名。
+        return new DynamicVarSet([]);
+    }
+
+    public static void SmartAddArgs(ICardComponent component, LocString loc)
+    {
+        // TODO: 如果[ComponentState]中没有指定DynamicVar生成器，则在此处注入到loc中，名字就是属性名。
     }
 }

@@ -7,6 +7,11 @@ namespace MinionLib.Component;
 
 public abstract class CardComponent : ICardComponent
 {
+    protected CardComponent()
+    {
+        DynamicVars = CardComponentStateSerializer.GenerateDynamicVars(this);
+    }
+    
     public string ComponentId => CardComponentRegistry.GetComponentId(GetType());
 
     [ComponentState]
@@ -37,12 +42,13 @@ public abstract class CardComponent : ICardComponent
         return this;
     }
 
-    public virtual DynamicVarSet DynamicVars { get; } = new([]);
+    public virtual DynamicVarSet DynamicVars { get; private set; } = new([]);
 
     protected LocString SmartPrefix()
     {
         var loc = new LocString("cards", ComponentId + ".prefix");
         DynamicVars.AddTo(loc);
+        CardComponentStateSerializer.SmartAddArgs(this, loc);
         return loc;
     }
     
@@ -50,6 +56,7 @@ public abstract class CardComponent : ICardComponent
     {
         var loc = new LocString("cards", ComponentId + ".postfix");
         DynamicVars.AddTo(loc);
+        CardComponentStateSerializer.SmartAddArgs(this, loc);
         return loc;
     }
     
@@ -57,14 +64,12 @@ public abstract class CardComponent : ICardComponent
     public virtual string GetFormattedPrefix()
     {
         var prefix = SmartPrefix();
-        prefix.Add("amount", Amount);
         return prefix.Exists() ? prefix.GetFormattedText() : string.Empty;
     }
 
     public virtual string GetFormattedPostfix()
     {
         var postfix = SmartPostfix();
-        postfix.Add("amount", Amount);
         return postfix.Exists() ? postfix.GetFormattedText() : string.Empty;
     }
 
