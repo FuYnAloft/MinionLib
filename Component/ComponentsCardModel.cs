@@ -56,7 +56,6 @@ public abstract class ComponentsCardModel(
     {
         EnsureComponentsInitialized();
         var finalComponent = AddOrMergeComponent(component);
-        MarkComponentStateDirty();
         return finalComponent;
     }
 
@@ -70,7 +69,6 @@ public abstract class ComponentsCardModel(
 
         _components[index].Detach();
         _components.RemoveAt(index);
-        MarkComponentStateDirty();
         return true;
     }
 
@@ -88,9 +86,6 @@ public abstract class ComponentsCardModel(
             _components.RemoveAt(i);
             removed++;
         }
-
-        if (removed > 0)
-            MarkComponentStateDirty();
 
         return removed;
     }
@@ -201,12 +196,6 @@ public abstract class ComponentsCardModel(
 
         _components = null;
         EnsureComponentsInitialized();
-    }
-
-    protected void MarkComponentStateDirty()
-    {
-        EnsureComponentsInitialized();
-        _componentStateBlob = CardComponentStateSerializer.Serialize(_components!);
     }
 
     private List<ICardComponent> BuildComponentsFromCanonical()
