@@ -94,19 +94,17 @@
         <EmbeddedResource Remove="images/**"/>
     </ItemGroup>
 
+    <!-- 当配置为 ExportRelease 时，排除 example 目录下的所有 C# 文件 -->
+    <ItemGroup Condition="'$(Configuration)' == 'ExportRelease'">
+        <Compile Remove="Example/**/*.cs"/>
+    </ItemGroup>
+
     <ItemGroup>
         <None Include=".gitignore"/>
         <None Include="MinionLib.json"/>
         <None Include="project.godot"/>
         <None Include="MinionLib/**"/>
         <None Include="images/**"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
@@ -141,7 +139,13 @@
         <Message Text="Exporting Godot .pck to mods folder" Importance="high"/>
         <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExport&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
               EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
-              ContinueOnError="WarnAndContinue"/>
+              ContinueOnError="WarnAndContinue"
+              Condition="'$(Configuration)' != 'ExportRelease'"/>
+        <!-- 当配置为 ExportRelease 时，使用 BasicExportNoExample 配置 -->
+        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExportNoExample&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
+              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
+              ContinueOnError="WarnAndContinue"
+              Condition="'$(Configuration)' == 'ExportRelease'"/>
     </Target>
 
     <Target Name="GodotPublishSkipped" AfterTargets="Publish" Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')">
