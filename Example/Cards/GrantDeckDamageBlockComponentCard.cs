@@ -19,6 +19,9 @@ public sealed class GrantDeckDamageBlockComponentCard() : ComponentsCardModel(0,
         foreach (var componentsCard in PileType.Deck.GetPile(Owner).Cards.OfType<IComponentsCardModel>().ToArray())
             componentsCard.AddComponent(new DamageBlockComponent { Damage = 1, Block = 1 });
 
+        foreach (var componentsCard in PileType.Hand.GetPile(Owner).Cards.OfType<IComponentsCardModel>().ToArray())
+            componentsCard.AddComponent(new DamageBlockComponent { Damage = 1, Block = 1 });
+
         return Task.CompletedTask;
     }
 }
