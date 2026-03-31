@@ -37,6 +37,12 @@ public abstract partial class CardComponent : ICardComponent
     }
 
     public virtual DynamicVarSet DynamicVars { get; } = new([]);
+    
+    public virtual bool ShouldGlowGoldInternal => false;
+
+    public virtual bool ShouldGlowRedInternal => false;
+
+    public virtual bool HasTurnEndInHandEffect => false;
 
     private LocString SmartPrefix()
     {

@@ -220,4 +220,19 @@ public abstract partial class ComponentsCardModel(
     {
         return Task.CompletedTask;
     }
+
+    protected sealed override bool ShouldGlowGoldInternal =>
+        (_components?.Any(c => c.ShouldGlowGoldInternal) ?? false) || ShouldGlowGoldInternalC;
+
+    protected virtual bool ShouldGlowGoldInternalC => false;
+
+    protected sealed override bool ShouldGlowRedInternal =>
+        (_components?.Any(c => c.ShouldGlowRedInternal) ?? false) || ShouldGlowRedInternalC;
+
+    protected virtual bool ShouldGlowRedInternalC => false;
+
+    public sealed override bool HasTurnEndInHandEffect =>
+        (_components?.Any(c => c.HasTurnEndInHandEffect) ?? false) || HasTurnEndInHandEffectC;
+
+    protected virtual bool HasTurnEndInHandEffectC => false;
 }

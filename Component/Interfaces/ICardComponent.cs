@@ -17,6 +17,12 @@ public partial interface ICardComponent
     ICardComponent? MergeWith(ICardComponent other);
 
     DynamicVarSet DynamicVars { get; }
+    
+    bool ShouldGlowGoldInternal => false;
+
+    bool ShouldGlowRedInternal => false;
+
+    bool HasTurnEndInHandEffect => false;
 
     string GetFormattedPrefix();
 
