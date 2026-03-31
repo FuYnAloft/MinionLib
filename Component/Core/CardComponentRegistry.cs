@@ -30,7 +30,7 @@ public static class CardComponentRegistry
         if (splitIndex < 0)
             splitIndex = rootNamespace.Length;
 
-        return rootNamespace[..splitIndex] + "-" + type.Name;
+        return rootNamespace[..splitIndex] + "." + type.Name;
     }
 
     public static string GetComponentId(Type type)

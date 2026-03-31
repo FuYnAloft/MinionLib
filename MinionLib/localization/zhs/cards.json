@@ -26,8 +26,8 @@
   "bound_minion_dead_suffix": "（已死亡）",
   
   
-  "MinionLib-HealOwnerComponent.prefix": "[gold]治疗{Amount:diff()}。[/gold]",
-  "MinionLib-HealOwnerComponent.postfix": "",
-  "MinionLib-DamageBlockComponent.prefix": "[gold]造成{Damage:diff()}点伤害，获得{Block:diff()}点格挡[/gold]。",
-  "MinionLib-DamageBlockComponent.postfix": ""
+  "MinionLib.HealOwnerComponent.prefix": "[gold]治疗{Amount:diff()}。[/gold]",
+  "MinionLib.HealOwnerComponent.postfix": "",
+  "MinionLib.DamageBlockComponent.prefix": "[gold]造成{Damage:diff()}点伤害，获得{Block:diff()}点格挡[/gold]。",
+  "MinionLib.DamageBlockComponent.postfix": ""
 }
