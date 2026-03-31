@@ -14,7 +14,7 @@ public sealed class GrantDeckDamageBlockComponentCard() : ComponentsCardModel(0,
 {
     public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
 
-    public override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
+    protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
     {
         foreach (var componentsCard in PileType.Deck.GetPile(Owner).Cards.OfType<IComponentsCardModel>().ToArray())
             componentsCard.AddComponent(new DamageBlockComponent { Damage = 1, Block = 1 });

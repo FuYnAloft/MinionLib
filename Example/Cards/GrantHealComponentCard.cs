@@ -17,7 +17,7 @@ public sealed class GrantHealComponentCard() : ComponentsCardModel(0, CardType.S
 {
     public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
 
-    public override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
+    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
     {
         var selectedCard = (await CardSelectCmd.FromHand(
             choiceContext,

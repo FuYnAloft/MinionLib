@@ -287,7 +287,7 @@ public abstract class ComponentsCardModel(
         }
     }
 
-    public virtual Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay,
+    protected virtual Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay,
         ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
@@ -296,7 +296,7 @@ public abstract class ComponentsCardModel(
         return Task.CompletedTask;
     }
 
-    public virtual Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
+    protected virtual Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
