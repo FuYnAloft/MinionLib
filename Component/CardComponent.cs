@@ -1,5 +1,3 @@
-using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MinionLib.Component.Core;
@@ -7,7 +5,7 @@ using MinionLib.Component.Interfaces;
 
 namespace MinionLib.Component;
 
-public abstract class CardComponent : ICardComponent
+public abstract partial class CardComponent : ICardComponent
 {
     protected CardComponent()
     {
@@ -76,17 +74,5 @@ public abstract class CardComponent : ICardComponent
     {
         var postfix = SmartPostfix();
         return postfix.Exists() ? FormatPostfix(postfix) : "";
-    }
-
-    public virtual Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay,
-        ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-
-    public virtual Task OnPlayPostfix(PlayerChoiceContext choiceContext, CardPlay cardPlay,
-        ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
     }
 }

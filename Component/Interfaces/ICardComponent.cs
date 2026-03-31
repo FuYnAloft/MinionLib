@@ -1,11 +1,8 @@
-using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MinionLib.Component.Core;
 
 namespace MinionLib.Component.Interfaces;
 
-public interface ICardComponent
+public partial interface ICardComponent
 {
     string ComponentId { get; }
 
@@ -24,17 +21,6 @@ public interface ICardComponent
     string GetFormattedPrefix();
 
     string GetFormattedPostfix();
-
-    Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-
-
-    Task OnPlayPostfix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
 }
 
 /// <summary>

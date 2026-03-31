@@ -1,7 +1,5 @@
-using System.Buffers;
 using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using MinionLib.Component.Core;
@@ -9,7 +7,7 @@ using MinionLib.Component.Interfaces;
 
 namespace MinionLib.Component;
 
-public abstract class ComponentsCardModel(
+public abstract partial class ComponentsCardModel(
     int canonicalEnergyCost,
     CardType type,
     CardRarity rarity,
@@ -219,84 +217,6 @@ public abstract class ComponentsCardModel(
     }
 
     public virtual Task ComponentCallBack(string name, params object[] args)
-    {
-        return Task.CompletedTask;
-    }
-
-    protected sealed override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-    {
-        EnsureComponentsInitialized();
-
-        var componentContext = new ComponentContext(ComponentPhase.Init);
-        
-        var count = Components.Count;
-        var snapshot = ArrayPool<ICardComponent>.Shared.Rent(count);
-        for (var i = 0; i < count; i++)
-        {
-            snapshot[i] = Components[i];
-        }
-        
-        try
-        {
-            for (var transitions = 0;
-                 transitions < MaxPhaseTransitions && componentContext.Phase != ComponentPhase.Final;
-                 transitions++)
-            {
-                componentContext.MoveNextPhase();
-
-                switch (componentContext.Phase)
-                {
-                    case ComponentPhase.Prefix:
-                        for(var i = 0; i < count; i++)
-                        {
-                            var component = snapshot[i];
-                            if (component.Card != this) continue;
-                            await component.OnPlayPrefix(choiceContext, cardPlay, componentContext);
-                            if (componentContext.Phase != ComponentPhase.Prefix) break;
-                        }
-
-                        break;
-                    case ComponentPhase.Postfix:
-                        for(var i = 0; i < count; i++)
-                        {
-                            var component = snapshot[i];
-                            if(component.Card != this) continue;
-                            await component.OnPlayPostfix(choiceContext, cardPlay, componentContext);
-                            if (componentContext.Phase != ComponentPhase.Postfix) break;
-                        }
-
-                        break;
-                    case ComponentPhase.Prime:
-                    case ComponentPhase.Core:
-                    case ComponentPhase.Final:
-                        await OnPlayPhased(choiceContext, cardPlay, componentContext);
-                        break;
-                    case ComponentPhase.Init:
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
-        }
-        finally
-        {
-            ArrayPool<ICardComponent>.Shared.Return(snapshot, clearArray: true);
-        }
-    }
-
-    protected virtual Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay,
-        ComponentContext componentContext)
-    {
-        if (componentContext.Phase == ComponentPhase.Core)
-            return OnPlay(choiceContext, cardPlay, componentContext);
-
-        return Task.CompletedTask;
-    }
-
-    protected virtual Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }

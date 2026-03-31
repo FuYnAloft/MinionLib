@@ -113,6 +113,7 @@
         <Content Include="README.md"/>
         <Content Include="docs/**/*"/>
         <Content Include="Example/MinionTest/**"/>
+        <None Include="Tools\ComponentCodeGeneration\**" />
     </ItemGroup>
 
     <Target Name="CheckDependencyPaths">
