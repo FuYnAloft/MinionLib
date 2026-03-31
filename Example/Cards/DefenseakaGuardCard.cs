@@ -16,6 +16,8 @@ namespace MinionLib.Example.Cards;
 public sealed class DefenseakaGuardCard()
     : CustomMinionBoundCardModel(0, CardType.Skill, CardRarity.Token, TargetType.Self)
 {
+    public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
+
     protected override bool ShouldGlowRedInternal => this.ResolveBoundMinion() is not { IsAlive: true };
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust, CardKeyword.Ethereal];

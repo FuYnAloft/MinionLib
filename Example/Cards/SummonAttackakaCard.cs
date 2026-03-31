@@ -15,6 +15,8 @@ namespace MinionLib.Example.Cards;
 [Pool(typeof(ColorlessCardPool))]
 public sealed class SummonAttackakaCard() : CustomCardModel(0, CardType.Power, CardRarity.Rare, TargetType.Self, false)
 {
+    public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
+
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new SummonVar(6m), new PowerVar<StrengthPower>(4m)];
 

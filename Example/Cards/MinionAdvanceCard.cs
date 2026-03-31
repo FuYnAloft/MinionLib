@@ -14,6 +14,8 @@ namespace MinionLib.Example.Cards;
 [Pool(typeof(ColorlessCardPool))]
 public sealed class MinionAdvanceCard() : CustomCardModel(0, CardType.Skill, CardRarity.Token, MinionTargetTypes.AnyMinion)
 {
+    public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var target = cardPlay.Target;
