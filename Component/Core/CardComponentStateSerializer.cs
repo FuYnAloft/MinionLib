@@ -191,11 +191,8 @@ public static class CardComponentStateSerializer
         public int RemoveComponents<T>() where T : ICardComponent => 0;
         public T? GetComponent<T>() where T : ICardComponent => default;
         public IEnumerable<T> GetComponents<T>() where T : ICardComponent => [];
-
-        public void EnsureComponentsInitialized()
-        {
-        }
-
+        public void EnsureComponentsInitialized(){}
+        public Task ComponentCallBack(string name, params object[] args) => Task.CompletedTask;
         public Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay,
             ComponentContext componentContext) => Task.CompletedTask;
     }

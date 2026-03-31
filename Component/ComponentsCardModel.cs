@@ -262,6 +262,11 @@ public abstract class ComponentsCardModel(
     {
         component.Attach(owner);
     }
+    
+    public virtual Task ComponentCallBack(string name, params object[] args)
+    {
+        return Task.CompletedTask;
+    }
 
     public virtual Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay,
         ComponentContext componentContext)

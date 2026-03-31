@@ -22,5 +22,7 @@ public interface IComponentsCardModel
 
     void EnsureComponentsInitialized();
 
+    Task ComponentCallBack(string name, params object[] args);
+
     Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext);
 }
