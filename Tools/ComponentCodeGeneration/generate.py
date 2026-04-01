@@ -53,7 +53,7 @@ namespace MinionLib.Component;
         args: str
         (name, modifier, args, arg_names, return_type, default_impl) = signature
         Xxx = f"""\
-    {modifier} sealed override async {return_type} {name}({args[:-2] if args.endswith(", ") else args})
+    {modifier} sealed override {"async " if return_type == "Task" else ""}{return_type} {name}({args[:-2] if args.endswith(", ") else args})
     {{
         EnsureComponentsInitialized();
 
@@ -81,7 +81,7 @@ namespace MinionLib.Component;
                         {{
                             var component = snapshot[i];
                             if (component.Card != this) continue;
-                            await component.{name}Prefix({arg_names}componentContext);
+                            {"await " if return_type == "Task" else ""}component.{name}Prefix({arg_names}componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }}
 
@@ -91,7 +91,7 @@ namespace MinionLib.Component;
                         {{
                             var component = snapshot[i];
                             if(component.Card != this) continue;
-                            await component.{name}Postfix({arg_names}componentContext);
+                            {"await " if return_type == "Task" else ""}component.{name}Postfix({arg_names}componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }}
 
@@ -99,7 +99,7 @@ namespace MinionLib.Component;
                     case ComponentPhase.Prime:
                     case ComponentPhase.Core:
                     case ComponentPhase.Final:
-                        await {name}Phased({arg_names}componentContext);
+                        {"await " if return_type == "Task" else ""}{name}Phased({arg_names}componentContext);
                         break;
                     case ComponentPhase.Init:
                     default:
@@ -122,7 +122,7 @@ namespace MinionLib.Component;
     protected virtual {return_type} {name}Phased({args}ComponentContext componentContext)
     {{
         if (componentContext.Phase == ComponentPhase.Core)
-            return {name}({arg_names}componentContext);
+            {"return " if return_type == "Task" else ""}{name}({arg_names}componentContext);
 
 {default_impl}    }}
 

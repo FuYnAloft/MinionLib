@@ -7570,7 +7570,7 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
-    protected sealed override async void OnUpgrade()
+    protected sealed override void OnUpgrade()
     {
         EnsureComponentsInitialized();
 
@@ -7598,7 +7598,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if (component.Card != this) continue;
-                            await component.OnUpgradePrefix(componentContext);
+                            component.OnUpgradePrefix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
 
@@ -7608,7 +7608,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if(component.Card != this) continue;
-                            await component.OnUpgradePostfix(componentContext);
+                            component.OnUpgradePostfix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
 
@@ -7616,7 +7616,7 @@ public abstract partial class ComponentsCardModel
                     case ComponentPhase.Prime:
                     case ComponentPhase.Core:
                     case ComponentPhase.Final:
-                        await OnUpgradePhased(componentContext);
+                        OnUpgradePhased(componentContext);
                         break;
                     case ComponentPhase.Init:
                     default:
@@ -7637,7 +7637,7 @@ public abstract partial class ComponentsCardModel
     protected virtual void OnUpgradePhased(ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
-            return OnUpgrade(componentContext);
+            OnUpgrade(componentContext);
 
     }
 
