@@ -4,18 +4,10 @@ using MinionLib.Component.Interfaces;
 
 namespace MinionLib.Component;
 
-public abstract class AmountCardComponent : CardComponent
+public abstract partial class AmountCardComponent : CardComponent
 {
     [ComponentState<DynamicVarFactory>]
-    public decimal Amount
-    {
-        get;
-        set
-        {
-            field = value;
-            DynamicVars["Amount"].BaseValue = value;
-        }
-    }
+    public partial decimal Amount { get; set; }
 
     public override ICardComponent? MergeWith(ICardComponent other)
     {
