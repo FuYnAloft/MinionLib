@@ -34,6 +34,16 @@ public abstract partial class CardComponent
         return Task.CompletedTask;
     }
     
+    public virtual Task OnEnqueuePlayVfxPrefix(Creature? target, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+    
+    public virtual Task OnEnqueuePlayVfxPostfix(Creature? target, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+    
     public virtual Task OnTurnEndInHandPrefix(PlayerChoiceContext choiceContext, ComponentContext componentContext)
     {
         return Task.CompletedTask;

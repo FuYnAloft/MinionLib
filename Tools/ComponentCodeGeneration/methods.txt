@@ -1,4 +1,5 @@
 protected virtual Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+public virtual Task OnEnqueuePlayVfx(Creature? target)
 public virtual Task OnTurnEndInHand(PlayerChoiceContext choiceContext)
 public virtual Task BeforeCardPlayed(CardPlay cardPlay)
 public virtual Task AfterCardPlayed(PlayerChoiceContext context, CardPlay cardPlay)

@@ -32,6 +32,16 @@ public partial interface ICardComponent
         return Task.CompletedTask;
     }
     
+    Task OnEnqueuePlayVfxPrefix(Creature? target, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+    
+    Task OnEnqueuePlayVfxPostfix(Creature? target, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+    
     Task OnTurnEndInHandPrefix(PlayerChoiceContext choiceContext, ComponentContext componentContext)
     {
         return Task.CompletedTask;
