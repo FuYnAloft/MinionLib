@@ -7493,4 +7493,79 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    protected sealed override async void OnUpgrade()
+    {
+        EnsureComponentsInitialized();
+
+        var componentContext = new ComponentContext(ComponentPhase.Init);
+        
+        var count = Components.Count;
+        var snapshot = ArrayPool<ICardComponent>.Shared.Rent(count);
+        for (var i = 0; i < count; i++)
+        {
+            snapshot[i] = Components[i];
+        }
+        
+        try
+        {
+            for (var transitions = 0;
+                 transitions < MaxPhaseTransitions && componentContext.Phase != ComponentPhase.Final;
+                 transitions++)
+            {
+                componentContext.MoveNextPhase();
+
+                switch (componentContext.Phase)
+                {
+                    case ComponentPhase.Prefix:
+                        for(var i = 0; i < count; i++)
+                        {
+                            var component = snapshot[i];
+                            if (component.Card != this) continue;
+                            await component.OnUpgradePrefix(componentContext);
+                            if (componentContext.Phase != ComponentPhase.Prefix) break;
+                        }
+
+                        break;
+                    case ComponentPhase.Postfix:
+                        for(var i = 0; i < count; i++)
+                        {
+                            var component = snapshot[i];
+                            if(component.Card != this) continue;
+                            await component.OnUpgradePostfix(componentContext);
+                            if (componentContext.Phase != ComponentPhase.Postfix) break;
+                        }
+
+                        break;
+                    case ComponentPhase.Prime:
+                    case ComponentPhase.Core:
+                    case ComponentPhase.Final:
+                        await OnUpgradePhased(componentContext);
+                        break;
+                    case ComponentPhase.Init:
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            if (componentContext.Phase != ComponentPhase.Final)
+                throw new InvalidOperationException(
+                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+        }
+        finally
+        {
+            ArrayPool<ICardComponent>.Shared.Return(snapshot, clearArray: true);
+        }
+    }
+
+    protected virtual void OnUpgradePhased(ComponentContext componentContext)
+    {
+        if (componentContext.Phase == ComponentPhase.Core)
+            return OnUpgrade(componentContext);
+
+    }
+
+    protected virtual void OnUpgrade(ComponentContext componentContext)
+    {
+    }
+    
 }

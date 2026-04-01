@@ -2,6 +2,7 @@ using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MinionLib.Component;
+using MinionLib.Component.Core;
 using MinionLib.Component.Interfaces;
 using MinionLib.Example.Components;
 
@@ -14,7 +15,7 @@ public sealed class HealSelfComponentCard() : ComponentsCardModel(0, CardType.Sk
 
     public override IEnumerable<ICardComponent> CanonicalComponents => [new HealOwnerComponent { Amount = 2 }];
 
-    protected override void OnUpgrade()
+    protected override void OnUpgrade(ComponentContext componentContext)
     {
         AddComponent(new HealOwnerComponent { Amount = 3 });
     }

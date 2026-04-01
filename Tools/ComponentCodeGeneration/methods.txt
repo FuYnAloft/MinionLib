@@ -95,3 +95,4 @@ public virtual Task BeforePlayPhaseStart(PlayerChoiceContext choiceContext, Play
 public virtual Task BeforeTurnEndVeryEarly(PlayerChoiceContext choiceContext, CombatSide side)
 public virtual Task BeforeTurnEndEarly(PlayerChoiceContext choiceContext, CombatSide side)
 public virtual Task AfterTurnEndLate(PlayerChoiceContext choiceContext, CombatSide side)
+protected virtual void OnUpgrade()

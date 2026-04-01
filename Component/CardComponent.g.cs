@@ -994,4 +994,12 @@ public abstract partial class CardComponent
         return Task.CompletedTask;
     }
     
+    public virtual void OnUpgradePrefix(ComponentContext componentContext)
+    {
+    }
+    
+    public virtual void OnUpgradePostfix(ComponentContext componentContext)
+    {
+    }
+    
 }

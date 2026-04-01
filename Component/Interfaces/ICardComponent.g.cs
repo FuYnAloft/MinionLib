@@ -992,4 +992,12 @@ public partial interface ICardComponent
         return Task.CompletedTask;
     }
     
+    void OnUpgradePrefix(ComponentContext componentContext)
+    {
+    }
+    
+    void OnUpgradePostfix(ComponentContext componentContext)
+    {
+    }
+    
 }

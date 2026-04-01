@@ -21,6 +21,8 @@ class Signature(NamedTuple):
     modifier: str
     args: str
     arg_names: str
+    return_type: str
+    default_impl: str
 
 
 def generate_components_card(signatures: list[Signature]) -> str:
@@ -49,9 +51,9 @@ namespace MinionLib.Component;
     buffer += "public abstract partial class ComponentsCardModel\n{\n"
     for signature in signatures:
         args: str
-        (name, modifier, args, arg_names) = signature
+        (name, modifier, args, arg_names, return_type, default_impl) = signature
         Xxx = f"""\
-    {modifier} sealed override async Task {name}({args[:-2] if args.endswith(", ") else args})
+    {modifier} sealed override async {return_type} {name}({args[:-2] if args.endswith(", ") else args})
     {{
         EnsureComponentsInitialized();
 
@@ -117,20 +119,18 @@ namespace MinionLib.Component;
 
 """
         XxxPhased = f"""\
-    protected virtual Task {name}Phased({args}ComponentContext componentContext)
+    protected virtual {return_type} {name}Phased({args}ComponentContext componentContext)
     {{
         if (componentContext.Phase == ComponentPhase.Core)
             return {name}({arg_names}componentContext);
 
-        return Task.CompletedTask;
-    }}
+{default_impl}    }}
 
 """
         XxxNew = f"""\
-    protected virtual Task {name}({args}ComponentContext componentContext)
+    protected virtual {return_type} {name}({args}ComponentContext componentContext)
     {{
-        return Task.CompletedTask;
-    }}
+{default_impl}    }}
     
 """
         buffer += Xxx + XxxPhased + XxxNew
@@ -161,19 +161,17 @@ namespace MinionLib.Component.Interfaces;
 """
     buffer += "public partial interface ICardComponent\n{\n"
     for signature in signatures:
-        (name, modifier, args, arg_names) = signature
+        (name, modifier, args, arg_names, return_type, default_impl) = signature
         XxxPrefix = f"""\
-    Task {name}Prefix({args}ComponentContext componentContext)
+    {return_type} {name}Prefix({args}ComponentContext componentContext)
     {{
-        return Task.CompletedTask;
-    }}
+{default_impl}    }}
     
 """
         XxxPostfix = f"""\
-    Task {name}Postfix({args}ComponentContext componentContext)
+    {return_type} {name}Postfix({args}ComponentContext componentContext)
     {{
-        return Task.CompletedTask;
-    }}
+{default_impl}    }}
     
 """
         buffer += XxxPrefix + XxxPostfix
@@ -205,19 +203,17 @@ namespace MinionLib.Component;
 """
     buffer += "public abstract partial class CardComponent\n{\n"
     for signature in signatures:
-        (name, modifier, args, arg_names) = signature
+        (name, modifier, args, arg_names, return_type, default_impl) = signature
         XxxPrefix = f"""\
-    public virtual Task {name}Prefix({args}ComponentContext componentContext)
+    public virtual {return_type} {name}Prefix({args}ComponentContext componentContext)
     {{
-        return Task.CompletedTask;
-    }}
+{default_impl}    }}
     
 """
         XxxPostfix = f"""\
-    public virtual Task {name}Postfix({args}ComponentContext componentContext)
+    public virtual {return_type} {name}Postfix({args}ComponentContext componentContext)
     {{
-        return Task.CompletedTask;
-    }}
+{default_impl}    }}
     
 """
         buffer += XxxPrefix + XxxPostfix
@@ -233,13 +229,14 @@ def parse_csharp_signature(line: str) -> Signature:
     # (?:Task|void)\s+          : 匹配并忽略返回类型 (Task 或 void)
     # (?P<name>\w+)             : 捕获组 name（匹配方法名）
     # \((?P<args>.*?)\)         : 捕获组 args（匹配括号内的所有内容）
-    pattern = r"^\s*(?P<modifier>\w+)\s+(?:virtual\s+)?(?:Task|void)\s+(?P<name>\w+)\s*\((?P<args>.*?)\)"
+    pattern = r"^\s*(?P<modifier>\w+)\s+(?:virtual\s+)?(?P<return>Task|void)\s+(?P<name>\w+)\s*\((?P<args>.*?)\)"
 
     match = re.search(pattern, line.strip())
     if not match:
         raise ValueError(f"无法解析签名: {line}")
 
     modifier = match.group("modifier")
+    return_type = match.group("return")
     name = match.group("name")
     args_str = match.group("args")
 
@@ -262,7 +259,9 @@ def parse_csharp_signature(line: str) -> Signature:
         name=name,
         modifier=modifier,
         args=args_str + ", " if args_str else "",
-        arg_names=arg_names
+        arg_names=arg_names,
+        return_type=return_type,
+        default_impl="        return Task.CompletedTask;\n" if return_type == "Task" else ""
     )
 
 
