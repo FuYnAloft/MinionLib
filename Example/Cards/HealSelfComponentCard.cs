@@ -18,6 +18,7 @@ public sealed class HealSelfComponentCard() : ComponentsCardModel(0, CardType.Sk
     protected override void OnUpgrade(ComponentContext componentContext)
     {
         AddComponent(new HealOwnerComponent { Amount = 3 });
+        GetComponent<HealOwnerComponent>()!.DynamicVars["Amount"].SetWasJustUpgraded();
     }
 }
 
