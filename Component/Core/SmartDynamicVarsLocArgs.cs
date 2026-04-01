@@ -59,7 +59,7 @@ public static class SmartDynamicVarsLocArgs
         return generateMethod;
     }
 
-    public static DynamicVarSet GenerateDynamicVars(ICardComponent component)
+    public static IEnumerable<DynamicVar> GenerateDynamicVars(ICardComponent component)
     {
         var rules = GetComponentStatePropertyRules(component.GetType());
         var vars = new List<DynamicVar>();
@@ -91,7 +91,7 @@ public static class SmartDynamicVarsLocArgs
             vars.Add(dynamicVar);
         }
 
-        return new DynamicVarSet(vars);
+        return vars;
     }
 
     public static void SmartAddArgs(ICardComponent component, LocString loc)

@@ -10,7 +10,9 @@ public abstract partial class CardComponent : ICardComponent
 {
     protected CardComponent()
     {
-        DynamicVars = SmartDynamicVarsLocArgs.GenerateDynamicVars(this);
+        var smart = SmartDynamicVarsLocArgs.GenerateDynamicVars(this);
+        var extra = ExtraVars;
+        DynamicVars = new DynamicVarSet(smart.Concat(extra));
     }
 
     public string ComponentId => CardComponentRegistry.GetComponentId(GetType());
@@ -37,8 +39,10 @@ public abstract partial class CardComponent : ICardComponent
         return other;
     }
 
-    public virtual DynamicVarSet DynamicVars { get; } = new([]);
-    
+    protected IEnumerable<DynamicVar> ExtraVars => [];
+
+    public DynamicVarSet DynamicVars { get; }
+
     public virtual bool ShouldGlowGoldInternal => false;
 
     public virtual bool ShouldGlowRedInternal => false;
