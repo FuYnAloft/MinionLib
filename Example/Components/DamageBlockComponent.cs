@@ -10,29 +10,13 @@ using MinionLib.Component.Interfaces;
 
 namespace MinionLib.Example.Components;
 
-public sealed class DamageBlockComponent : CardComponent
+public sealed partial class DamageBlockComponent : CardComponent
 {
     [ComponentState<DamageVarFactory>]
-    public int Damage
-    {
-        get;
-        set
-        {
-            field = value;
-            DynamicVars["Damage"].BaseValue = value;
-        }
-    }
+    public partial int Damage { get; set; }
 
     [ComponentState<BlockVarFactory>]
-    public int Block
-    {
-        get;
-        set
-        {
-            field = value;
-            DynamicVars["Block"].BaseValue = value;
-        }
-    }
+    public partial int Block { get; set; }
 
     public override async Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay,
         ComponentContext componentContext)
