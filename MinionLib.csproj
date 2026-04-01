@@ -84,6 +84,21 @@
     </ItemGroup>
 
     <ItemGroup>
+        <!-- 屏蔽源生成器项目 -->
+        <Compile Remove="MinionLib.Generators\**" />
+        <Content Remove="MinionLib.Generators\**" />
+        <None Remove="MinionLib.Generators\**" />
+        <EmbeddedResource Remove="MinionLib.Generators\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- 引入生成器 -->
+        <ProjectReference Include="MinionLib.Generators\MinionLib.Generators.csproj"
+                          OutputItemType="Analyzer"
+                          ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+    <ItemGroup>
         <Compile Remove="MinionLib/**"/>
         <Compile Remove="materials/**"/>
         <Compile Remove="shaders/**"/>
