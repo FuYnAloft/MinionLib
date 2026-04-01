@@ -21,7 +21,7 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
         title: "ComponentState property must be public partial",
         messageFormat: "Property '{0}' must be declared as 'public partial' to use source-generated ComponentState backing implementation",
         category: "MinionLib.Generators",
-        DiagnosticSeverity.Warning,
+        DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
     private static readonly DiagnosticDescriptor ContainingTypeMustBePartial = new(
@@ -29,7 +29,7 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
         title: "Containing type must be partial",
         messageFormat: "Type '{0}' must be declared as partial to host generated ComponentState properties",
         category: "MinionLib.Generators",
-        DiagnosticSeverity.Warning,
+        DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
     private static readonly DiagnosticDescriptor MissingDynamicVarGenerator = new(
@@ -37,7 +37,7 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
         title: "ComponentState missing dynamic var generator",
         messageFormat: "Property '{0}' has [ComponentState] without a dynamic var generator; generation is skipped",
         category: "MinionLib.Generators",
-        DiagnosticSeverity.Warning,
+        DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
