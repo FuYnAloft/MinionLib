@@ -602,6 +602,16 @@ public partial interface ICardComponent
         return Task.CompletedTask;
     }
     
+    Task AfterModifyingEnergyGainPrefix(ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+    
+    Task AfterModifyingEnergyGainPostfix(ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+    
     Task AfterModifyingHandDrawPrefix(ComponentContext componentContext)
     {
         return Task.CompletedTask;

@@ -604,6 +604,16 @@ public abstract partial class CardComponent
         return Task.CompletedTask;
     }
     
+    public virtual Task AfterModifyingEnergyGainPrefix(ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+    
+    public virtual Task AfterModifyingEnergyGainPostfix(ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+    
     public virtual Task AfterModifyingHandDrawPrefix(ComponentContext componentContext)
     {
         return Task.CompletedTask;
