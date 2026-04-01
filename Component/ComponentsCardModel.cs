@@ -1,5 +1,6 @@
 using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using MinionLib.Component.Core;
@@ -235,4 +236,9 @@ public abstract partial class ComponentsCardModel(
         (_components?.Any(c => c.HasTurnEndInHandEffect) ?? false) || HasTurnEndInHandEffectC;
 
     protected virtual bool HasTurnEndInHandEffectC => false;
+
+    protected sealed override IEnumerable<IHoverTip> ExtraHoverTips =>
+        _components?.SelectMany(c => c.HoverTips).Concat(ExtraHoverTipsC) ?? ExtraHoverTipsC;
+
+    protected virtual IEnumerable<IHoverTip> ExtraHoverTipsC => [];
 }

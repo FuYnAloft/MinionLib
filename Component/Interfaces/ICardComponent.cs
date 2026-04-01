@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace MinionLib.Component.Interfaces;
@@ -23,6 +24,8 @@ public partial interface ICardComponent
     bool ShouldGlowRedInternal => false;
 
     bool HasTurnEndInHandEffect => false;
+    
+    IEnumerable<IHoverTip> HoverTips => [];
 
     string GetFormattedPrefix();
 

@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MinionLib.Component.Core;
@@ -43,6 +44,8 @@ public abstract partial class CardComponent : ICardComponent
     public virtual bool ShouldGlowRedInternal => false;
 
     public virtual bool HasTurnEndInHandEffect => false;
+    
+    public virtual IEnumerable<IHoverTip> HoverTips => [];
 
     private LocString SmartPrefix()
     {
