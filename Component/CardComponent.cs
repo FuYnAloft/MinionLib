@@ -82,7 +82,7 @@ public abstract partial class CardComponent : ICardComponent
     {
         var loc = new LocString("cards", ComponentId + ".prefix");
         DynamicVars.AddTo(loc);
-        SmartDynamicVarsLocArgs.SmartAddArgs(this, loc);
+        SmartAddArgs(loc);
         return loc;
     }
 
@@ -90,8 +90,12 @@ public abstract partial class CardComponent : ICardComponent
     {
         var loc = new LocString("cards", ComponentId + ".postfix");
         DynamicVars.AddTo(loc);
-        SmartDynamicVarsLocArgs.SmartAddArgs(this, loc);
+        SmartAddArgs(loc);
         return loc;
+    }
+
+    protected virtual void SmartAddArgs(LocString loc)
+    {
     }
 
     protected virtual string FormatPrefix(LocString loc)

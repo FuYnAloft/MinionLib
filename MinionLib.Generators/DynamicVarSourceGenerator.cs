@@ -17,11 +17,13 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
     private const string ComponentStateGenericAttributeMetadataName = "MinionLib.Component.Core.ComponentStateAttribute`1";
     private const string CardComponentMetadataName = "MinionLib.Component.CardComponent";
     private const string DynamicVarMetadataName = "MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar";
+    private const string LocStringMetadataName = "MegaCrit.Sts2.Core.Localization.LocString";
+    private const string IListMetadataName = "System.Collections.Generic.IList`1";
 
     private static readonly DiagnosticDescriptor CardComponentTypeMustBePartial = new(
         id: "MLSG200",
-        title: "CardComponent type must be partial for generated SmartVars",
-        messageFormat: "CardComponent subtype '{0}' defines [ComponentState] DynamicVar properties and must be declared partial",
+        title: "CardComponent type must be partial for generated ComponentState bindings",
+        messageFormat: "CardComponent subtype '{0}' defines [ComponentState] properties and must be declared partial",
         category: "MinionLib.Generators",
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -43,7 +45,9 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
     {
         var cardComponentType = compilation.GetTypeByMetadataName(CardComponentMetadataName);
         var dynamicVarType = compilation.GetTypeByMetadataName(DynamicVarMetadataName);
-        if (cardComponentType == null || dynamicVarType == null)
+        var locStringType = compilation.GetTypeByMetadataName(LocStringMetadataName);
+        var iListOpenType = compilation.GetTypeByMetadataName(IListMetadataName);
+        if (cardComponentType == null || dynamicVarType == null || locStringType == null || iListOpenType == null)
             return;
 
         var componentStateAttribute = compilation.GetTypeByMetadataName(ComponentStateAttributeMetadataName);
@@ -58,7 +62,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             if (!InheritsFrom(type, cardComponentType))
                 continue;
 
-            var ownRules = GetOwnRules(type, componentStateAttribute, componentStateGenericAttribute, dynamicVarType, context);
+            var ownRules = GetOwnComponentStateRules(type, componentStateAttribute, componentStateGenericAttribute);
             if (ownRules.Length == 0)
                 continue;
 
@@ -69,53 +73,109 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
                 continue;
             }
 
-            var source = BuildSource(type, ownRules);
+            var allRules = GetAllComponentStateRules(type, componentStateAttribute, componentStateGenericAttribute);
+            if (allRules.Length == 0)
+                continue;
+
+            ValidateDynamicVarTypes(context, allRules, dynamicVarType);
+
+            var smartVarRules = allRules
+                .Where(static r => r.GeneratorType != null)
+                .OrderBy(static r => r.PropertyName, StringComparer.Ordinal)
+                .ToImmutableArray();
+
+            var smartArgRules = allRules
+                .Where(static r => r.GeneratorType == null)
+                .OrderBy(static r => r.PropertyName, StringComparer.Ordinal)
+                .ToImmutableArray();
+
+            var source = BuildSource(type, smartVarRules, smartArgRules, dynamicVarType, locStringType, iListOpenType);
             context.AddSource(BuildHintName(type), SourceText.From(source, Encoding.UTF8));
         }
     }
 
-    private static ImmutableArray<DynamicVarRule> GetOwnRules(
-        INamedTypeSymbol type,
-        INamedTypeSymbol? componentStateAttribute,
-        INamedTypeSymbol? componentStateGenericAttribute,
-        INamedTypeSymbol dynamicVarType,
-        SourceProductionContext context)
+    private static void ValidateDynamicVarTypes(SourceProductionContext context, ImmutableArray<ComponentStateRule> rules,
+        INamedTypeSymbol dynamicVarType)
     {
-        var result = ImmutableArray.CreateBuilder<DynamicVarRule>();
-
-        foreach (var property in type.GetMembers().OfType<IPropertySymbol>())
+        foreach (var rule in rules)
         {
-            if (property.IsStatic || property.GetMethod == null)
-                continue;
-            if (property.Parameters.Length != 0)
+            if (rule.GeneratorType == null)
                 continue;
 
-            var attribute = property.GetAttributes()
-                .FirstOrDefault(a => IsComponentStateAttribute(a, componentStateAttribute, componentStateGenericAttribute));
-            if (attribute == null)
-                continue;
-
-            if (!TryExtractGenerator(attribute, out var generatorType, out var constructorArgs))
-                continue;
-            if (generatorType == null)
-                continue;
-
-            if (!InheritsFrom(generatorType, dynamicVarType))
+            if (!InheritsFrom(rule.GeneratorType, dynamicVarType))
             {
                 context.ReportDiagnostic(Diagnostic.Create(
                     DynamicVarTypeMustInheritDynamicVar,
-                    property.Locations.FirstOrDefault(),
-                    property.Name,
-                    generatorType.ToDisplayString()));
-                continue;
+                    rule.Property.Locations.FirstOrDefault(),
+                    rule.PropertyName,
+                    rule.GeneratorType.ToDisplayString()));
             }
+        }
+    }
 
-            result.Add(new DynamicVarRule(property.Name, generatorType, constructorArgs));
+    private static ImmutableArray<ComponentStateRule> GetOwnComponentStateRules(
+        INamedTypeSymbol type,
+        INamedTypeSymbol? componentStateAttribute,
+        INamedTypeSymbol? componentStateGenericAttribute)
+    {
+        return type.GetMembers()
+            .OfType<IPropertySymbol>()
+            .Select(p => BuildRule(p, componentStateAttribute, componentStateGenericAttribute))
+            .Where(static r => r != null)
+            .Select(static r => r!)
+            .ToImmutableArray();
+    }
+
+    private static ImmutableArray<ComponentStateRule> GetAllComponentStateRules(
+        INamedTypeSymbol type,
+        INamedTypeSymbol? componentStateAttribute,
+        INamedTypeSymbol? componentStateGenericAttribute)
+    {
+        var map = new Dictionary<string, ComponentStateRule>(StringComparer.Ordinal);
+        var current = type;
+        var chain = new Stack<INamedTypeSymbol>();
+        while (current != null)
+        {
+            chain.Push(current);
+            current = current.BaseType;
         }
 
-        return result
-            .OrderBy(x => x.PropertyName, StringComparer.Ordinal)
-            .ToImmutableArray();
+        while (chain.Count > 0)
+        {
+            var node = chain.Pop();
+            foreach (var property in node.GetMembers().OfType<IPropertySymbol>())
+            {
+                var rule = BuildRule(property, componentStateAttribute, componentStateGenericAttribute);
+                if (rule == null)
+                    continue;
+
+                if (!IsAccessibleFromType(rule.Property, type))
+                    continue;
+
+                map[rule.PropertyName] = rule;
+            }
+        }
+
+        return map.Values.ToImmutableArray();
+    }
+
+    private static ComponentStateRule? BuildRule(
+        IPropertySymbol property,
+        INamedTypeSymbol? componentStateAttribute,
+        INamedTypeSymbol? componentStateGenericAttribute)
+    {
+        if (property.IsStatic || property.GetMethod == null || property.Parameters.Length != 0)
+            return null;
+
+        var attribute = property.GetAttributes()
+            .FirstOrDefault(a => IsComponentStateAttribute(a, componentStateAttribute, componentStateGenericAttribute));
+        if (attribute == null)
+            return null;
+
+        if (!TryExtractGenerator(attribute, out var generatorType, out var constructorArgs))
+            return null;
+
+        return new ComponentStateRule(property, property.Name, generatorType, constructorArgs);
     }
 
     private static bool TryExtractGenerator(
@@ -145,7 +205,6 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             generatorType = typeSymbol;
 
         constructorArgs = NormalizeConstructorArgs(attribute.ConstructorArguments, 1);
-
         return true;
     }
 
@@ -157,9 +216,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
         if (args.Length == startIndex + 1 && args[startIndex].Kind == TypedConstantKind.Array)
             return args[startIndex].Values;
 
-        return args
-            .Skip(startIndex)
-            .ToImmutableArray();
+        return args.Skip(startIndex).ToImmutableArray();
     }
 
     private static bool IsComponentStateAttribute(
@@ -175,7 +232,29 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
                || SymbolEqualityComparer.Default.Equals(original, componentStateGenericAttribute);
     }
 
-    private static string BuildSource(INamedTypeSymbol type, ImmutableArray<DynamicVarRule> rules)
+    private static bool IsAccessibleFromType(IPropertySymbol property, INamedTypeSymbol type)
+    {
+        if (SymbolEqualityComparer.Default.Equals(property.ContainingType, type))
+            return true;
+
+        return property.DeclaredAccessibility switch
+        {
+            Accessibility.Public => true,
+            Accessibility.Internal => true,
+            Accessibility.Protected => true,
+            Accessibility.ProtectedOrInternal => true,
+            Accessibility.ProtectedAndInternal => true,
+            _ => false
+        };
+    }
+
+    private static string BuildSource(
+        INamedTypeSymbol type,
+        ImmutableArray<ComponentStateRule> smartVarRules,
+        ImmutableArray<ComponentStateRule> smartArgRules,
+        INamedTypeSymbol dynamicVarType,
+        INamedTypeSymbol locStringType,
+        INamedTypeSymbol iListOpenType)
     {
         var sb = new StringBuilder();
         sb.AppendLine("// <auto-generated />");
@@ -189,36 +268,169 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
 
         AppendContainingTypeDeclarations(sb, type);
 
-        sb.AppendLine("    protected override global::System.Collections.Generic.IEnumerable<global::MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar> SmartVars");
-        sb.AppendLine("    {");
-        sb.AppendLine("        get");
-        sb.AppendLine("        {");
-        sb.AppendLine("            foreach (var __baseVar in base.SmartVars)");
-        sb.AppendLine("                yield return __baseVar;");
-
-        foreach (var rule in rules)
+        if (smartVarRules.Length > 0)
         {
-            sb.Append("            yield return new ")
-                .Append(rule.DynamicVarType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
-                .Append("(\"")
-                .Append(rule.PropertyName)
-                .Append("\", global::System.Convert.ToDecimal(this.")
-                .Append(rule.PropertyName)
-                .Append(")");
-
-            foreach (var arg in rule.ConstructorArgs)
+            sb.AppendLine("    protected override global::System.Collections.Generic.IEnumerable<global::MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar> SmartVars =>");
+            sb.AppendLine("    [");
+            for (var i = 0; i < smartVarRules.Length; i++)
             {
-                sb.Append(", ").Append(TypedConstantToCode(arg));
+                var rule = smartVarRules[i];
+                sb.Append("        new ")
+                    .Append(rule.GeneratorType!.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
+                    .Append("(\"")
+                    .Append(rule.PropertyName)
+                    .Append("\", global::System.Convert.ToDecimal(this.")
+                    .Append(rule.PropertyName)
+                    .Append(")");
+
+                foreach (var arg in rule.ConstructorArgs)
+                    sb.Append(", ").Append(TypedConstantToCode(arg));
+
+                sb.Append(")");
+                sb.AppendLine(i == smartVarRules.Length - 1 ? string.Empty : ",");
             }
 
-            sb.AppendLine(");");
+            sb.AppendLine("    ];");
+            sb.AppendLine();
         }
 
-        sb.AppendLine("        }");
-        sb.AppendLine("    }");
+        sb.AppendLine("    protected override void SmartAddArgs(global::MegaCrit.Sts2.Core.Localization.LocString loc)");
+        sb.AppendLine("    {");
+        if (smartArgRules.Length == 0)
+        {
+            sb.AppendLine("    }");
+        }
+        else
+        {
+            foreach (var rule in smartArgRules)
+            {
+                EmitSmartArg(sb, rule, dynamicVarType, locStringType, iListOpenType);
+            }
+
+            sb.AppendLine("    }");
+        }
 
         AppendContainingTypeClosures(sb, type);
         return sb.ToString();
+    }
+
+    private static void EmitSmartArg(StringBuilder sb, ComponentStateRule rule,
+        INamedTypeSymbol dynamicVarType, INamedTypeSymbol locStringType, INamedTypeSymbol iListOpenType)
+    {
+        var type = rule.Property.Type;
+        var valueExpr = "this." + rule.PropertyName;
+        var isNullable = type.IsReferenceType || type.NullableAnnotation == NullableAnnotation.Annotated;
+
+        if (isNullable)
+        {
+            var local = "__v_" + rule.PropertyName;
+            sb.Append("        var ").Append(local).Append(" = ").Append(valueExpr).AppendLine(";");
+            sb.Append("        if (").Append(local).AppendLine(" == null)");
+            sb.Append("            loc.Add(\"").Append(rule.PropertyName).AppendLine("\", 0m);");
+            sb.AppendLine("        else");
+            EmitNonNullSmartArg(sb, type, rule.PropertyName, local, dynamicVarType, locStringType, iListOpenType, 3);
+            return;
+        }
+
+        EmitNonNullSmartArg(sb, type, rule.PropertyName, valueExpr, dynamicVarType, locStringType, iListOpenType, 2);
+    }
+
+    private static void EmitNonNullSmartArg(StringBuilder sb, ITypeSymbol type, string name, string valueExpr,
+        INamedTypeSymbol dynamicVarType, INamedTypeSymbol locStringType, INamedTypeSymbol iListOpenType, int indent)
+    {
+        var p = new string(' ', indent * 4);
+
+        if (IsTypeOrDerived(type, dynamicVarType))
+        {
+            sb.Append(p).Append("loc.Add(").Append(valueExpr).AppendLine(");");
+            return;
+        }
+
+        switch (type.SpecialType)
+        {
+            case SpecialType.System_Decimal:
+            case SpecialType.System_Int32:
+            case SpecialType.System_Int64:
+            case SpecialType.System_Boolean:
+                sb.Append(p).Append("loc.Add(\"").Append(name).Append("\", ").Append(valueExpr).AppendLine(");");
+                return;
+            case SpecialType.System_Single:
+            case SpecialType.System_Double:
+                sb.Append(p).Append("loc.Add(\"").Append(name).Append("\", (decimal)").Append(valueExpr).AppendLine(");");
+                return;
+            case SpecialType.System_String:
+                sb.Append(p).Append("loc.Add(\"").Append(name).Append("\", ").Append(valueExpr).AppendLine(");");
+                return;
+        }
+
+        if (IsTypeOrDerived(type, locStringType))
+        {
+            sb.Append(p).Append("loc.Add(\"").Append(name).Append("\", ").Append(valueExpr).AppendLine(");");
+            return;
+        }
+
+        if (IsIListOfString(type, iListOpenType))
+        {
+            sb.Append(p).Append("loc.Add(\"").Append(name).Append("\", ").Append(valueExpr).AppendLine(");");
+            return;
+        }
+
+        if (IsNumericLike(type))
+        {
+            sb.Append(p).Append("loc.Add(\"").Append(name)
+                .Append("\", global::System.Convert.ToDecimal(")
+                .Append(valueExpr)
+                .AppendLine("));");
+            return;
+        }
+
+        sb.Append(p).Append("loc.AddObj(\"").Append(name).Append("\", ").Append(valueExpr).AppendLine(");");
+    }
+
+    private static bool IsNumericLike(ITypeSymbol type)
+    {
+        if (type.TypeKind == TypeKind.Enum)
+            return true;
+
+        return type.SpecialType is SpecialType.System_Byte
+            or SpecialType.System_SByte
+            or SpecialType.System_Int16
+            or SpecialType.System_UInt16
+            or SpecialType.System_Int32
+            or SpecialType.System_UInt32
+            or SpecialType.System_Int64
+            or SpecialType.System_UInt64
+            or SpecialType.System_Single
+            or SpecialType.System_Double
+            or SpecialType.System_Decimal;
+    }
+
+    private static bool IsIListOfString(ITypeSymbol type, INamedTypeSymbol iListOpenType)
+    {
+        if (type is not INamedTypeSymbol named)
+            return false;
+
+        foreach (var iface in named.AllInterfaces)
+        {
+            if (!iface.IsGenericType)
+                continue;
+            if (!SymbolEqualityComparer.Default.Equals(iface.OriginalDefinition, iListOpenType))
+                continue;
+            if (iface.TypeArguments.Length != 1)
+                continue;
+            if (iface.TypeArguments[0].SpecialType == SpecialType.System_String)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsTypeOrDerived(ITypeSymbol type, INamedTypeSymbol baseType)
+    {
+        if (type is not INamedTypeSymbol named)
+            return false;
+
+        return InheritsFrom(named, baseType);
     }
 
     private static string TypedConstantToCode(TypedConstant constant)
@@ -385,21 +597,22 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
         };
     }
 
-    private sealed class DynamicVarRule
+    private sealed class ComponentStateRule
     {
-        public DynamicVarRule(string propertyName, INamedTypeSymbol dynamicVarType,
+        public ComponentStateRule(IPropertySymbol property, string propertyName, INamedTypeSymbol? generatorType,
             ImmutableArray<TypedConstant> constructorArgs)
         {
+            Property = property;
             PropertyName = propertyName;
-            DynamicVarType = dynamicVarType;
+            GeneratorType = generatorType;
             ConstructorArgs = constructorArgs;
         }
 
+        public IPropertySymbol Property { get; }
         public string PropertyName { get; }
-        public INamedTypeSymbol DynamicVarType { get; }
+        public INamedTypeSymbol? GeneratorType { get; }
         public ImmutableArray<TypedConstant> ConstructorArgs { get; }
     }
 }
-
 
 
