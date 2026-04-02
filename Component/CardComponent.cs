@@ -40,9 +40,9 @@ public abstract partial class CardComponent : ICardComponent
         return CardComponentStateSerializer.DeepClone(this);
     }
 
-    public virtual ICardComponent? MergeWith(ICardComponent other)
+    public virtual ICardComponent? MergeWith(ICardComponent incoming)
     {
-        return other;
+        return incoming;
     }
 
     protected virtual IEnumerable<DynamicVar> ExtraVars => [];

@@ -18,7 +18,7 @@ public partial interface ICardComponent
 
     ICardComponent DeepClone();
 
-    ICardComponent? MergeWith(ICardComponent other);
+    ICardComponent? MergeWith(ICardComponent incoming);
 
     DynamicVarSet DynamicVars { get; }
     
@@ -63,7 +63,7 @@ public sealed class KeepsTwo : ICardComponent
         return Instance;
     }
 
-    public ICardComponent? MergeWith(ICardComponent other)
+    public ICardComponent? MergeWith(ICardComponent incoming)
     {
         return Instance;
     }

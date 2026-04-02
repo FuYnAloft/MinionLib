@@ -16,9 +16,9 @@ public sealed class HealOwnerComponent : AmountCardComponent
         await CreatureCmd.Heal(Card.Owner.Creature, Amount);
     }
 
-    public override ICardComponent? MergeWith(ICardComponent other)
+    public override ICardComponent? MergeWith(ICardComponent incoming)
     {
-        if (other is not HealOwnerComponent heal) return this;
+        if (incoming is not HealOwnerComponent heal) return this;
 
         Amount += heal.Amount;
         return Amount <= 0 ? null : this;
