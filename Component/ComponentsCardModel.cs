@@ -18,7 +18,8 @@ public abstract partial class ComponentsCardModel(
     : CustomCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary, autoAdd),
         IComponentsCardModel
 {
-    private const int MaxPhaseTransitions = 32;
+    // ReSharper disable once ConvertToConstant.Local
+    private static readonly int MaxPhaseTransitions = 32;
 
     private List<ICardComponent>? _components;
 
