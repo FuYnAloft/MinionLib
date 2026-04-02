@@ -53,7 +53,7 @@ public abstract partial class ComponentsCardModel(
 
     public virtual IEnumerable<ICardComponent> CanonicalComponents => [];
 
-    public T AddComponent<T>(T component) where T : ICardComponent
+    public T? AddComponent<T>(T component) where T : ICardComponent
     {
         EnsureComponentsInitialized();
         var finalComponent = AddOrMergeComponent(component);
@@ -155,31 +155,10 @@ public abstract partial class ComponentsCardModel(
 
     private List<ICardComponent> BuildComponentsFromCanonical()
     {
-        var result = new List<ICardComponent>();
-        foreach (var canonicalComponent in CanonicalComponents)
-        {
-            var incoming = canonicalComponent.DeepClone();
-            var existingIndex = result.FindIndex(c => c.GetType() == incoming.GetType());
-            if (existingIndex < 0)
-            {
-                result.Add(incoming);
-                continue;
-            }
-
-            var existing = result[existingIndex];
-            var merged = existing.MergeWith(incoming);
-            if (merged == null)
-                result.RemoveAt(existingIndex);
-            else if (ReferenceEquals(merged, KeepsTwo.Instance))
-                result.Add(incoming);
-            else
-                result[existingIndex] = merged;
-        }
-
-        return result;
+        return CanonicalComponents.Select(c => c.DeepClone()).ToList();
     }
 
-    private T AddOrMergeComponent<T>(T incoming) where T : ICardComponent
+    private T? AddOrMergeComponent<T>(T incoming) where T : ICardComponent
     {
         var existingIndex = _components!.FindIndex(c => c is T);
         if (existingIndex < 0)
@@ -199,13 +178,17 @@ public abstract partial class ComponentsCardModel(
             return incoming;
         }
 
+        if (ReferenceEquals(merged, existing))
+        {
+            return (T)merged;
+        }
+
         existing.Detach();
-        incoming.Detach();
 
         if (merged == null)
         {
             _components.RemoveAt(existingIndex);
-            return incoming;
+            return default;
         }
 
         merged.Attach(this);

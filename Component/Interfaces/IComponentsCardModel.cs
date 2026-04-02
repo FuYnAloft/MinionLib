@@ -10,7 +10,7 @@ public interface IComponentsCardModel
 
     IEnumerable<ICardComponent> CanonicalComponents { get; }
 
-    T AddComponent<T>(T component) where T : ICardComponent;
+    T? AddComponent<T>(T component) where T : ICardComponent;
 
     bool RemoveComponent<T>() where T : ICardComponent;
 
