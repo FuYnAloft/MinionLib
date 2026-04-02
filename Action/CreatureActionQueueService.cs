@@ -17,7 +17,7 @@ internal static class CreatureActionQueueService
         var queueSynchronizer = RunManager.Instance.ActionQueueSynchronizer;
         if (queueSynchronizer.CombatState != ActionSynchronizerCombatState.PlayPhase)
             return false;
-        
+
         if (!CreatureActionQueueThreshold.TryReserve(action))
             return false;
 
@@ -31,9 +31,8 @@ internal static class CreatureActionQueueService
         {
             CreatureActionQueueThreshold.Release(actor.CombatId.Value, action.Id);
             throw;
-        } 
+        }
 
         return true;
     }
 }
-

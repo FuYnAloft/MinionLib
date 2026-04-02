@@ -8,7 +8,6 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.DynamicVars;
 using MinionLib.Models;
-using MinionLib.Utilities;
 
 namespace MinionLib.Example.Cards;
 
@@ -23,7 +22,7 @@ public sealed class DefenseakaGuardCard()
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust, CardKeyword.Ethereal];
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
-        [new BoundMinionBlockVar("BoundPetBlock",0m, ValueProp.Move)];
+        [new BoundMinionBlockVar("BoundPetBlock", 0m, ValueProp.Move)];
 
     public override bool GainsBlock => true;
 

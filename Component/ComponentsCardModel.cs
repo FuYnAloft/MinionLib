@@ -178,10 +178,7 @@ public abstract partial class ComponentsCardModel(
             return incoming;
         }
 
-        if (ReferenceEquals(merged, existing))
-        {
-            return (T)merged;
-        }
+        if (ReferenceEquals(merged, existing)) return (T)merged;
 
         existing.Detach();
 

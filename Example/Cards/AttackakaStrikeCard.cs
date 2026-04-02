@@ -16,7 +16,7 @@ public sealed class AttackakaStrikeCard()
     : CustomMinionBoundCardModel(0, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy)
 {
     public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
-    
+
     protected override bool ShouldGlowRedInternal => this.ResolveBoundMinion() is not { IsAlive: true };
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust, CardKeyword.Ethereal];

@@ -21,4 +21,3 @@ public sealed class HealSelfComponentCard() : ComponentsCardModel(0, CardType.Sk
         GetComponent<HealOwnerComponent>()!.DynamicVars["Amount"].SetWasJustUpgraded();
     }
 }
-

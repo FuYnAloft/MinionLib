@@ -3,7 +3,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace MinionLib.Component.DynamicVarFactories;
 
-public abstract class DamageVarFactory: IDynamicVarFactory
+public abstract class DamageVarFactory : IDynamicVarFactory
 {
     public static DynamicVar Create(string name, object[] parameters)
     {

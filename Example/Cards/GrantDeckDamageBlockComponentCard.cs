@@ -10,11 +10,13 @@ using MinionLib.Example.Components;
 namespace MinionLib.Example.Cards;
 
 [Pool(typeof(ColorlessCardPool))]
-public sealed class GrantDeckDamageBlockComponentCard() : ComponentsCardModel(0, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
+public sealed class GrantDeckDamageBlockComponentCard()
+    : ComponentsCardModel(0, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
 {
     public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
 
-    protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
+    protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay,
+        ComponentContext componentContext)
     {
         foreach (var componentsCard in PileType.Deck.GetPile(Owner).Cards.OfType<IComponentsCardModel>().ToArray())
             componentsCard.AddComponent(new DamageBlockComponent { Damage = 1, Block = 1 });
@@ -25,4 +27,3 @@ public sealed class GrantDeckDamageBlockComponentCard() : ComponentsCardModel(0,
         return Task.CompletedTask;
     }
 }
-

@@ -79,23 +79,23 @@
 
     <ItemGroup>
         <PackageReference Include="Alchyr.Sts2.BaseLib" Version="*" PrivateAssets="All"/>
-<!--        <PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="*"/>-->
+        <!--<PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="*"/>-->
         <AdditionalFiles Include="MinionLib/localization/**/*.json"/>
     </ItemGroup>
 
     <ItemGroup>
         <!-- 屏蔽源生成器项目 -->
-        <Compile Remove="MinionLib.Generators\**" />
-        <Content Remove="MinionLib.Generators\**" />
-        <None Remove="MinionLib.Generators\**" />
-        <EmbeddedResource Remove="MinionLib.Generators\**" />
+        <Compile Remove="MinionLib.Generators\**"/>
+        <Content Remove="MinionLib.Generators\**"/>
+        <None Remove="MinionLib.Generators\**"/>
+        <EmbeddedResource Remove="MinionLib.Generators\**"/>
     </ItemGroup>
 
     <ItemGroup>
         <!-- 引入生成器 -->
         <ProjectReference Include="MinionLib.Generators\MinionLib.Generators.csproj"
                           OutputItemType="Analyzer"
-                          ReferenceOutputAssembly="false" />
+                          ReferenceOutputAssembly="false"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -123,12 +123,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include=".agent/*" />
-        <Content Include="LICENSE" />
+        <Content Include=".agent/*"/>
+        <Content Include="LICENSE"/>
         <Content Include="README.md"/>
         <Content Include="docs/**/*"/>
         <Content Include="Example/MinionTest/**"/>
-        <None Include="Tools\ComponentCodeGeneration\**" />
+        <None Include="Tools\ComponentCodeGeneration\**"/>
     </ItemGroup>
 
     <Target Name="CheckDependencyPaths">

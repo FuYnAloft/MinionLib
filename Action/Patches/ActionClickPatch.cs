@@ -3,8 +3,8 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.ControllerInput;
-using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Runs;
@@ -77,7 +77,7 @@ public static class ActionClickPatch
         }
 
         if (actor.PetOwner != null && !LocalContext.IsMe(actor.PetOwner)) return;
-        
+
         if (actor.IsPlayer && !LocalContext.IsMe(actor)) return;
 
         if (actor.CombatState == null || actor.CombatState.CurrentSide != actor.Side) return;

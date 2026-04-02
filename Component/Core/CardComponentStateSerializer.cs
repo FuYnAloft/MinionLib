@@ -173,19 +173,17 @@ public static class CardComponentStateSerializer
         if (property.Name == AmountPropertyName && property.PropertyType == typeof(int))
             return true;
 
-        if (Attribute.IsDefined(property, typeof(ComponentStateAttribute), inherit: true))
+        if (Attribute.IsDefined(property, typeof(ComponentStateAttribute), true))
             return true;
 
-        return Attribute.IsDefined(property, typeof(SavedPropertyAttribute), inherit: true);
+        return Attribute.IsDefined(property, typeof(SavedPropertyAttribute), true);
     }
 
     private sealed class NullOwner : IComponentsCardModel
     {
         public static readonly NullOwner Instance = new();
-
         public IReadOnlyList<ICardComponent> Components => [];
         public IEnumerable<ICardComponent> CanonicalComponents => [];
-
         public T AddComponent<T>(T component) where T : ICardComponent => component;
         public bool RemoveComponent<T>() where T : ICardComponent => false;
         public int RemoveComponents<T>() where T : ICardComponent => 0;

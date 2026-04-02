@@ -6,8 +6,7 @@ namespace MinionLib.Component;
 
 public abstract partial class AmountCardComponent : CardComponent
 {
-    [ComponentState<DynamicVarFactory>]
-    public partial decimal Amount { get; set; }
+    [ComponentState<DynamicVarFactory>] public partial decimal Amount { get; set; }
 
     public override ICardComponent? MergeWith(ICardComponent incoming)
     {

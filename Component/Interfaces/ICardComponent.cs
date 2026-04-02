@@ -9,7 +9,7 @@ public partial interface ICardComponent
     string ComponentId { get; }
 
     IComponentsCardModel? ComponentsCard { get; }
-    
+
     CardModel? Card => ComponentsCard as CardModel;
 
     void Attach(IComponentsCardModel card);
@@ -21,13 +21,13 @@ public partial interface ICardComponent
     ICardComponent? MergeWith(ICardComponent incoming);
 
     DynamicVarSet DynamicVars { get; }
-    
+
     bool ShouldGlowGoldInternal => false;
 
     bool ShouldGlowRedInternal => false;
 
     bool HasTurnEndInHandEffect => false;
-    
+
     IEnumerable<IHoverTip> HoverTips => [];
 
     string GetFormattedPrefix();
@@ -36,11 +36,11 @@ public partial interface ICardComponent
 }
 
 /// <summary>
-/// Marker return value for MergeWith: keep both components and skip merge replacement.
+///     Marker return value for MergeWith: keep both components and skip merge replacement.
 /// </summary>
 public sealed class KeepsTwo : ICardComponent
 {
-    public static KeepsTwo Instance { get; } = new KeepsTwo();
+    public static KeepsTwo Instance { get; } = new();
 
     private KeepsTwo()
     {

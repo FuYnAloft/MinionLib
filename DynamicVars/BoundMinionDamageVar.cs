@@ -10,7 +10,6 @@ namespace MinionLib.DynamicVars;
 
 public sealed class BoundMinionDamageVar(string name, decimal damage, ValueProp props) : DynamicVar(name, damage)
 {
-
     public BoundMinionDamageVar(decimal damage, ValueProp props) : this("BoundMinionDamage", damage, props)
     {
     }
@@ -33,7 +32,7 @@ public sealed class BoundMinionDamageVar(string name, decimal damage, ValueProp 
         }
 
         amount = Hook.ModifyDamage(card.Owner.RunState, card.CombatState, target, minion, amount, props, card,
-            ModifyDamageHookType.All, previewMode, out var _);
+            ModifyDamageHookType.All, previewMode, out _);
         PreviewValue = amount;
     }
 }

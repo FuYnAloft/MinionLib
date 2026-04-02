@@ -17,5 +17,3 @@ public sealed class AwaitCard() : CustomCardModel(0, CardType.Skill, CardRarity.
         await Cmd.Wait(3.0f);
     }
 }
-
-

@@ -5,6 +5,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using MinionLib.Initialization;
+
 namespace MinionLib;
 
 [ModInitializer(nameof(Initialize))]

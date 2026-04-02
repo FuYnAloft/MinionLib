@@ -62,4 +62,3 @@ public static class ComponentDescriptionRawCachePatch
         return text;
     }
 }
-

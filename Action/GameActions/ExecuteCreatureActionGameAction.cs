@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
@@ -5,7 +6,6 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Context;
 
 namespace MinionLib.Action.GameActions;
 
@@ -43,7 +43,8 @@ public sealed class ExecuteCreatureActionGameAction : GameAction
         ActionModelId = action.Id;
     }
 
-    public ExecuteCreatureActionGameAction(Player owner, uint actorCombatId, ModelId actionModelId, uint? targetCombatId)
+    public ExecuteCreatureActionGameAction(Player owner, uint actorCombatId, ModelId actionModelId,
+        uint? targetCombatId)
     {
         Owner = owner;
         ActorCombatId = actorCombatId;
@@ -139,15 +140,15 @@ public sealed class ExecuteCreatureActionGameAction : GameAction
     {
         return new NetExecuteCreatureActionGameAction
         {
-            ActorCombatId = this.ActorCombatId,
-            ActionModelId = this.ActionModelId,
-            TargetCombatId = this.TargetCombatId
+            ActorCombatId = ActorCombatId,
+            ActionModelId = ActionModelId,
+            TargetCombatId = TargetCombatId
         };
     }
 
     public override string ToString()
     {
-        return $"{nameof(ExecuteCreatureActionGameAction)} owner={OwnerId} actor={ActorCombatId} action={ActionModelId.Entry} target={TargetCombatId?.ToString() ?? "null"}";
+        return
+            $"{nameof(ExecuteCreatureActionGameAction)} owner={OwnerId} actor={ActorCombatId} action={ActionModelId.Entry} target={TargetCombatId?.ToString() ?? "null"}";
     }
 }
-

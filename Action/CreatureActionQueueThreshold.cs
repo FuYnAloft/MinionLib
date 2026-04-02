@@ -53,5 +53,3 @@ internal static class CreatureActionQueueThreshold
         return QueuedCount.TryGetValue((actorCombatId, actionId), out var value) ? value : 0;
     }
 }
-
-

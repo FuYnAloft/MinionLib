@@ -76,7 +76,7 @@ public abstract class MinionBoundCardModel(
 {
     public uint? BoundMinionCombatId { get; set; }
     public string? BoundMinionNameSnapshot { get; set; }
-    
+
     protected override void AddExtraArgsToDescription(LocString description)
     {
         base.AddExtraArgsToDescription(description);

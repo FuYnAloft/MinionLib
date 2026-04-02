@@ -33,9 +33,7 @@ public sealed class BoundMinionBlockVar(string name, decimal value, ValueProp pr
 
         var amount = minion.GetPowerAmount<DexterityPower>() + BaseValue;
         if (runGlobalHooks)
-        {
             amount = Hook.ModifyBlock(card.CombatState!, card.Owner.Creature, amount, props, card, null, out _);
-        }
 
         PreviewValue = amount;
     }

@@ -19,12 +19,12 @@ public static class CustomTargetTypeManager
         CustomTypeDefinitions.Add(targetType, customTargetType);
         return targetType;
     }
-    
+
     public static bool IsCustomTargetType(TargetType targetType)
     {
         return RegisteredCustomTypes.Contains(targetType);
     }
-    
+
     public static bool TryGetCustomTargetType(TargetType targetType,
         [MaybeNullWhen(false)] out CustomTargetType customTargetType, bool includeBuiltin = true)
     {

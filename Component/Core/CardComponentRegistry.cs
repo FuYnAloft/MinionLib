@@ -11,8 +11,8 @@ public static class CardComponentRegistry
     static CardComponentRegistry()
     {
         var componentTypes = ReflectionHelper.GetSubtypesInMods<CardComponent>()
-             .OrderBy(t => t.FullName, StringComparer.Ordinal)
-             .ToList();
+            .OrderBy(t => t.FullName, StringComparer.Ordinal)
+            .ToList();
 
         foreach (var componentType in componentTypes)
             Register(componentType);
@@ -44,7 +44,8 @@ public static class CardComponentRegistry
             throw new InvalidOperationException($"Unknown component id '{componentId}'");
 
         return (ICardComponent)(Activator.CreateInstance(componentType)
-             ?? throw new InvalidOperationException($"Cannot instantiate component type {componentType}"));
+                                ?? throw new InvalidOperationException(
+                                    $"Cannot instantiate component type {componentType}"));
     }
 
     private static void Register(Type componentType)

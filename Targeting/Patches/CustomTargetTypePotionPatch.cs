@@ -38,7 +38,8 @@ public static class CustomTargetTypePotionPatch
     private static bool UsePotionPrefix(NPotionHolder __instance, ref Task __result)
     {
         var potion = __instance.Potion?.Model;
-        if (potion == null || !CustomTargetTypeManager.TryGetCustomTargetType(potion.TargetType, out var customType, includeBuiltin:false))
+        if (potion == null ||
+            !CustomTargetTypeManager.TryGetCustomTargetType(potion.TargetType, out var customType, false))
             return true;
 
         if (!customType.IsSingleTarget)
@@ -58,7 +59,7 @@ public static class CustomTargetTypePotionPatch
     private static bool TargetNodePrefix(NPotionHolder __instance, TargetType targetType, ref Task __result)
     {
         var potion = __instance.Potion?.Model;
-        if (potion == null || !CustomTargetTypeManager.TryGetCustomTargetType(targetType, out var customType, includeBuiltin:false))
+        if (potion == null || !CustomTargetTypeManager.TryGetCustomTargetType(targetType, out var customType, false))
             return true;
 
         __result = TargetNodeCustom(__instance, potion, targetType, customType);
@@ -70,7 +71,8 @@ public static class CustomTargetTypePotionPatch
     private static void PopupReadyPostfix(NPotionPopup __instance)
     {
         var potion = AccessTools.Property(typeof(NPotionPopup), "Potion")?.GetValue(__instance) as PotionModel;
-        if (potion == null || !CustomTargetTypeManager.TryGetCustomTargetType(potion.TargetType, out var customType, includeBuiltin:false))
+        if (potion == null ||
+            !CustomTargetTypeManager.TryGetCustomTargetType(potion.TargetType, out var customType, false))
             return;
 
         var useButton = UseButtonRef(__instance);
@@ -208,4 +210,3 @@ public static class CustomTargetTypePotionPatch
         return null;
     }
 }
-

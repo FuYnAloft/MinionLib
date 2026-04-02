@@ -16,7 +16,7 @@ public static class SmartDynamicVarsLocArgs
         public required MethodInfo? GeneratorMethod { get; init; }
         public bool HasGenerator => GeneratorMethod != null;
     }
-    
+
     private static ComponentStatePropertyRule[] GetComponentStatePropertyRules(Type componentType)
     {
         if (ComponentStatePropertyRuleCache.TryGetValue(componentType, out var cached))
@@ -28,7 +28,7 @@ public static class SmartDynamicVarsLocArgs
             .Select(p => new
             {
                 Property = p,
-                Attribute = p.GetCustomAttribute<ComponentStateAttribute>(inherit: true)
+                Attribute = p.GetCustomAttribute<ComponentStateAttribute>(true)
             })
             .Where(x => x.Attribute != null)
             .OrderBy(x => x.Property.Name, StringComparer.Ordinal)
@@ -50,7 +50,7 @@ public static class SmartDynamicVarsLocArgs
             return null;
 
         var generateMethod = generatorType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static,
-            binder: null, [typeof(string), typeof(object[])], modifiers: null);
+            null, [typeof(string), typeof(object[])], null);
 
         if (generateMethod == null || !typeof(DynamicVar).IsAssignableFrom(generateMethod.ReturnType))
             throw new InvalidOperationException(
@@ -83,10 +83,7 @@ public static class SmartDynamicVarsLocArgs
             }
 
             var propertyValue = rule.Property.GetValue(component);
-            if (TryConvertToDecimal(propertyValue, out var numericValue))
-            {
-                dynamicVar.BaseValue = numericValue;
-            }
+            if (TryConvertToDecimal(propertyValue, out var numericValue)) dynamicVar.BaseValue = numericValue;
 
             vars.Add(dynamicVar);
         }
@@ -150,13 +147,9 @@ public static class SmartDynamicVarsLocArgs
                 return;
             default:
                 if (TryConvertToDecimal(value, out var numeric))
-                {
                     loc.Add(name, numeric);
-                }
                 else
-                {
                     loc.AddObj(name, value);
-                }
 
                 return;
         }
@@ -181,5 +174,4 @@ public static class SmartDynamicVarsLocArgs
             return false;
         }
     }
-
 }

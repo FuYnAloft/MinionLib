@@ -9,6 +9,7 @@ namespace MinionLib.Targeting.Pets;
 public class AnyMinionOrOwnerTargetType : CustomTargetType
 {
     public override bool IsSingleTarget => true;
+
     public override bool GeneralPredicate(Creature target)
     {
         return target.IsAlive && (target.IsPlayer || target is
@@ -20,7 +21,7 @@ public class AnyMinionOrOwnerTargetType : CustomTargetType
         return GeneralPredicate(target) && (target.PetOwner == card.Owner || target.Player == card.Owner);
     }
 
-    public override bool PotionPredicate(Creature target, MegaCrit.Sts2.Core.Models.PotionModel potion)
+    public override bool PotionPredicate(Creature target, PotionModel potion)
     {
         return GeneralPredicate(target) && (target.PetOwner == potion.Owner || target.Player == potion.Owner);
     }

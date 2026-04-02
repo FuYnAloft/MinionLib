@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MinionLib.Targeting.Pets;
 using static MinionLib.Targeting.CustomTargetTypeManager;
+
 namespace MinionLib.Targeting;
 
 public static class MinionTargetTypes

@@ -1,4 +1,3 @@
-using System.Linq;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
@@ -13,11 +12,13 @@ using MinionLib.Example.Components;
 namespace MinionLib.Example.Cards;
 
 [Pool(typeof(ColorlessCardPool))]
-public sealed class GrantHealComponentCard() : ComponentsCardModel(0, CardType.Skill, CardRarity.Common, TargetType.Self)
+public sealed class GrantHealComponentCard()
+    : ComponentsCardModel(0, CardType.Skill, CardRarity.Common, TargetType.Self)
 {
     public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
 
-    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
+    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay,
+        ComponentContext componentContext)
     {
         var selectedCard = (await CardSelectCmd.FromHand(
             choiceContext,
@@ -31,4 +32,3 @@ public sealed class GrantHealComponentCard() : ComponentsCardModel(0, CardType.S
         componentsCard.AddComponent(new HealOwnerComponent { Amount = 3 });
     }
 }
-

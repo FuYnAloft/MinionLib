@@ -37,8 +37,7 @@ public struct NetExecuteCreatureActionGameAction : INetAction
 
     public override string ToString()
     {
-        return $"{nameof(NetExecuteCreatureActionGameAction)} actor={ActorCombatId} action={ActionModelId.Entry} target={TargetCombatId?.ToString() ?? "null"}";
+        return
+            $"{nameof(NetExecuteCreatureActionGameAction)} actor={ActorCombatId} action={ActionModelId.Entry} target={TargetCombatId?.ToString() ?? "null"}";
     }
 }
-
-

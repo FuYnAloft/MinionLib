@@ -10,7 +10,6 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MinionLib.Commands;
 using MinionLib.Example.Minions;
 using MinionLib.Models;
-using MinionLib.Utilities;
 
 namespace MinionLib.Example.Cards;
 

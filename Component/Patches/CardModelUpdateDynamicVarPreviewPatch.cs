@@ -20,11 +20,7 @@ public static class CardModelUpdateDynamicVarPreviewPatch
         var runGlobalHooks = __instance.CombatState != null;
 
         foreach (var component in componentsCard.Components)
-        {
-            foreach (var dynVar in component.DynamicVars.Values)
-            {
-                dynVar.UpdateCardPreview(__instance, (dynamic)previewMode, target, runGlobalHooks);
-            }
-        }
+        foreach (var dynVar in component.DynamicVars.Values)
+            dynVar.UpdateCardPreview(__instance, (dynamic)previewMode, target, runGlobalHooks);
     }
 }

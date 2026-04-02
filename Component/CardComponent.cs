@@ -12,7 +12,7 @@ public abstract partial class CardComponent : ICardComponent
     public string ComponentId => CardComponentRegistry.GetComponentId(GetType());
 
     public IComponentsCardModel? ComponentsCard { get; private set; }
-    
+
     public CardModel? Card => ComponentsCard as CardModel;
 
     public void Attach(IComponentsCardModel card)
