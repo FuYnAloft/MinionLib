@@ -19,9 +19,11 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
     private const string ComponentStateGenericAttributeMetadataName = "MinionLib.Component.Core.ComponentStateAttribute`1";
     private const string NoGeneratedSerializationMetadataName = "MinionLib.Component.Core.NoGeneratedSerializationAttribute";
     private const string CardComponentMetadataName = "MinionLib.Component.CardComponent";
+    private const string ICardComponentMetadataName = "MinionLib.Component.Interfaces.ICardComponent";
     private const string FullyQualifiedGeneratedSerializableMetadataName = "global::" + GeneratedSerializableMetadataName;
     private const string FullyQualifiedComponentStateAttributeMetadataName = "global::" + ComponentStateAttributeMetadataName;
     private const string FullyQualifiedCardComponentMetadataName = "global::" + CardComponentMetadataName;
+    private const string FullyQualifiedICardComponentMetadataName = "global::" + ICardComponentMetadataName;
 
     private static readonly DiagnosticDescriptor ImplementationMustBeClass = new(
         id: "MLSG100",
@@ -31,12 +33,20 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    private static readonly DiagnosticDescriptor MissingParameterlessCtor = new(
-        id: "MLSG101",
-        title: "Missing parameterless constructor",
-        messageFormat: "Type '{0}' implements IGeneratedBinarySerializable and must define a parameterless constructor",
+    private static readonly DiagnosticDescriptor ParameterlessCtorMustBePublic = new(
+        id: "MLSG103",
+        title: "Parameterless constructor must be public",
+        messageFormat: "Type '{0}' defines a parameterless constructor but it is not public",
         category: "MinionLib.Generators",
         DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor JsonFallbackWarning = new(
+        id: "MLSG104",
+        title: "ComponentState property falls back to JSON serialization",
+        messageFormat: "Property '{0}' on type '{1}' uses JSON fallback serialization",
+        category: "MinionLib.Generators",
+        DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
     private static readonly DiagnosticDescriptor TypeMustBePartialForGeneration = new(
@@ -45,6 +55,14 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         messageFormat: "Type '{0}' is eligible for generated serialization but is not declared partial; generation skipped",
         category: "MinionLib.Generators",
         DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor ICardComponentShouldBeSealedOrAbstract = new(
+        id: "MLSG202",
+        title: "ICardComponent implementation should be sealed or abstract",
+        messageFormat: "Type '{0}' implements ICardComponent and should be declared sealed or abstract",
+        category: "MinionLib.Generators",
+        DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -80,6 +98,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         var namespaceName = type.ContainingNamespace.IsGlobalNamespace ? null : type.ContainingNamespace.ToDisplayString();
         var isClass = type.TypeKind == TypeKind.Class;
         var properties = isClass ? GetStateProperties(type) : ImmutableArray<PropertyGenerationData>.Empty;
+        var parameterlessCtorAccessibility = GetParameterlessCtorAccessibility(type);
 
         return new TypeGenerationData(
             HintName: BuildHintName(type),
@@ -87,10 +106,13 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             NamespaceName: namespaceName,
             ContainingTypes: BuildContainingTypeChain(type),
             IsClass: isClass,
-            HasParameterlessConstructor: HasParameterlessConstructor(type),
+            ParameterlessCtorAccessibility: parameterlessCtorAccessibility,
             HasNoGeneratedSerializationAttribute: HasAttribute(type, NoGeneratedSerializationMetadataName),
             HasExplicitSerializationMethods: HasExplicitSerializationMethods(type),
             IsPartial: IsPartial(type),
+            IsAbstract: type.IsAbstract,
+            IsSealed: type.IsSealed,
+            ImplementsICardComponent: Implements(type, FullyQualifiedICardComponentMetadataName),
             IsCardComponentDerived: InheritsFrom(type, FullyQualifiedCardComponentMetadataName),
             TypeLocation: DiagnosticLocationData.FromLocation(type.Locations.FirstOrDefault()),
             Properties: properties);
@@ -103,7 +125,10 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             .Where(static p => p.GetMethod != null && p.SetMethod != null)
             .Where(static p => p.GetAttributes().Any(IsComponentStateAttribute))
             .OrderBy(static p => p.Name, StringComparer.Ordinal)
-            .Select(static p => new PropertyGenerationData(p.Name, TypeShapeData.FromSymbol(p.Type)))
+            .Select(static p => new PropertyGenerationData(
+                p.Name,
+                DiagnosticLocationData.FromLocation(p.Locations.FirstOrDefault()),
+                TypeShapeData.FromSymbol(p.Type)))
             .ToImmutableArray();
     }
 
@@ -127,16 +152,36 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 continue;
             }
 
-            if (!type.HasParameterlessConstructor)
+            if (type.ImplementsICardComponent && !type.IsAbstract && !type.IsSealed)
+                context.ReportDiagnostic(Diagnostic.Create(ICardComponentShouldBeSealedOrAbstract, type.TypeLocation.ToLocation(), type.TypeDisplayName));
+
+            foreach (var property in type.Properties)
             {
-                context.ReportDiagnostic(Diagnostic.Create(MissingParameterlessCtor, type.TypeLocation.ToLocation(), type.TypeDisplayName));
+                if (!property.Type.UsesJsonFallback)
+                    continue;
+
+                context.ReportDiagnostic(Diagnostic.Create(
+                    JsonFallbackWarning,
+                    property.PropertyLocation.ToLocation(),
+                    property.PropertyName,
+                    type.TypeDisplayName));
             }
 
-            if (type.HasNoGeneratedSerializationAttribute || type.HasExplicitSerializationMethods)
+            if (type.HasNoGeneratedSerializationAttribute)
                 continue;
 
-            if (type.Properties.Length == 0)
+            var needsCtorGeneration = !type.IsAbstract && type.ParameterlessCtorAccessibility is null;
+            var needsMethodGeneration = !type.HasExplicitSerializationMethods && type.Properties.Length > 0;
+            if (!needsCtorGeneration && !needsMethodGeneration)
                 continue;
+
+            if (needsMethodGeneration
+                && !type.IsAbstract
+                && type.ParameterlessCtorAccessibility is not null
+                && type.ParameterlessCtorAccessibility != Accessibility.Public)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(ParameterlessCtorMustBePublic, type.TypeLocation.ToLocation(), type.TypeDisplayName));
+            }
 
             if (!type.IsPartial)
             {
@@ -144,16 +189,17 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 continue;
             }
 
-            var source = BuildSource(type);
+            var source = BuildSource(type, needsCtorGeneration, needsMethodGeneration);
             context.AddSource(type.HintName, SourceText.From(source, Encoding.UTF8));
         }
     }
 
-    private static string BuildSource(TypeGenerationData type)
+    private static string BuildSource(TypeGenerationData type, bool generateCtor, bool generateMethods)
     {
         var sb = new StringBuilder();
         sb.AppendLine("// <auto-generated />");
         sb.AppendLine("#nullable enable");
+        sb.AppendLine("#pragma warning disable CS0618");
 
         if (!string.IsNullOrWhiteSpace(type.NamespaceName))
         {
@@ -163,29 +209,40 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
 
         AppendContainingTypeDeclarations(sb, type.ContainingTypes);
 
-        var methodPrefix = type.IsCardComponentDerived ? "public override" : "public";
-        var uniqueId = 0;
+        if (generateCtor)
+        {
+            sb.AppendLine();
+            sb.AppendLine("    [global::System.Obsolete(\"For deserialization only\", false)]");
+            sb.Append("    public ").Append(GetInnermostTypeName(type.ContainingTypes)).AppendLine("() { }");
+            sb.AppendLine();
+        }
 
-        sb.Append("    ").Append(methodPrefix)
-            .AppendLine(" void Serialize(global::System.Buffers.ArrayBufferWriter<byte> writer)");
-        sb.AppendLine("    {");
-        if (type.IsCardComponentDerived)
-            sb.AppendLine("        base.Serialize(writer);");
-        for (var i = 0; i < type.Properties.Length; i++)
-            EmitSerializeForType(sb, type.Properties[i].Type, "this." + type.Properties[i].PropertyName, 2, ref uniqueId);
-        sb.AppendLine("    }");
-        sb.AppendLine();
+        if (generateMethods)
+        {
+            var methodPrefix = type.IsCardComponentDerived ? "public override" : "public";
+            var uniqueId = 0;
 
-        sb.Append("    ").Append(methodPrefix)
-            .AppendLine(" bool Deserialize(ref global::System.ReadOnlySpan<byte> reader)");
-        sb.AppendLine("    {");
-        if (type.IsCardComponentDerived)
-            sb.AppendLine("        if (!base.Deserialize(ref reader)) return false;");
-        for (var i = 0; i < type.Properties.Length; i++)
-            EmitDeserializeForType(sb, type.Properties[i].Type, "this." + type.Properties[i].PropertyName, 2, ref uniqueId);
+            sb.Append("    ").Append(methodPrefix)
+                .AppendLine(" void Serialize(global::System.Buffers.ArrayBufferWriter<byte> writer)");
+            sb.AppendLine("    {");
+            if (type.IsCardComponentDerived)
+                sb.AppendLine("        base.Serialize(writer);");
+            for (var i = 0; i < type.Properties.Length; i++)
+                EmitSerializeForType(sb, type.Properties[i].Type, "this." + type.Properties[i].PropertyName, 2, ref uniqueId);
+            sb.AppendLine("    }");
+            sb.AppendLine();
 
-        sb.AppendLine("        return true;");
-        sb.AppendLine("    }");
+            sb.Append("    ").Append(methodPrefix)
+                .AppendLine(" bool Deserialize(ref global::System.ReadOnlySpan<byte> reader)");
+            sb.AppendLine("    {");
+            if (type.IsCardComponentDerived)
+                sb.AppendLine("        if (!base.Deserialize(ref reader)) return false;");
+            for (var i = 0; i < type.Properties.Length; i++)
+                EmitDeserializeForType(sb, type.Properties[i].Type, "this." + type.Properties[i].PropertyName, 2, ref uniqueId);
+
+            sb.AppendLine("        return true;");
+            sb.AppendLine("    }");
+        }
 
         AppendContainingTypeClosures(sb, type.ContainingTypes.Length);
         return sb.ToString();
@@ -202,7 +259,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).Append("global::MinionLib.Component.Core.SerializationUtils.WriteBoolean(writer, ").Append(has).AppendLine(");");
             sb.Append(p).Append("if (").Append(has).AppendLine(")");
             sb.Append(p).AppendLine("{");
-            EmitSerializeForType(sb, type.NullableUnderlying, expr + "!", indent + 1, ref id);
+            EmitSerializeForType(sb, type.NullableUnderlying, EnsureNullForgiven(expr), indent + 1, ref id);
             sb.Append(p).AppendLine("}");
             return;
         }
@@ -213,18 +270,19 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             {
                 var len = "__len_" + id++;
                 var i = "__i_" + id++;
+                var notNullExpr = EnsureNullForgiven(expr);
                 sb.Append(p).Append("if (").Append(expr).AppendLine(" == null)");
                 sb.Append(p).AppendLine("{");
                 sb.Append(p).AppendLine("    global::MinionLib.Component.Core.SerializationUtils.WriteInt32(writer, -1);");
                 sb.Append(p).AppendLine("}");
                 sb.Append(p).AppendLine("else");
                 sb.Append(p).AppendLine("{");
-                sb.Append(p).Append("    var ").Append(len).Append(" = ").Append(expr).AppendLine("!.Length;");
+                sb.Append(p).Append("    var ").Append(len).Append(" = ").Append(notNullExpr).AppendLine(".Length;");
                 sb.Append(p).Append("    global::MinionLib.Component.Core.SerializationUtils.WriteInt32(writer, ").Append(len).AppendLine(");");
                 sb.Append(p).Append("    for (var ").Append(i).Append(" = 0; ").Append(i).Append(" < ").Append(len).Append("; ").Append(i)
                     .AppendLine("++)");
                 sb.Append(p).AppendLine("    {");
-                EmitSerializeForType(sb, type.ElementType, expr + "![" + i + "]", indent + 2, ref id);
+                EmitSerializeForType(sb, type.ElementType, notNullExpr + "[" + i + "]", indent + 2, ref id);
                 sb.Append(p).AppendLine("    }");
                 sb.Append(p).AppendLine("}");
                 return;
@@ -233,18 +291,19 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             {
                 var len = "__len_" + id++;
                 var i = "__i_" + id++;
+                var notNullExpr = EnsureNullForgiven(expr);
                 sb.Append(p).Append("if (").Append(expr).AppendLine(" == null)");
                 sb.Append(p).AppendLine("{");
                 sb.Append(p).AppendLine("    global::MinionLib.Component.Core.SerializationUtils.WriteInt32(writer, -1);");
                 sb.Append(p).AppendLine("}");
                 sb.Append(p).AppendLine("else");
                 sb.Append(p).AppendLine("{");
-                sb.Append(p).Append("    var ").Append(len).Append(" = ").Append(expr).AppendLine("!.Count;");
+                sb.Append(p).Append("    var ").Append(len).Append(" = ").Append(notNullExpr).AppendLine(".Count;");
                 sb.Append(p).Append("    global::MinionLib.Component.Core.SerializationUtils.WriteInt32(writer, ").Append(len).AppendLine(");");
                 sb.Append(p).Append("    for (var ").Append(i).Append(" = 0; ").Append(i).Append(" < ").Append(len).Append("; ").Append(i)
                     .AppendLine("++)");
                 sb.Append(p).AppendLine("    {");
-                EmitSerializeForType(sb, type.ElementType, expr + "![" + i + "]", indent + 2, ref id);
+                EmitSerializeForType(sb, type.ElementType, notNullExpr + "[" + i + "]", indent + 2, ref id);
                 sb.Append(p).AppendLine("    }");
                 sb.Append(p).AppendLine("}");
                 return;
@@ -266,13 +325,13 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 sb.Append(p).AppendLine("else");
                 sb.Append(p).AppendLine("{");
                 sb.Append(p).AppendLine("    global::MinionLib.Component.Core.SerializationUtils.WriteBoolean(writer, true);");
-                sb.Append(p).Append("    global::MinionLib.Component.Core.SerializationUtils.WriteSerializableBlock(writer, ").Append(expr)
-                    .AppendLine("!);");
+                sb.Append(p).Append("    global::MinionLib.Component.Core.SerializationUtils.WriteSerializableBlock(writer, ")
+                    .Append(EnsureNullForgiven(expr)).AppendLine(");");
                 sb.Append(p).AppendLine("}");
                 return;
             default:
                 sb.Append(p).Append("global::MinionLib.Component.Core.SerializationUtils.WriteJson<")
-                    .Append(type.DisplayName).Append(">(writer, ").Append(expr).AppendLine(");");
+                    .Append(type.DisplayName).Append(">(writer, ").Append(EnsureNullForgiven(expr)).AppendLine(");");
                 return;
         }
     }
@@ -550,18 +609,25 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         return type.CanAssignNullOnDeserialize ? " = default;" : " = default!;";
     }
 
+    private static string EnsureNullForgiven(string expr)
+    {
+        return expr.EndsWith("!", StringComparison.Ordinal) ? expr : expr + "!";
+    }
+
     private static bool Implements(INamedTypeSymbol type, string fullyQualifiedInterfaceMetadataName)
     {
         return type.AllInterfaces.Any(i => i.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == fullyQualifiedInterfaceMetadataName);
     }
 
-    private static bool HasParameterlessConstructor(INamedTypeSymbol type)
+    private static Accessibility? GetParameterlessCtorAccessibility(INamedTypeSymbol type)
     {
         if (type.InstanceConstructors.Length == 0)
-            return true;
+            return null;
 
-        return type.InstanceConstructors.Any(static ctor => ctor.Parameters.Length == 0 && !ctor.IsStatic);
+        var ctor = type.InstanceConstructors.FirstOrDefault(static c => c.Parameters.Length == 0 && !c.IsStatic);
+        return ctor?.DeclaredAccessibility;
     }
+
 
     private static bool HasAttribute(ISymbol symbol, string attributeMetadataName)
     {
@@ -625,6 +691,11 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                    .Replace('.', '_') + ".BinarySerialization.g.cs";
     }
 
+    private static string GetInnermostTypeName(ImmutableArray<ContainingTypeData> containingTypes)
+    {
+        return containingTypes[containingTypes.Length - 1].Name;
+    }
+
     private static void AppendContainingTypeDeclarations(StringBuilder builder, ImmutableArray<ContainingTypeData> containingTypes)
     {
         for (var i = 0; i < containingTypes.Length; i++)
@@ -668,15 +739,21 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         string? NamespaceName,
         ImmutableArray<ContainingTypeData> ContainingTypes,
         bool IsClass,
-        bool HasParameterlessConstructor,
+        Accessibility? ParameterlessCtorAccessibility,
         bool HasNoGeneratedSerializationAttribute,
         bool HasExplicitSerializationMethods,
         bool IsPartial,
+        bool IsAbstract,
+        bool IsSealed,
+        bool ImplementsICardComponent,
         bool IsCardComponentDerived,
         DiagnosticLocationData TypeLocation,
         ImmutableArray<PropertyGenerationData> Properties);
 
-    private readonly record struct PropertyGenerationData(string PropertyName, TypeShapeData Type);
+    private readonly record struct PropertyGenerationData(
+        string PropertyName,
+        DiagnosticLocationData PropertyLocation,
+        TypeShapeData Type);
 
     private readonly record struct ContainingTypeData(
         string Keyword,
@@ -688,59 +765,80 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         TypeSerializationKind Kind,
         PrimitiveSerializationKind PrimitiveKind,
         bool CanAssignNullOnDeserialize,
+        bool SuppressJsonFallbackWarning,
         bool HasNullableWrapper,
         TypeShapeData? NullableUnderlying,
         TypeShapeData? ElementType,
         string? ListTypeName,
         TypeShapeData? EnumUnderlying)
     {
+        public bool UsesJsonFallback =>
+            (Kind == TypeSerializationKind.Json && !SuppressJsonFallbackWarning)
+            || (NullableUnderlying?.UsesJsonFallback ?? false)
+            || (ElementType?.UsesJsonFallback ?? false)
+            || (EnumUnderlying?.UsesJsonFallback ?? false);
+
         public static TypeShapeData FromSymbol(ITypeSymbol type)
         {
             var canAssignNull = ComputeCanAssignNullOnDeserialize(type);
 
-            if (type.NullableAnnotation == NullableAnnotation.Annotated
-                && type is not INamedTypeSymbol { SpecialType: SpecialType.System_String })
+            if (TryGetNullableValueUnderlyingType(type, out var nullableValueUnderlying))
             {
-                var underlying = RemoveNullable(type);
-                var normalizedUnderlying = underlying.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
+                var normalizedUnderlying = nullableValueUnderlying.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
+                var underlyingShape = FromSymbol(normalizedUnderlying);
                 return new TypeShapeData(
                     DisplayName: normalizedUnderlying.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                    Kind: TypeSerializationKind.Json,
-                    PrimitiveKind: PrimitiveSerializationKind.None,
+                    Kind: underlyingShape.Kind,
+                    PrimitiveKind: underlyingShape.PrimitiveKind,
                     CanAssignNullOnDeserialize: canAssignNull,
+                    SuppressJsonFallbackWarning: underlyingShape.SuppressJsonFallbackWarning,
                     HasNullableWrapper: true,
-                    NullableUnderlying: FromSymbol(normalizedUnderlying),
+                    NullableUnderlying: underlyingShape,
                     ElementType: null,
                     ListTypeName: null,
                     EnumUnderlying: null);
             }
 
+            if (type.NullableAnnotation == NullableAnnotation.Annotated
+                && !type.IsValueType
+                && type is not INamedTypeSymbol { SpecialType: SpecialType.System_String })
+            {
+                return FromSymbol(type.WithNullableAnnotation(NullableAnnotation.NotAnnotated)) with
+                {
+                    CanAssignNullOnDeserialize = canAssignNull
+                };
+            }
+
             if (type is IArrayTypeSymbol array && array.Rank == 1)
             {
+                var elementShape = FromSymbol(array.ElementType);
                 return new TypeShapeData(
                     DisplayName: type.WithNullableAnnotation(NullableAnnotation.NotAnnotated)
                         .ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                     Kind: TypeSerializationKind.Array,
                     PrimitiveKind: PrimitiveSerializationKind.None,
                     CanAssignNullOnDeserialize: canAssignNull,
+                    SuppressJsonFallbackWarning: false,
                     HasNullableWrapper: false,
                     NullableUnderlying: null,
-                    ElementType: FromSymbol(array.ElementType),
+                    ElementType: elementShape,
                     ListTypeName: null,
                     EnumUnderlying: null);
             }
 
             if (TryGetListElementType(type, out var listElement))
             {
+                var elementShape = FromSymbol(listElement!);
                 return new TypeShapeData(
                     DisplayName: type.WithNullableAnnotation(NullableAnnotation.NotAnnotated)
                         .ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                     Kind: TypeSerializationKind.List,
                     PrimitiveKind: PrimitiveSerializationKind.None,
                     CanAssignNullOnDeserialize: canAssignNull,
+                    SuppressJsonFallbackWarning: false,
                     HasNullableWrapper: false,
                     NullableUnderlying: null,
-                    ElementType: FromSymbol(listElement!),
+                    ElementType: elementShape,
                     ListTypeName: type.WithNullableAnnotation(NullableAnnotation.NotAnnotated)
                         .ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                     EnumUnderlying: null);
@@ -753,6 +851,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                     Kind: TypeSerializationKind.String,
                     PrimitiveKind: PrimitiveSerializationKind.None,
                     CanAssignNullOnDeserialize: canAssignNull,
+                    SuppressJsonFallbackWarning: false,
                     HasNullableWrapper: false,
                     NullableUnderlying: null,
                     ElementType: null,
@@ -768,6 +867,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                     Kind: TypeSerializationKind.Primitive,
                     PrimitiveKind: primitiveKind,
                     CanAssignNullOnDeserialize: canAssignNull,
+                    SuppressJsonFallbackWarning: false,
                     HasNullableWrapper: false,
                     NullableUnderlying: null,
                     ElementType: null,
@@ -777,27 +877,32 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
 
             if (type.TypeKind == TypeKind.Enum && type is INamedTypeSymbol enumType && enumType.EnumUnderlyingType != null)
             {
+                var enumUnderlying = FromSymbol(enumType.EnumUnderlyingType);
                 return new TypeShapeData(
                     DisplayName: type.WithNullableAnnotation(NullableAnnotation.NotAnnotated)
                         .ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                     Kind: TypeSerializationKind.Enum,
                     PrimitiveKind: PrimitiveSerializationKind.None,
                     CanAssignNullOnDeserialize: canAssignNull,
+                    SuppressJsonFallbackWarning: false,
                     HasNullableWrapper: false,
                     NullableUnderlying: null,
                     ElementType: null,
                     ListTypeName: null,
-                    EnumUnderlying: FromSymbol(enumType.EnumUnderlyingType));
+                    EnumUnderlying: enumUnderlying);
             }
 
             if (ImplementsSerializable(type))
             {
+                var namedType = (INamedTypeSymbol)type;
+                var canUseSerializablePath = CanUseSerializablePath(namedType);
                 return new TypeShapeData(
                     DisplayName: type.WithNullableAnnotation(NullableAnnotation.NotAnnotated)
                         .ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                    Kind: TypeSerializationKind.Serializable,
+                    Kind: canUseSerializablePath ? TypeSerializationKind.Serializable : TypeSerializationKind.Json,
                     PrimitiveKind: PrimitiveSerializationKind.None,
                     CanAssignNullOnDeserialize: canAssignNull,
+                    SuppressJsonFallbackWarning: !canUseSerializablePath,
                     HasNullableWrapper: false,
                     NullableUnderlying: null,
                     ElementType: null,
@@ -811,11 +916,40 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 Kind: TypeSerializationKind.Json,
                 PrimitiveKind: PrimitiveSerializationKind.None,
                 CanAssignNullOnDeserialize: canAssignNull,
+                SuppressJsonFallbackWarning: false,
                 HasNullableWrapper: false,
                 NullableUnderlying: null,
                 ElementType: null,
                 ListTypeName: null,
                 EnumUnderlying: null);
+        }
+
+        private static bool CanUseSerializablePath(INamedTypeSymbol type)
+        {
+            if (type.TypeKind != TypeKind.Class || type.IsAbstract)
+                return false;
+
+            if (type.InstanceConstructors.Length == 0)
+                return true;
+
+            var ctor = type.InstanceConstructors.FirstOrDefault(static c => c.Parameters.Length == 0 && !c.IsStatic);
+            if (ctor != null)
+                return ctor.DeclaredAccessibility == Accessibility.Public;
+
+            return IsPartial(type) && !HasAttribute(type, NoGeneratedSerializationMetadataName);
+        }
+
+        private static bool TryGetNullableValueUnderlyingType(ITypeSymbol type, out ITypeSymbol underlying)
+        {
+            if (type is INamedTypeSymbol named
+                && named.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
+            {
+                underlying = named.TypeArguments[0];
+                return true;
+            }
+
+            underlying = type;
+            return false;
         }
 
         private static bool TryGetListElementType(ITypeSymbol type, out ITypeSymbol? elementType)
@@ -871,14 +1005,6 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             return type.NullableAnnotation != NullableAnnotation.NotAnnotated;
         }
 
-        private static ITypeSymbol RemoveNullable(ITypeSymbol type)
-        {
-            if (type is INamedTypeSymbol named
-                && named.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
-                return named.TypeArguments[0];
-
-            return type.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
-        }
     }
 
     private enum TypeSerializationKind

@@ -17,13 +17,13 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
     private const string ComponentStateAttributeMetadataName = "MinionLib.Component.Core.ComponentStateAttribute";
     private const string ComponentStateGenericAttributeMetadataName = "MinionLib.Component.Core.ComponentStateAttribute`1";
 
-    private static readonly DiagnosticDescriptor PropertyMustBePartial = new(
-        id: "MLSG001",
-        title: "ComponentState property must be partial",
-        messageFormat: "Property '{0}' must be declared as 'partial' to use source-generated ComponentState backing implementation",
-        category: "MinionLib.Generators",
-        DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
+    private static readonly SymbolDisplayFormat FullyQualifiedWithNullable = new(
+        globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,
+        typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+        genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
+        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers
+                              | SymbolDisplayMiscellaneousOptions.UseSpecialTypes
+                              | SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
 
     private static readonly DiagnosticDescriptor ContainingTypeMustBePartial = new(
         id: "MLSG002",
@@ -72,7 +72,7 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
 
         var containingType = propertySymbol.ContainingType;
         var propertyName = propertySymbol.Name;
-        var typeFqn = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        var typeFqn = propertySymbol.Type.ToDisplayString(FullyQualifiedWithNullable);
         var namespaceName = propertySymbol.ContainingNamespace.IsGlobalNamespace
             ? null
             : propertySymbol.ContainingNamespace.ToDisplayString();
@@ -149,13 +149,7 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
     private static void Emit(SourceProductionContext context, PropertyData data)
     {
         if (!data.IsPropertyPartial)
-        {
-            context.ReportDiagnostic(Diagnostic.Create(
-                PropertyMustBePartial,
-                data.DiagnosticLocation.ToLocation(),
-                data.PropertyName));
             return;
-        }
 
         if (!data.IsContainingTypePartial)
         {
