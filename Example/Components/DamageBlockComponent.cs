@@ -21,7 +21,7 @@ public sealed partial class DamageBlockComponent : CardComponent
     public override async Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay,
         ComponentContext componentContext)
     {
-        if (Card is not CardModel componentCard)
+        if (ComponentsCard is not CardModel componentCard)
             return;
 
         if (cardPlay.Target != null)

@@ -122,7 +122,7 @@ public static class CardComponentStateSerializer
 
     public static ICardComponent DeepClone(ICardComponent component)
     {
-        var owner = component.Card;
+        var owner = component.ComponentsCard;
         var serialized = Serialize([component]);
         var clone = Deserialize(serialized, owner ?? NullOwner.Instance).FirstOrDefault();
 

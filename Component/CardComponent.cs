@@ -10,11 +10,11 @@ public abstract partial class CardComponent : ICardComponent
 {
     public string ComponentId => CardComponentRegistry.GetComponentId(GetType());
 
-    public IComponentsCardModel? Card { get; private set; }
+    public IComponentsCardModel? ComponentsCard { get; private set; }
 
     public void Attach(IComponentsCardModel card)
     {
-        Card = card;
+        ComponentsCard = card;
         OnAttach();
     }
 
@@ -25,7 +25,7 @@ public abstract partial class CardComponent : ICardComponent
     public void Detach()
     {
         OnDetach();
-        Card = null;
+        ComponentsCard = null;
     }
 
     protected virtual void OnDetach()

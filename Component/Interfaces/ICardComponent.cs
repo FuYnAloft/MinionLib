@@ -7,7 +7,7 @@ public partial interface ICardComponent
 {
     string ComponentId { get; }
 
-    IComponentsCardModel? Card { get; }
+    IComponentsCardModel? ComponentsCard { get; }
 
     void Attach(IComponentsCardModel card);
 
@@ -45,7 +45,7 @@ public sealed class KeepsTwo : ICardComponent
 
     public string ComponentId => nameof(KeepsTwo);
 
-    public IComponentsCardModel? Card => null;
+    public IComponentsCardModel? ComponentsCard => null;
 
     public void Attach(IComponentsCardModel card)
     {

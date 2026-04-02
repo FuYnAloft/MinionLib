@@ -51,7 +51,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.OnPlayPrefix(choiceContext, cardPlay, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -61,7 +61,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.OnPlayPostfix(choiceContext, cardPlay, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -128,7 +128,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.OnEnqueuePlayVfxPrefix(target, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -138,7 +138,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.OnEnqueuePlayVfxPostfix(target, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -205,7 +205,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.OnTurnEndInHandPrefix(choiceContext, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -215,7 +215,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.OnTurnEndInHandPostfix(choiceContext, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -282,7 +282,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeCardPlayedPrefix(cardPlay, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -292,7 +292,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeCardPlayedPostfix(cardPlay, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -359,7 +359,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCardPlayedPrefix(context, cardPlay, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -369,7 +369,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCardPlayedPostfix(context, cardPlay, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -436,7 +436,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCardPlayedLatePrefix(choiceContext, cardPlay, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -446,7 +446,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCardPlayedLatePostfix(choiceContext, cardPlay, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -513,7 +513,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterPlayerTurnStartPrefix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -523,7 +523,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterPlayerTurnStartPostfix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -590,7 +590,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeTurnEndPrefix(choiceContext, side, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -600,7 +600,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeTurnEndPostfix(choiceContext, side, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -667,7 +667,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterTurnEndPrefix(choiceContext, side, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -677,7 +677,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterTurnEndPostfix(choiceContext, side, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -744,7 +744,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterActEnteredPrefix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -754,7 +754,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterActEnteredPostfix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -821,7 +821,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterAddToDeckPreventedPrefix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -831,7 +831,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterAddToDeckPreventedPostfix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -898,7 +898,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeAttackPrefix(command, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -908,7 +908,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeAttackPostfix(command, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -975,7 +975,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterAttackPrefix(command, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -985,7 +985,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterAttackPostfix(command, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -1052,7 +1052,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterBlockClearedPrefix(creature, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -1062,7 +1062,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterBlockClearedPostfix(creature, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -1129,7 +1129,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeBlockGainedPrefix(creature, amount, props, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -1139,7 +1139,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeBlockGainedPostfix(creature, amount, props, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -1206,7 +1206,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterBlockGainedPrefix(creature, amount, props, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -1216,7 +1216,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterBlockGainedPostfix(creature, amount, props, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -1283,7 +1283,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterBlockBrokenPrefix(creature, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -1293,7 +1293,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterBlockBrokenPostfix(creature, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -1360,7 +1360,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCardChangedPilesPrefix(card, oldPileType, source, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -1370,7 +1370,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCardChangedPilesPostfix(card, oldPileType, source, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -1437,7 +1437,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCardChangedPilesLatePrefix(card, oldPileType, source, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -1447,7 +1447,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCardChangedPilesLatePostfix(card, oldPileType, source, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -1514,7 +1514,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCardDiscardedPrefix(choiceContext, card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -1524,7 +1524,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCardDiscardedPostfix(choiceContext, card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -1591,7 +1591,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCardDrawnEarlyPrefix(choiceContext, card, fromHandDraw, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -1601,7 +1601,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCardDrawnEarlyPostfix(choiceContext, card, fromHandDraw, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -1668,7 +1668,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCardDrawnPrefix(choiceContext, card, fromHandDraw, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -1678,7 +1678,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCardDrawnPostfix(choiceContext, card, fromHandDraw, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -1745,7 +1745,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCardEnteredCombatPrefix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -1755,7 +1755,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCardEnteredCombatPostfix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -1822,7 +1822,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCardGeneratedForCombatPrefix(card, addedByPlayer, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -1832,7 +1832,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCardGeneratedForCombatPostfix(card, addedByPlayer, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -1899,7 +1899,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCardExhaustedPrefix(choiceContext, card, causedByEthereal, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -1909,7 +1909,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCardExhaustedPostfix(choiceContext, card, causedByEthereal, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -1976,7 +1976,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeCardAutoPlayedPrefix(card, target, type, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -1986,7 +1986,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeCardAutoPlayedPostfix(card, target, type, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -2053,7 +2053,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCardRetainedPrefix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -2063,7 +2063,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCardRetainedPostfix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -2130,7 +2130,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeCombatStartPrefix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -2140,7 +2140,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeCombatStartPostfix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -2207,7 +2207,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeCombatStartLatePrefix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -2217,7 +2217,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeCombatStartLatePostfix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -2284,7 +2284,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCombatEndPrefix(room, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -2294,7 +2294,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCombatEndPostfix(room, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -2361,7 +2361,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCombatVictoryEarlyPrefix(room, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -2371,7 +2371,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCombatVictoryEarlyPostfix(room, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -2438,7 +2438,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCombatVictoryPrefix(room, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -2448,7 +2448,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCombatVictoryPostfix(room, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -2515,7 +2515,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCreatureAddedToCombatPrefix(creature, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -2525,7 +2525,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCreatureAddedToCombatPostfix(creature, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -2592,7 +2592,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterCurrentHpChangedPrefix(creature, delta, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -2602,7 +2602,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterCurrentHpChangedPostfix(creature, delta, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -2669,7 +2669,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterDamageGivenPrefix(choiceContext, dealer, result, props, target, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -2679,7 +2679,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterDamageGivenPostfix(choiceContext, dealer, result, props, target, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -2746,7 +2746,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeDamageReceivedPrefix(choiceContext, target, amount, props, dealer, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -2756,7 +2756,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeDamageReceivedPostfix(choiceContext, target, amount, props, dealer, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -2823,7 +2823,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterDamageReceivedPrefix(choiceContext, target, result, props, dealer, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -2833,7 +2833,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterDamageReceivedPostfix(choiceContext, target, result, props, dealer, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -2900,7 +2900,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterDamageReceivedLatePrefix(choiceContext, target, result, props, dealer, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -2910,7 +2910,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterDamageReceivedLatePostfix(choiceContext, target, result, props, dealer, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -2977,7 +2977,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeDeathPrefix(creature, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -2987,7 +2987,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeDeathPostfix(creature, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -3054,7 +3054,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterDeathPrefix(choiceContext, creature, wasRemovalPrevented, deathAnimLength, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -3064,7 +3064,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterDeathPostfix(choiceContext, creature, wasRemovalPrevented, deathAnimLength, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -3131,7 +3131,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterDiedToDoomPrefix(choiceContext, creatures, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -3141,7 +3141,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterDiedToDoomPostfix(choiceContext, creatures, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -3208,7 +3208,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterEnergyResetPrefix(player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -3218,7 +3218,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterEnergyResetPostfix(player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -3285,7 +3285,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterEnergyResetLatePrefix(player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -3295,7 +3295,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterEnergyResetLatePostfix(player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -3362,7 +3362,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterEnergySpentPrefix(card, amount, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -3372,7 +3372,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterEnergySpentPostfix(card, amount, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -3439,7 +3439,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeCardRemovedPrefix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -3449,7 +3449,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeCardRemovedPostfix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -3516,7 +3516,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeFlushPrefix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -3526,7 +3526,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeFlushPostfix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -3593,7 +3593,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeFlushLatePrefix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -3603,7 +3603,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeFlushLatePostfix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -3670,7 +3670,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterGoldGainedPrefix(player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -3680,7 +3680,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterGoldGainedPostfix(player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -3747,7 +3747,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeHandDrawPrefix(player, choiceContext, combatState, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -3757,7 +3757,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeHandDrawPostfix(player, choiceContext, combatState, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -3824,7 +3824,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeHandDrawLatePrefix(player, choiceContext, combatState, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -3834,7 +3834,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeHandDrawLatePostfix(player, choiceContext, combatState, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -3901,7 +3901,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterHandEmptiedPrefix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -3911,7 +3911,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterHandEmptiedPostfix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -3978,7 +3978,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterItemPurchasedPrefix(player, itemPurchased, goldSpent, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -3988,7 +3988,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterItemPurchasedPostfix(player, itemPurchased, goldSpent, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -4055,7 +4055,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterMapGeneratedPrefix(map, actIndex, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -4065,7 +4065,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterMapGeneratedPostfix(map, actIndex, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -4132,7 +4132,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterModifyingBlockAmountPrefix(modifiedAmount, cardSource, cardPlay, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -4142,7 +4142,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterModifyingBlockAmountPostfix(modifiedAmount, cardSource, cardPlay, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -4209,7 +4209,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterModifyingCardPlayCountPrefix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -4219,7 +4219,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterModifyingCardPlayCountPostfix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -4286,7 +4286,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterModifyingCardPlayResultPileOrPositionPrefix(card, pileType, position, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -4296,7 +4296,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterModifyingCardPlayResultPileOrPositionPostfix(card, pileType, position, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -4363,7 +4363,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterModifyingOrbPassiveTriggerCountPrefix(orb, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -4373,7 +4373,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterModifyingOrbPassiveTriggerCountPostfix(orb, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -4440,7 +4440,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterModifyingCardRewardOptionsPrefix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -4450,7 +4450,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterModifyingCardRewardOptionsPostfix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -4517,7 +4517,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterModifyingDamageAmountPrefix(cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -4527,7 +4527,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterModifyingDamageAmountPostfix(cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -4594,7 +4594,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterModifyingEnergyGainPrefix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -4604,7 +4604,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterModifyingEnergyGainPostfix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -4671,7 +4671,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterModifyingHandDrawPrefix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -4681,7 +4681,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterModifyingHandDrawPostfix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -4748,7 +4748,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterPreventingDrawPrefix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -4758,7 +4758,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterPreventingDrawPostfix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -4825,7 +4825,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterModifyingHpLostBeforeOstyPrefix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -4835,7 +4835,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterModifyingHpLostBeforeOstyPostfix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -4902,7 +4902,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterModifyingHpLostAfterOstyPrefix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -4912,7 +4912,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterModifyingHpLostAfterOstyPostfix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -4979,7 +4979,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterModifyingPowerAmountReceivedPrefix(power, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -4989,7 +4989,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterModifyingPowerAmountReceivedPostfix(power, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -5056,7 +5056,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterModifyingPowerAmountGivenPrefix(power, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -5066,7 +5066,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterModifyingPowerAmountGivenPostfix(power, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -5133,7 +5133,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterModifyingRewardsPrefix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -5143,7 +5143,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterModifyingRewardsPostfix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -5210,7 +5210,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeRewardsOfferedPrefix(player, rewards, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -5220,7 +5220,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeRewardsOfferedPostfix(player, rewards, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -5287,7 +5287,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterOrbChanneledPrefix(choiceContext, player, orb, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -5297,7 +5297,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterOrbChanneledPostfix(choiceContext, player, orb, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -5364,7 +5364,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterOrbEvokedPrefix(choiceContext, orb, targets, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -5374,7 +5374,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterOrbEvokedPostfix(choiceContext, orb, targets, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -5441,7 +5441,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterOstyRevivedPrefix(osty, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -5451,7 +5451,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterOstyRevivedPostfix(osty, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -5518,7 +5518,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforePotionUsedPrefix(potion, target, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -5528,7 +5528,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforePotionUsedPostfix(potion, target, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -5595,7 +5595,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterPotionUsedPrefix(potion, target, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -5605,7 +5605,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterPotionUsedPostfix(potion, target, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -5672,7 +5672,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterPotionDiscardedPrefix(potion, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -5682,7 +5682,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterPotionDiscardedPostfix(potion, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -5749,7 +5749,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterPotionProcuredPrefix(potion, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -5759,7 +5759,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterPotionProcuredPostfix(potion, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -5826,7 +5826,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforePowerAmountChangedPrefix(power, amount, target, applier, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -5836,7 +5836,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforePowerAmountChangedPostfix(power, amount, target, applier, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -5903,7 +5903,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterPowerAmountChangedPrefix(power, amount, applier, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -5913,7 +5913,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterPowerAmountChangedPostfix(power, amount, applier, cardSource, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -5980,7 +5980,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterPreventingBlockClearPrefix(preventer, creature, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -5990,7 +5990,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterPreventingBlockClearPostfix(preventer, creature, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -6057,7 +6057,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterPreventingDeathPrefix(creature, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -6067,7 +6067,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterPreventingDeathPostfix(creature, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -6134,7 +6134,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterRestSiteHealPrefix(player, isMimicked, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -6144,7 +6144,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterRestSiteHealPostfix(player, isMimicked, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -6211,7 +6211,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterRestSiteSmithPrefix(player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -6221,7 +6221,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterRestSiteSmithPostfix(player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -6288,7 +6288,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterRewardTakenPrefix(player, reward, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -6298,7 +6298,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterRewardTakenPostfix(player, reward, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -6365,7 +6365,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeRoomEnteredPrefix(room, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -6375,7 +6375,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeRoomEnteredPostfix(room, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -6442,7 +6442,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterRoomEnteredPrefix(room, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -6452,7 +6452,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterRoomEnteredPostfix(room, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -6519,7 +6519,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterShufflePrefix(choiceContext, shuffler, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -6529,7 +6529,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterShufflePostfix(choiceContext, shuffler, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -6596,7 +6596,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterStarsSpentPrefix(amount, spender, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -6606,7 +6606,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterStarsSpentPostfix(amount, spender, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -6673,7 +6673,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterStarsGainedPrefix(amount, gainer, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -6683,7 +6683,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterStarsGainedPostfix(amount, gainer, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -6750,7 +6750,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterForgePrefix(amount, forger, source, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -6760,7 +6760,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterForgePostfix(amount, forger, source, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -6827,7 +6827,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterSummonPrefix(choiceContext, summoner, amount, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -6837,7 +6837,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterSummonPostfix(choiceContext, summoner, amount, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -6904,7 +6904,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterTakingExtraTurnPrefix(player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -6914,7 +6914,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterTakingExtraTurnPostfix(player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -6981,7 +6981,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterTargetingBlockedVfxPrefix(blocker, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -6991,7 +6991,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterTargetingBlockedVfxPostfix(blocker, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -7058,7 +7058,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeSideTurnStartPrefix(choiceContext, side, combatState, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -7068,7 +7068,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeSideTurnStartPostfix(choiceContext, side, combatState, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -7135,7 +7135,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterSideTurnStartPrefix(side, combatState, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -7145,7 +7145,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterSideTurnStartPostfix(side, combatState, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -7212,7 +7212,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterPlayerTurnStartEarlyPrefix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -7222,7 +7222,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterPlayerTurnStartEarlyPostfix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -7289,7 +7289,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterPlayerTurnStartLatePrefix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -7299,7 +7299,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterPlayerTurnStartLatePostfix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -7366,7 +7366,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforePlayPhaseStartPrefix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -7376,7 +7376,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforePlayPhaseStartPostfix(choiceContext, player, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -7443,7 +7443,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeTurnEndVeryEarlyPrefix(choiceContext, side, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -7453,7 +7453,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeTurnEndVeryEarlyPostfix(choiceContext, side, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -7520,7 +7520,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.BeforeTurnEndEarlyPrefix(choiceContext, side, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -7530,7 +7530,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.BeforeTurnEndEarlyPostfix(choiceContext, side, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -7597,7 +7597,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             await component.AfterTurnEndLatePrefix(choiceContext, side, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -7607,7 +7607,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             await component.AfterTurnEndLatePostfix(choiceContext, side, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
@@ -7674,7 +7674,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             component.OnUpgradePrefix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
@@ -7684,7 +7684,7 @@ public abstract partial class ComponentsCardModel
                         for(var i = 0; i < count; i++)
                         {
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             component.OnUpgradePostfix(componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }

@@ -14,7 +14,7 @@ public sealed class HealOwnerComponent : AmountCardComponent
     public override async Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay,
         ComponentContext componentContext)
     {
-        if (Card is not CardModel componentCard) return;
+        if (ComponentsCard is not CardModel componentCard) return;
 
         await CreatureCmd.Heal(componentCard.Owner.Creature, Amount);
     }

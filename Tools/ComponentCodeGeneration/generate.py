@@ -80,7 +80,7 @@ namespace MinionLib.Component;
                         for(var i = 0; i < count; i++)
                         {{
                             var component = snapshot[i];
-                            if (component.Card != this) continue;
+                            if (component.ComponentsCard != this) continue;
                             {"await " if return_type == "Task" else ""}component.{name}Prefix({arg_names}componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }}
@@ -90,7 +90,7 @@ namespace MinionLib.Component;
                         for(var i = 0; i < count; i++)
                         {{
                             var component = snapshot[i];
-                            if(component.Card != this) continue;
+                            if(component.ComponentsCard != this) continue;
                             {"await " if return_type == "Task" else ""}component.{name}Postfix({arg_names}componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }}
