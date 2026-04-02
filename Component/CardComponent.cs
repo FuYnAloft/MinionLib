@@ -8,13 +8,6 @@ namespace MinionLib.Component;
 
 public abstract partial class CardComponent : ICardComponent
 {
-    protected CardComponent()
-    {
-        var smart = SmartDynamicVarsLocArgs.GenerateDynamicVars(this);
-        var extra = ExtraVars;
-        DynamicVars = new DynamicVarSet(smart.Concat(extra));
-    }
-
     public string ComponentId => CardComponentRegistry.GetComponentId(GetType());
 
     public IComponentsCardModel? Card { get; private set; }
@@ -39,16 +32,26 @@ public abstract partial class CardComponent : ICardComponent
         return other;
     }
 
-    protected IEnumerable<DynamicVar> ExtraVars => [];
+    protected virtual IEnumerable<DynamicVar> ExtraVars => [];
 
-    public DynamicVarSet DynamicVars { get; }
+    public DynamicVarSet DynamicVars
+    {
+        get
+        {
+            if (field != null)
+                return field;
+            var smart = SmartDynamicVarsLocArgs.GenerateDynamicVars(this);
+            field = new DynamicVarSet(smart.Concat(ExtraVars));
+            return field;
+        }
+    }
 
     public virtual bool ShouldGlowGoldInternal => false;
 
     public virtual bool ShouldGlowRedInternal => false;
 
     public virtual bool HasTurnEndInHandEffect => false;
-    
+
     public virtual IEnumerable<IHoverTip> HoverTips => [];
 
     private LocString SmartPrefix()
@@ -76,7 +79,7 @@ public abstract partial class CardComponent : ICardComponent
     {
         return loc.GetFormattedText();
     }
-    
+
     public string GetFormattedPrefix()
     {
         var prefix = SmartPrefix();
