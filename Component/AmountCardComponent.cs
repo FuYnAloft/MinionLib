@@ -1,12 +1,12 @@
 using MinionLib.Component.Core;
-using MinionLib.Component.DynamicVarFactories;
 using MinionLib.Component.Interfaces;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace MinionLib.Component;
 
 public abstract partial class AmountCardComponent : CardComponent
 {
-    [ComponentState<DynamicVarFactory>] public partial decimal Amount { get; set; }
+    [ComponentState<DynamicVar>] public partial decimal Amount { get; set; }
 
     public override ICardComponent? MergeWith(ICardComponent incoming)
     {

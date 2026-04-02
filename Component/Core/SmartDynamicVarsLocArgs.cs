@@ -12,9 +12,7 @@ public static class SmartDynamicVarsLocArgs
     private sealed class ComponentStatePropertyRule
     {
         public required PropertyInfo Property { get; init; }
-        public required ComponentStateAttribute Attribute { get; init; }
-        public required MethodInfo? GeneratorMethod { get; init; }
-        public bool HasGenerator => GeneratorMethod != null;
+        public required bool HasGenerator { get; init; }
     }
 
     private static ComponentStatePropertyRule[] GetComponentStatePropertyRules(Type componentType)
@@ -35,8 +33,7 @@ public static class SmartDynamicVarsLocArgs
             .Select(x => new ComponentStatePropertyRule
             {
                 Property = x.Property,
-                Attribute = x.Attribute!,
-                GeneratorMethod = ResolveGeneratorMethod(x.Attribute!.DynamicVarGenerator)
+                HasGenerator = x.Attribute!.DynamicVarGenerator != null
             })
             .ToArray();
 
@@ -44,52 +41,6 @@ public static class SmartDynamicVarsLocArgs
         return rules;
     }
 
-    private static MethodInfo? ResolveGeneratorMethod(Type? generatorType)
-    {
-        if (generatorType == null)
-            return null;
-
-        var generateMethod = generatorType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static,
-            null, [typeof(string), typeof(object[])], null);
-
-        if (generateMethod == null || !typeof(DynamicVar).IsAssignableFrom(generateMethod.ReturnType))
-            throw new InvalidOperationException(
-                $"DynamicVar generator {generatorType.FullName} must define public static DynamicVar Create(string, object[]). ");
-
-        return generateMethod;
-    }
-
-    public static IEnumerable<DynamicVar> GenerateDynamicVars(ICardComponent component)
-    {
-        var rules = GetComponentStatePropertyRules(component.GetType());
-        var vars = new List<DynamicVar>();
-
-        foreach (var rule in rules)
-        {
-            if (!rule.HasGenerator)
-                continue;
-
-            DynamicVar dynamicVar;
-            try
-            {
-                dynamicVar = (DynamicVar)rule.GeneratorMethod!.Invoke(null,
-                    [rule.Property.Name, rule.Attribute.Parameters])!;
-            }
-            catch (Exception ex)
-            {
-                Debug("Component",
-                    $"Failed to generate DynamicVar for {component.GetType().Name}.{rule.Property.Name}: {ex.Message}");
-                continue;
-            }
-
-            var propertyValue = rule.Property.GetValue(component);
-            if (TryConvertToDecimal(propertyValue, out var numericValue)) dynamicVar.BaseValue = numericValue;
-
-            vars.Add(dynamicVar);
-        }
-
-        return vars;
-    }
 
     public static void SmartAddArgs(ICardComponent component, LocString loc)
     {
@@ -115,7 +66,7 @@ public static class SmartDynamicVarsLocArgs
 
         switch (value)
         {
-            case DynamicVar dynamicVar:
+            case MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar dynamicVar:
                 loc.Add(dynamicVar);
                 return;
             case decimal dec:

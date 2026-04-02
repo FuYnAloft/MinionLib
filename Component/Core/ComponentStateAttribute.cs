@@ -1,4 +1,4 @@
-using MinionLib.Component.DynamicVarFactories;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace MinionLib.Component.Core;
 
@@ -22,4 +22,4 @@ public class ComponentStateAttribute : Attribute
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class ComponentStateAttribute<T>(params object[] parameters)
     : ComponentStateAttribute(typeof(T), parameters)
-    where T : IDynamicVarFactory;
+    where T : DynamicVar;

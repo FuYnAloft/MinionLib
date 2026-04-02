@@ -32,14 +32,6 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    private static readonly DiagnosticDescriptor MissingDynamicVarGenerator = new(
-        id: "MLSG003",
-        title: "ComponentState missing dynamic var generator",
-        messageFormat: "Property '{0}' has [ComponentState] without a dynamic var generator; generation is skipped",
-        category: "MinionLib.Generators",
-        DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
-
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var propertyCandidates = context.SyntaxProvider
@@ -108,7 +100,7 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
             }
 
             var hintName = BuildHintName(candidate.Symbol);
-            var source = BuildSource(candidate.Symbol);
+            var source = BuildSource(candidate);
             context.AddSource(hintName, SourceText.From(source, Encoding.UTF8));
         }
     }
@@ -136,15 +128,6 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
                 ContainingTypeMustBePartial,
                 candidate.Syntax.Identifier.GetLocation(),
                 containingType.Name);
-            return false;
-        }
-
-        if (!HasDynamicVarGenerator(candidate.Attribute))
-        {
-            diagnostic = Diagnostic.Create(
-                MissingDynamicVarGenerator,
-                candidate.Syntax.Identifier.GetLocation(),
-                candidate.Symbol.Name);
             return false;
         }
 
@@ -189,8 +172,9 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
         return $"{containingType}_{property.Name}.ComponentStateProperty.g.cs";
     }
 
-    private static string BuildSource(IPropertySymbol property)
+    private static string BuildSource(PropertyCandidate candidate)
     {
+        var property = candidate.Symbol;
         var namespaceName = property.ContainingNamespace.IsGlobalNamespace
             ? null
             : property.ContainingNamespace.ToDisplayString();
@@ -233,7 +217,8 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
         builder.AppendLine("set");
         builder.AppendLine("        {");
         builder.Append("            ").Append(fieldName).AppendLine(" = value;");
-        builder.Append("            DynamicVars[\"").Append(property.Name).AppendLine("\"].BaseValue = global::System.Convert.ToDecimal(value);");
+        if (HasDynamicVarGenerator(candidate.Attribute))
+            builder.Append("            DynamicVars[\"").Append(property.Name).AppendLine("\"].BaseValue = global::System.Convert.ToDecimal(value);");
         builder.AppendLine("        }");
         builder.AppendLine("    }");
 

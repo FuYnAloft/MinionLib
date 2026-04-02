@@ -55,6 +55,8 @@ public abstract partial class CardComponent : ICardComponent
         return true;
     }
 
+    protected virtual IEnumerable<DynamicVar> SmartVars => [];
+    
     protected virtual IEnumerable<DynamicVar> ExtraVars => [];
 
     public DynamicVarSet DynamicVars
@@ -63,8 +65,7 @@ public abstract partial class CardComponent : ICardComponent
         {
             if (field != null)
                 return field;
-            var smart = SmartDynamicVarsLocArgs.GenerateDynamicVars(this);
-            field = new DynamicVarSet(smart.Concat(ExtraVars));
+            field = new DynamicVarSet(SmartVars.Concat(ExtraVars));
             return field;
         }
     }
