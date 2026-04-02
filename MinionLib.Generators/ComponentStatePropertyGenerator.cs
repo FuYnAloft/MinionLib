@@ -219,8 +219,18 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
 
         builder.Append("partial ").Append(propertyType).Append(' ').Append(property.Name).AppendLine();
         builder.AppendLine("    {");
-        builder.Append("        get => ").Append(fieldName).AppendLine(";");
-        builder.AppendLine("        set");
+
+        var getAccessorPrefix = GetAccessorAccessibilityKeyword(property.DeclaredAccessibility, property.GetMethod!.DeclaredAccessibility);
+        builder.Append("        ");
+        if (!string.IsNullOrEmpty(getAccessorPrefix))
+            builder.Append(getAccessorPrefix).Append(' ');
+        builder.Append("get => ").Append(fieldName).AppendLine(";");
+
+        var setAccessorPrefix = GetAccessorAccessibilityKeyword(property.DeclaredAccessibility, property.SetMethod!.DeclaredAccessibility);
+        builder.Append("        ");
+        if (!string.IsNullOrEmpty(setAccessorPrefix))
+            builder.Append(setAccessorPrefix).Append(' ');
+        builder.AppendLine("set");
         builder.AppendLine("        {");
         builder.Append("            ").Append(fieldName).AppendLine(" = value;");
         builder.Append("            DynamicVars[\"").Append(property.Name).AppendLine("\"].BaseValue = global::System.Convert.ToDecimal(value);");
@@ -305,6 +315,15 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
             Accessibility.ProtectedAndInternal => "private protected",
             _ => string.Empty
         };
+    }
+
+    private static string GetAccessorAccessibilityKeyword(Accessibility propertyAccessibility,
+        Accessibility accessorAccessibility)
+    {
+        // Only emit accessor modifiers when accessor is explicitly more restrictive than property.
+        return accessorAccessibility == propertyAccessibility
+            ? string.Empty
+            : GetAccessibilityKeyword(accessorAccessibility);
     }
 
     private static string ToCamelCase(string value)
