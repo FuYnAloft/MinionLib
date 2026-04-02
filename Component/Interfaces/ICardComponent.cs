@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
 
 namespace MinionLib.Component.Interfaces;
 
@@ -8,6 +9,8 @@ public partial interface ICardComponent
     string ComponentId { get; }
 
     IComponentsCardModel? ComponentsCard { get; }
+    
+    CardModel? Card => ComponentsCard as CardModel;
 
     void Attach(IComponentsCardModel card);
 
