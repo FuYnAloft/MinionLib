@@ -24,7 +24,7 @@ public abstract partial class ComponentsCardModel(
     private List<ICardComponent>? _components;
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
-    public string MinionLibComponentStateBlob
+    public int[] MinionLibComponentStateBlob
     {
         get
         {
@@ -35,12 +35,12 @@ public abstract partial class ComponentsCardModel(
         }
         set
         {
-            _componentStateBlob = value ?? "";
+            _componentStateBlob = value;
             _components = null;
         }
     }
 
-    private string _componentStateBlob = string.Empty;
+    private int[] _componentStateBlob = [];
 
     public IReadOnlyList<ICardComponent> Components
     {
@@ -108,7 +108,7 @@ public abstract partial class ComponentsCardModel(
         if (_components != null)
             return;
 
-        _components = string.IsNullOrWhiteSpace(_componentStateBlob)
+        _components = _componentStateBlob.Length == 0
             ? BuildComponentsFromCanonical()
             : CardComponentStateSerializer.Deserialize(_componentStateBlob, this);
 

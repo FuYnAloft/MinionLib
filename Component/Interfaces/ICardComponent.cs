@@ -1,10 +1,11 @@
+using System.Buffers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 
 namespace MinionLib.Component.Interfaces;
 
-public partial interface ICardComponent
+public partial interface ICardComponent : IGeneratedBinarySerializable
 {
     string ComponentId { get; }
 
@@ -66,6 +67,15 @@ public sealed class KeepsTwo : ICardComponent
     public ICardComponent? MergeWith(ICardComponent incoming)
     {
         return Instance;
+    }
+
+    public void Serialize(ArrayBufferWriter<byte> writer)
+    {
+    }
+
+    public bool Deserialize(ref ReadOnlySpan<byte> reader)
+    {
+        return true;
     }
 
     public DynamicVarSet DynamicVars => null!;

@@ -1,3 +1,4 @@
+using System.Buffers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -44,6 +45,10 @@ public abstract partial class CardComponent : ICardComponent
     {
         return incoming;
     }
+
+    public abstract void Serialize(ArrayBufferWriter<byte> writer);
+
+    public abstract bool Deserialize(ref ReadOnlySpan<byte> reader);
 
     protected virtual IEnumerable<DynamicVar> ExtraVars => [];
 
