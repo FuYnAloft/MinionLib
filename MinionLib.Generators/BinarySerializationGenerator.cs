@@ -232,6 +232,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         INamedTypeSymbol serializableSymbol)
     {
         var p = Indent(indent);
+        var canAssignNull = CanAssignNullOnDeserialize(type);
 
         if (type.NullableAnnotation == NullableAnnotation.Annotated && type is not INamedTypeSymbol { SpecialType: SpecialType.System_String })
         {
@@ -265,7 +266,10 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).AppendLine("    return false;");
             sb.Append(p).Append("if (").Append(len).AppendLine(" == -1)");
             sb.Append(p).AppendLine("{");
-            sb.Append(p).Append("    ").Append(targetExpr).AppendLine(" = null;");
+            if (canAssignNull)
+                sb.Append(p).Append("    ").Append(targetExpr).AppendLine(" = null;");
+            else
+                sb.Append(p).AppendLine("    return false;");
             sb.Append(p).AppendLine("}");
             sb.Append(p).AppendLine("else");
             sb.Append(p).AppendLine("{");
@@ -273,7 +277,8 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).Append("    for (var ").Append(i).Append(" = 0; ").Append(i).Append(" < ").Append(len).Append("; ").Append(i)
                 .AppendLine("++)");
             sb.Append(p).AppendLine("    {");
-            sb.Append(p).Append("        ").Append(elementTypeName).Append(' ').Append(item).AppendLine("; ");
+            sb.Append(p).Append("        ").Append(elementTypeName).Append(' ').Append(item)
+                .Append(GetLocalInitializer(array.ElementType)).AppendLine();
             EmitDeserializeForType(sb, array.ElementType, item, indent + 2, ref id, serializableSymbol);
             sb.Append(p).Append("        ").Append(arr).Append("[").Append(i).Append("] = ").Append(item).AppendLine(";");
             sb.Append(p).AppendLine("    }");
@@ -298,7 +303,10 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).AppendLine("    return false;");
             sb.Append(p).Append("if (").Append(len).AppendLine(" == -1)");
             sb.Append(p).AppendLine("{");
-            sb.Append(p).Append("    ").Append(targetExpr).AppendLine(" = null;");
+            if (canAssignNull)
+                sb.Append(p).Append("    ").Append(targetExpr).AppendLine(" = null;");
+            else
+                sb.Append(p).AppendLine("    return false;");
             sb.Append(p).AppendLine("}");
             sb.Append(p).AppendLine("else");
             sb.Append(p).AppendLine("{");
@@ -306,7 +314,8 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).Append("    for (var ").Append(i).Append(" = 0; ").Append(i).Append(" < ").Append(len).Append("; ").Append(i)
                 .AppendLine("++)");
             sb.Append(p).AppendLine("    {");
-            sb.Append(p).Append("        ").Append(elemTypeName).Append(' ').Append(item).AppendLine("; ");
+            sb.Append(p).Append("        ").Append(elemTypeName).Append(' ').Append(item)
+                .Append(GetLocalInitializer(listElement!)).AppendLine();
             EmitDeserializeForType(sb, listElement!, item, indent + 2, ref id, serializableSymbol);
             sb.Append(p).Append("        ").Append(list).Append(".Add(").Append(item).AppendLine(");");
             sb.Append(p).AppendLine("    }");
@@ -320,21 +329,18 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).Append("if (!global::MinionLib.Component.Core.SerializationUtils.TryReadString(ref reader, out var __str_")
                 .Append(id).AppendLine("))");
             sb.Append(p).AppendLine("    return false;");
-            sb.Append(p).Append(targetExpr).Append(" = __str_").Append(id++).AppendLine(";");
-            return;
-        }
+            var strVar = $"__str_{id++}";
+            if (canAssignNull)
+            {
+                sb.Append(p).Append(targetExpr).Append(" = ").Append(strVar).AppendLine(";");
+            }
+            else
+            {
+                sb.Append(p).Append("if (").Append(strVar).AppendLine(" == null)");
+                sb.Append(p).AppendLine("    return false;");
+                sb.Append(p).Append(targetExpr).Append(" = ").Append(strVar).AppendLine("!;");
+            }
 
-        if (TryEmitPrimitiveDeserialize(sb, type, targetExpr, indent, ref id))
-            return;
-
-        if (type.TypeKind == TypeKind.Enum)
-        {
-            var underlying = ((INamedTypeSymbol)type).EnumUnderlyingType!;
-            var raw = $"__enumRaw_{id++}";
-            EmitDeserializeForType(sb, underlying, raw, indent, ref id, serializableSymbol);
-            sb.Append(p).Append(targetExpr).Append(" = (")
-                .Append(type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)).Append(")")
-                .Append(raw).AppendLine(";");
             return;
         }
 
@@ -349,7 +355,10 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).AppendLine("    return false;");
             sb.Append(p).Append("if (!").Append(has).AppendLine(")");
             sb.Append(p).AppendLine("{");
-            sb.Append(p).Append("    ").Append(targetExpr).AppendLine(" = null;");
+            if (canAssignNull)
+                sb.Append(p).Append("    ").Append(targetExpr).AppendLine(" = null;");
+            else
+                sb.Append(p).AppendLine("    return false;");
             sb.Append(p).AppendLine("}");
             sb.Append(p).AppendLine("else");
             sb.Append(p).AppendLine("{");
@@ -483,7 +492,20 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
     private static bool ImplementsSerializable(ITypeSymbol type, INamedTypeSymbol serializableSymbol)
     {
         return type is INamedTypeSymbol named
-               && named.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(i, serializableSymbol));
+                && named.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(i, serializableSymbol));
+    }
+
+    private static string GetLocalInitializer(ITypeSymbol type)
+    {
+        return CanAssignNullOnDeserialize(type) ? " = default;" : " = default!;";
+    }
+
+    private static bool CanAssignNullOnDeserialize(ITypeSymbol type)
+    {
+        if (type.IsValueType)
+            return type is INamedTypeSymbol named && named.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T;
+
+        return type.NullableAnnotation != NullableAnnotation.NotAnnotated;
     }
 
     private static ITypeSymbol RemoveNullable(ITypeSymbol type)
