@@ -258,6 +258,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             var i = $"__i_{id++}";
             var item = $"__item_{id++}";
             var elementTypeName = array.ElementType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            var arrayCreationExpr = BuildJaggedArrayCreationExpression(array, len);
 
             sb.Append(p).Append("if (!global::MinionLib.Component.Core.SerializationUtils.TryReadInt32(ref reader, out var ")
                 .Append(len).AppendLine("))");
@@ -273,7 +274,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).AppendLine("}");
             sb.Append(p).AppendLine("else");
             sb.Append(p).AppendLine("{");
-            sb.Append(p).Append("    var ").Append(arr).Append(" = new ").Append(elementTypeName).Append("[").Append(len).AppendLine("]; ");
+            sb.Append(p).Append("    var ").Append(arr).Append(" = ").Append(arrayCreationExpr).AppendLine(";");
             sb.Append(p).Append("    for (var ").Append(i).Append(" = 0; ").Append(i).Append(" < ").Append(len).Append("; ").Append(i)
                 .AppendLine("++)");
             sb.Append(p).AppendLine("    {");
@@ -517,6 +518,20 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
     }
 
     private static string Indent(int level) => new(' ', level * 4);
+
+    private static string BuildJaggedArrayCreationExpression(IArrayTypeSymbol array, string firstLengthExpr)
+    {
+        var baseType = (ITypeSymbol)array;
+        var depth = 0;
+        while (baseType is IArrayTypeSymbol nested && nested.Rank == 1)
+        {
+            depth++;
+            baseType = nested.ElementType;
+        }
+
+        var baseTypeName = baseType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        return $"new {baseTypeName}[{firstLengthExpr}]{string.Concat(Enumerable.Repeat("[]", depth - 1))}";
+    }
 
     private static IEnumerable<INamedTypeSymbol> GetAllTypes(INamespaceSymbol root)
     {
