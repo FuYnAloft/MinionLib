@@ -1,7 +1,6 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Component;
 using MinionLib.Component.Core;
@@ -12,23 +11,20 @@ namespace MinionLib.Example.Components;
 
 public sealed partial class DamageBlockComponent : CardComponent
 {
-    [ComponentState<DamageVarFactory>]
+    [ComponentState<DamageVarFactory>(ValueProp.Move)]
     public partial int Damage { get; set; }
 
-    [ComponentState<BlockVarFactory>]
+    [ComponentState<BlockVarFactory>(ValueProp.Move)]
     public partial int Block { get; set; }
 
     public override async Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay,
         ComponentContext componentContext)
     {
-        if (ComponentsCard is not CardModel componentCard)
-            return;
-
+        if (Card == null) return;
         if (cardPlay.Target != null)
-            await CreatureCmd.Damage(choiceContext, cardPlay.Target, Damage, ValueProp.Move,
-                componentCard.Owner.Creature, componentCard);
-
-        await CreatureCmd.GainBlock(componentCard.Owner.Creature, Block, ValueProp.Move, cardPlay);
+            await CreatureCmd.Damage(choiceContext, cardPlay.Target, DynamicVars.Damage,
+                Card.Owner.Creature, Card);
+        await CreatureCmd.GainBlock(Card.Owner.Creature, DynamicVars.Block, cardPlay);
     }
 
     public override ICardComponent? MergeWith(ICardComponent other)

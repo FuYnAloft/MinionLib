@@ -1,8 +1,6 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Models;
 using MinionLib.Component;
 using MinionLib.Component.Core;
 using MinionLib.Component.Interfaces;
@@ -14,9 +12,8 @@ public sealed class HealOwnerComponent : AmountCardComponent
     public override async Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay,
         ComponentContext componentContext)
     {
-        if (ComponentsCard is not CardModel componentCard) return;
-
-        await CreatureCmd.Heal(componentCard.Owner.Creature, Amount);
+        if (Card == null) return;
+        await CreatureCmd.Heal(Card.Owner.Creature, Amount);
     }
 
     public override ICardComponent? MergeWith(ICardComponent other)
