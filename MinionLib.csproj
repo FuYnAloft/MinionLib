@@ -79,7 +79,7 @@
 
     <ItemGroup>
         <PackageReference Include="Alchyr.Sts2.BaseLib" Version="*" PrivateAssets="All"/>
-        <PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="*"/>
+<!--        <PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="*"/>-->
         <AdditionalFiles Include="MinionLib/localization/**/*.json"/>
     </ItemGroup>
 
