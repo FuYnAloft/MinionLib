@@ -13,7 +13,7 @@ public sealed class HealSelfComponentCard() : ComponentsCardModel(0, CardType.Sk
 {
     public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
 
-    public override IEnumerable<ICardComponent> CanonicalComponents => [new HealOwnerComponent { Amount = 2 }];
+    protected override IEnumerable<ICardComponent> CanonicalComponents => [new HealOwnerComponent { Amount = 2 }];
 
     protected override void OnUpgrade(ComponentContext componentContext)
     {

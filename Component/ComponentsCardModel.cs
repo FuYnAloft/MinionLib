@@ -51,7 +51,7 @@ public abstract partial class ComponentsCardModel(
         }
     }
 
-    public virtual IEnumerable<ICardComponent> CanonicalComponents => [];
+    protected virtual IEnumerable<ICardComponent> CanonicalComponents => [];
 
     public T? AddComponent<T>(T component) where T : ICardComponent
     {

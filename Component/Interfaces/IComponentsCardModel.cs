@@ -8,8 +8,6 @@ public interface IComponentsCardModel
 
     IReadOnlyList<ICardComponent> Components { get; }
 
-    IEnumerable<ICardComponent> CanonicalComponents { get; }
-
     T? AddComponent<T>(T component) where T : ICardComponent;
 
     bool RemoveComponent<T>() where T : ICardComponent;

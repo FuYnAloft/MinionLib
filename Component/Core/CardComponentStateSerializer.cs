@@ -183,7 +183,6 @@ public static class CardComponentStateSerializer
     {
         public static readonly NullOwner Instance = new();
         public IReadOnlyList<ICardComponent> Components => [];
-        public IEnumerable<ICardComponent> CanonicalComponents => [];
         public T AddComponent<T>(T component) where T : ICardComponent => component;
         public bool RemoveComponent<T>() where T : ICardComponent => false;
         public int RemoveComponents<T>() where T : ICardComponent => 0;
@@ -191,7 +190,5 @@ public static class CardComponentStateSerializer
         public IEnumerable<T> GetComponents<T>() where T : ICardComponent => [];
         public void EnsureComponentsInitialized(){}
         public Task ComponentCallBack(string name, params object[] args) => Task.CompletedTask;
-        public Task OnPlayPhased(PlayerChoiceContext choiceContext, CardPlay cardPlay,
-            ComponentContext componentContext) => Task.CompletedTask;
     }
 }
