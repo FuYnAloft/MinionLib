@@ -16,10 +16,10 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
     private const string ComponentStateAttributeMetadataName = "MinionLib.Component.Core.ComponentStateAttribute";
     private const string ComponentStateGenericAttributeMetadataName = "MinionLib.Component.Core.ComponentStateAttribute`1";
 
-    private static readonly DiagnosticDescriptor PropertyMustBePublicPartial = new(
+    private static readonly DiagnosticDescriptor PropertyMustBePartial = new(
         id: "MLSG001",
-        title: "ComponentState property must be public partial",
-        messageFormat: "Property '{0}' must be declared as 'public partial' to use source-generated ComponentState backing implementation",
+        title: "ComponentState property must be partial",
+        messageFormat: "Property '{0}' must be declared as 'partial' to use source-generated ComponentState backing implementation",
         category: "MinionLib.Generators",
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -119,11 +119,10 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
     {
         diagnostic = null;
 
-        if (candidate.Symbol.DeclaredAccessibility != Accessibility.Public
-            || !candidate.Syntax.Modifiers.Any(SyntaxKind.PartialKeyword))
+        if (!candidate.Syntax.Modifiers.Any(SyntaxKind.PartialKeyword))
         {
             diagnostic = Diagnostic.Create(
-                PropertyMustBePublicPartial,
+                PropertyMustBePartial,
                 candidate.Syntax.Identifier.GetLocation(),
                 candidate.Symbol.Name);
             return false;
@@ -213,7 +212,12 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
 
         builder.Append("    private ").Append(propertyType).Append(' ').Append(fieldName).AppendLine(";");
         builder.AppendLine();
-        builder.Append("    public partial ").Append(propertyType).Append(' ').Append(property.Name).AppendLine();
+        var accessibilityKeyword = GetAccessibilityKeyword(property.DeclaredAccessibility);
+        builder.Append("    ");
+        if (!string.IsNullOrEmpty(accessibilityKeyword))
+            builder.Append(accessibilityKeyword).Append(' ');
+
+        builder.Append("partial ").Append(propertyType).Append(' ').Append(property.Name).AppendLine();
         builder.AppendLine("    {");
         builder.Append("        get => ").Append(fieldName).AppendLine(";");
         builder.AppendLine("        set");
@@ -289,6 +293,20 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
         };
     }
 
+    private static string GetAccessibilityKeyword(Accessibility accessibility)
+    {
+        return accessibility switch
+        {
+            Accessibility.Public => "public",
+            Accessibility.Private => "private",
+            Accessibility.Internal => "internal",
+            Accessibility.Protected => "protected",
+            Accessibility.ProtectedOrInternal => "protected internal",
+            Accessibility.ProtectedAndInternal => "private protected",
+            _ => string.Empty
+        };
+    }
+
     private static string ToCamelCase(string value)
     {
         if (string.IsNullOrEmpty(value))
@@ -335,6 +353,5 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
         }
     }
 }
-
 
 
