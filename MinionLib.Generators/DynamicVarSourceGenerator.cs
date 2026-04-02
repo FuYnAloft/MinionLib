@@ -84,7 +84,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
                 .OrderBy(static r => r.PropertyName, StringComparer.Ordinal)
                 .ToImmutableArray();
 
-            var smartArgRules = allRules
+            var smartArgRules = ownRules
                 .Where(static r => r.GeneratorType == null)
                 .OrderBy(static r => r.PropertyName, StringComparer.Ordinal)
                 .ToImmutableArray();
@@ -294,14 +294,11 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             sb.AppendLine();
         }
 
-        sb.AppendLine("    protected override void SmartAddArgs(global::MegaCrit.Sts2.Core.Localization.LocString loc)");
-        sb.AppendLine("    {");
-        if (smartArgRules.Length == 0)
+        if (smartArgRules.Length > 0)
         {
-            sb.AppendLine("    }");
-        }
-        else
-        {
+            sb.AppendLine("    protected override void SmartAddArgs(global::MegaCrit.Sts2.Core.Localization.LocString loc)");
+            sb.AppendLine("    {");
+            sb.AppendLine("        base.SmartAddArgs(loc);");
             foreach (var rule in smartArgRules)
             {
                 EmitSmartArg(sb, rule, dynamicVarType, locStringType, iListOpenType);

@@ -11,10 +11,10 @@ namespace MinionLib.Example.Components;
 
 public sealed partial class HealOwnerComponent : AmountCardComponent
 {
-    [ComponentState<DamageVar>(ValueProp.Move)]
+    [ComponentState]
     public int ANumbet { get; set; }
     
-    [ComponentState<DynamicVar>]
+    [ComponentState]
     public decimal BNumbet { get; set; }
     
     
