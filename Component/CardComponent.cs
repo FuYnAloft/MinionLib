@@ -46,9 +46,14 @@ public abstract partial class CardComponent : ICardComponent
         return incoming;
     }
 
-    public abstract void Serialize(ArrayBufferWriter<byte> writer);
+    public virtual void Serialize(ArrayBufferWriter<byte> writer)
+    {
+    }
 
-    public abstract bool Deserialize(ref ReadOnlySpan<byte> reader);
+    public virtual bool Deserialize(ref ReadOnlySpan<byte> reader)
+    {
+        return true;
+    }
 
     protected virtual IEnumerable<DynamicVar> ExtraVars => [];
 

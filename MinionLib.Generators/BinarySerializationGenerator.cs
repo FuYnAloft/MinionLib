@@ -115,6 +115,8 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         sb.Append("    ").Append(methodPrefix)
             .AppendLine(" void Serialize(global::System.Buffers.ArrayBufferWriter<byte> writer)");
         sb.AppendLine("    {");
+        if (isCardComponentDerived)
+            sb.AppendLine("        base.Serialize(writer);");
         foreach (var prop in props)
             EmitSerializeForType(sb, prop.Type, $"this.{prop.Name}", 2, ref uniqueId, serializableSymbol);
         sb.AppendLine("    }");
@@ -123,6 +125,8 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         sb.Append("    ").Append(methodPrefix)
             .AppendLine(" bool Deserialize(ref global::System.ReadOnlySpan<byte> reader)");
         sb.AppendLine("    {");
+        if (isCardComponentDerived)
+            sb.AppendLine("        if (!base.Deserialize(ref reader)) return false;");
         foreach (var prop in props)
             EmitDeserializeForType(sb, prop.Type, $"this.{prop.Name}", 2, ref uniqueId, serializableSymbol);
 
@@ -342,6 +346,22 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 sb.Append(p).Append(targetExpr).Append(" = ").Append(strVar).AppendLine("!;");
             }
 
+            return;
+        }
+
+        if (TryEmitPrimitiveDeserialize(sb, type, targetExpr, indent, ref id))
+            return;
+
+        if (type.TypeKind == TypeKind.Enum)
+        {
+            var enumTypeName = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            var underlying = ((INamedTypeSymbol)type).EnumUnderlyingType!;
+            var underlyingTypeName = underlying.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            var raw = $"__enum_{id++}";
+
+            sb.Append(p).Append(underlyingTypeName).Append(' ').Append(raw).AppendLine(" = default;");
+            EmitDeserializeForType(sb, underlying, raw, indent, ref id, serializableSymbol);
+            sb.Append(p).Append(targetExpr).Append(" = (").Append(enumTypeName).Append(")").Append(raw).AppendLine(";");
             return;
         }
 
