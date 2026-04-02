@@ -12,14 +12,24 @@ public abstract partial class CardComponent : ICardComponent
 
     public IComponentsCardModel? Card { get; private set; }
 
-    public virtual void Attach(IComponentsCardModel card)
+    public void Attach(IComponentsCardModel card)
     {
         Card = card;
+        OnAttach();
     }
 
-    public virtual void Detach()
+    protected virtual void OnAttach()
     {
+    }
+
+    public void Detach()
+    {
+        OnDetach();
         Card = null;
+    }
+
+    protected virtual void OnDetach()
+    {
     }
 
     public virtual ICardComponent DeepClone()
