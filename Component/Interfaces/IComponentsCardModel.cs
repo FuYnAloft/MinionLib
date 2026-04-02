@@ -1,11 +1,11 @@
-using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MinionLib.Component.Core;
+using MegaCrit.Sts2.Core.Models;
 
 namespace MinionLib.Component.Interfaces;
 
 public interface IComponentsCardModel
 {
+    CardModel AsCardModel => (CardModel)this;
+
     IReadOnlyList<ICardComponent> Components { get; }
 
     IEnumerable<ICardComponent> CanonicalComponents { get; }
