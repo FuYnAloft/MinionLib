@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
@@ -17,6 +18,9 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
     private const string ComponentStateGenericAttributeMetadataName = "MinionLib.Component.Core.ComponentStateAttribute`1";
     private const string NoGeneratedSerializationMetadataName = "MinionLib.Component.Core.NoGeneratedSerializationAttribute";
     private const string CardComponentMetadataName = "MinionLib.Component.CardComponent";
+    private const string FullyQualifiedGeneratedSerializableMetadataName = "global::" + GeneratedSerializableMetadataName;
+    private const string FullyQualifiedComponentStateAttributeMetadataName = "global::" + ComponentStateAttributeMetadataName;
+    private const string FullyQualifiedCardComponentMetadataName = "global::" + CardComponentMetadataName;
 
     private static readonly DiagnosticDescriptor ImplementationMustBeClass = new(
         id: "MLSG100",
@@ -44,23 +48,34 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterSourceOutput(context.CompilationProvider, static (spc, compilation) => { Emit(spc, compilation); });
+        var typeCandidates = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                static (node, _) => node is ClassDeclarationSyntax { BaseList: not null },
+                static (ctx, _) => GetTypeCandidate(ctx))
+            .Where(static x => x != null)
+            .Select(static (x, _) => x!);
+
+        context.RegisterSourceOutput(typeCandidates.Collect(), static (spc, types) => Emit(spc, types));
     }
 
-    private static void Emit(SourceProductionContext context, Compilation compilation)
+    private static INamedTypeSymbol? GetTypeCandidate(GeneratorSyntaxContext context)
     {
-        var serializableSymbol = compilation.GetTypeByMetadataName(GeneratedSerializableMetadataName);
-        if (serializableSymbol == null)
-            return;
+        if (context.Node is not ClassDeclarationSyntax classSyntax)
+            return null;
 
-        var componentStateAttribute = compilation.GetTypeByMetadataName(ComponentStateAttributeMetadataName);
-        var componentStateGenericAttribute = compilation.GetTypeByMetadataName(ComponentStateGenericAttributeMetadataName);
-        var noGeneratedAttribute = compilation.GetTypeByMetadataName(NoGeneratedSerializationMetadataName);
-        var cardComponentType = compilation.GetTypeByMetadataName(CardComponentMetadataName);
+        return context.SemanticModel.GetDeclaredSymbol(classSyntax) as INamedTypeSymbol;
+    }
 
-        foreach (var type in GetAllTypes(compilation.Assembly.GlobalNamespace))
+    private static void Emit(SourceProductionContext context, ImmutableArray<INamedTypeSymbol> types)
+    {
+        var visited = new HashSet<string>(System.StringComparer.Ordinal);
+        foreach (var type in types)
         {
-            if (!Implements(type, serializableSymbol) || type.TypeKind == TypeKind.Interface)
+            var typeName = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            if (!visited.Add(typeName))
+                continue;
+
+            if (!Implements(type, FullyQualifiedGeneratedSerializableMetadataName) || type.TypeKind == TypeKind.Interface)
                 continue;
 
             if (type.TypeKind != TypeKind.Class)
@@ -74,10 +89,10 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 context.ReportDiagnostic(Diagnostic.Create(MissingParameterlessCtor,
                     type.Locations.FirstOrDefault(), type.ToDisplayString()));
 
-            if (HasAttribute(type, noGeneratedAttribute) || HasExplicitSerializationMethods(type))
+            if (HasAttribute(type, NoGeneratedSerializationMetadataName) || HasExplicitSerializationMethods(type))
                 continue;
 
-            var props = GetStateProperties(type, componentStateAttribute, componentStateGenericAttribute);
+            var props = GetStateProperties(type);
             if (props.Length == 0)
                 continue;
 
@@ -88,14 +103,12 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 continue;
             }
 
-            var source = BuildSource(type, props, cardComponentType != null && InheritsFrom(type, cardComponentType),
-                serializableSymbol);
+            var source = BuildSource(type, props, InheritsFrom(type, FullyQualifiedCardComponentMetadataName));
             context.AddSource(BuildHintName(type), SourceText.From(source, Encoding.UTF8));
         }
     }
 
-    private static string BuildSource(INamedTypeSymbol type, ImmutableArray<IPropertySymbol> props, bool isCardComponentDerived,
-        INamedTypeSymbol serializableSymbol)
+    private static string BuildSource(INamedTypeSymbol type, ImmutableArray<IPropertySymbol> props, bool isCardComponentDerived)
     {
         var sb = new StringBuilder();
         sb.AppendLine("// <auto-generated />");
@@ -118,7 +131,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         if (isCardComponentDerived)
             sb.AppendLine("        base.Serialize(writer);");
         foreach (var prop in props)
-            EmitSerializeForType(sb, prop.Type, $"this.{prop.Name}", 2, ref uniqueId, serializableSymbol);
+            EmitSerializeForType(sb, prop.Type, $"this.{prop.Name}", 2, ref uniqueId);
         sb.AppendLine("    }");
         sb.AppendLine();
 
@@ -128,7 +141,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         if (isCardComponentDerived)
             sb.AppendLine("        if (!base.Deserialize(ref reader)) return false;");
         foreach (var prop in props)
-            EmitDeserializeForType(sb, prop.Type, $"this.{prop.Name}", 2, ref uniqueId, serializableSymbol);
+            EmitDeserializeForType(sb, prop.Type, $"this.{prop.Name}", 2, ref uniqueId);
 
         sb.AppendLine("        return true;");
         sb.AppendLine("    }");
@@ -137,8 +150,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         return sb.ToString();
     }
 
-    private static void EmitSerializeForType(StringBuilder sb, ITypeSymbol type, string expr, int indent, ref int id,
-        INamedTypeSymbol serializableSymbol)
+    private static void EmitSerializeForType(StringBuilder sb, ITypeSymbol type, string expr, int indent, ref int id)
     {
         var p = Indent(indent);
 
@@ -149,7 +161,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).Append("global::MinionLib.Component.Core.SerializationUtils.WriteBoolean(writer, ").Append(has).AppendLine(");");
             sb.Append(p).Append("if (").Append(has).AppendLine(")");
             sb.Append(p).AppendLine("{");
-            EmitSerializeForType(sb, RemoveNullable(type), expr + "!", indent + 1, ref id, serializableSymbol);
+            EmitSerializeForType(sb, RemoveNullable(type), expr + "!", indent + 1, ref id);
             sb.Append(p).AppendLine("}");
             return;
         }
@@ -169,7 +181,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).Append("    for (var ").Append(i).Append(" = 0; ").Append(i).Append(" < ").Append(len).Append("; ").Append(i)
                 .AppendLine("++)");
             sb.Append(p).AppendLine("    {");
-            EmitSerializeForType(sb, array.ElementType, expr + "![" + i + "]", indent + 2, ref id, serializableSymbol);
+            EmitSerializeForType(sb, array.ElementType, expr + "![" + i + "]", indent + 2, ref id);
             sb.Append(p).AppendLine("    }");
             sb.Append(p).AppendLine("}");
             return;
@@ -190,7 +202,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).Append("    for (var ").Append(i).Append(" = 0; ").Append(i).Append(" < ").Append(len).Append("; ").Append(i)
                 .AppendLine("++)");
             sb.Append(p).AppendLine("    {");
-            EmitSerializeForType(sb, listElement!, expr + "![" + i + "]", indent + 2, ref id, serializableSymbol);
+            EmitSerializeForType(sb, listElement!, expr + "![" + i + "]", indent + 2, ref id);
             sb.Append(p).AppendLine("    }");
             sb.Append(p).AppendLine("}");
             return;
@@ -209,11 +221,11 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         {
             var underlying = ((INamedTypeSymbol)type).EnumUnderlyingType!;
             EmitSerializeForType(sb, underlying, "(" + underlying.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) + ")" + expr,
-                indent, ref id, serializableSymbol);
+                indent, ref id);
             return;
         }
 
-        if (ImplementsSerializable(type, serializableSymbol))
+        if (ImplementsSerializable(type, FullyQualifiedGeneratedSerializableMetadataName))
         {
             sb.Append(p).Append("if (").Append(expr).AppendLine(" == null)");
             sb.Append(p).AppendLine("{");
@@ -232,8 +244,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             .Append(type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)).Append(">(writer, ").Append(expr).AppendLine(");");
     }
 
-    private static void EmitDeserializeForType(StringBuilder sb, ITypeSymbol type, string targetExpr, int indent, ref int id,
-        INamedTypeSymbol serializableSymbol)
+    private static void EmitDeserializeForType(StringBuilder sb, ITypeSymbol type, string targetExpr, int indent, ref int id)
     {
         var p = Indent(indent);
         var canAssignNull = CanAssignNullOnDeserialize(type);
@@ -250,7 +261,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).AppendLine("}");
             sb.Append(p).AppendLine("else");
             sb.Append(p).AppendLine("{");
-            EmitDeserializeForType(sb, RemoveNullable(type), targetExpr, indent + 1, ref id, serializableSymbol);
+            EmitDeserializeForType(sb, RemoveNullable(type), targetExpr, indent + 1, ref id);
             sb.Append(p).AppendLine("}");
             return;
         }
@@ -284,7 +295,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).AppendLine("    {");
             sb.Append(p).Append("        ").Append(elementTypeName).Append(' ').Append(item)
                 .Append(GetLocalInitializer(array.ElementType)).AppendLine();
-            EmitDeserializeForType(sb, array.ElementType, item, indent + 2, ref id, serializableSymbol);
+            EmitDeserializeForType(sb, array.ElementType, item, indent + 2, ref id);
             sb.Append(p).Append("        ").Append(arr).Append("[").Append(i).Append("] = ").Append(item).AppendLine(";");
             sb.Append(p).AppendLine("    }");
             sb.Append(p).Append("    ").Append(targetExpr).Append(" = ").Append(arr).AppendLine(";");
@@ -321,7 +332,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             sb.Append(p).AppendLine("    {");
             sb.Append(p).Append("        ").Append(elemTypeName).Append(' ').Append(item)
                 .Append(GetLocalInitializer(listElement!)).AppendLine();
-            EmitDeserializeForType(sb, listElement!, item, indent + 2, ref id, serializableSymbol);
+            EmitDeserializeForType(sb, listElement!, item, indent + 2, ref id);
             sb.Append(p).Append("        ").Append(list).Append(".Add(").Append(item).AppendLine(");");
             sb.Append(p).AppendLine("    }");
             sb.Append(p).Append("    ").Append(targetExpr).Append(" = ").Append(list).AppendLine(";");
@@ -360,12 +371,12 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             var raw = $"__enum_{id++}";
 
             sb.Append(p).Append(underlyingTypeName).Append(' ').Append(raw).AppendLine(" = default;");
-            EmitDeserializeForType(sb, underlying, raw, indent, ref id, serializableSymbol);
+            EmitDeserializeForType(sb, underlying, raw, indent, ref id);
             sb.Append(p).Append(targetExpr).Append(" = (").Append(enumTypeName).Append(")").Append(raw).AppendLine(";");
             return;
         }
 
-        if (ImplementsSerializable(type, serializableSymbol))
+        if (ImplementsSerializable(type, FullyQualifiedGeneratedSerializableMetadataName))
         {
             var has = $"__has_{id++}";
             var obj = $"__obj_{id++}";
@@ -510,10 +521,10 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         return true;
     }
 
-    private static bool ImplementsSerializable(ITypeSymbol type, INamedTypeSymbol serializableSymbol)
+    private static bool ImplementsSerializable(ITypeSymbol type, string fullyQualifiedInterfaceMetadataName)
     {
         return type is INamedTypeSymbol named
-                && named.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(i, serializableSymbol));
+                && named.AllInterfaces.Any(i => i.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == fullyQualifiedInterfaceMetadataName);
     }
 
     private static string GetLocalInitializer(ITypeSymbol type)
@@ -553,28 +564,9 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         return $"new {baseTypeName}[{firstLengthExpr}]{string.Concat(Enumerable.Repeat("[]", depth - 1))}";
     }
 
-    private static IEnumerable<INamedTypeSymbol> GetAllTypes(INamespaceSymbol root)
+    private static bool Implements(INamedTypeSymbol type, string fullyQualifiedInterfaceMetadataName)
     {
-        foreach (var type in root.GetTypeMembers())
-            foreach (var nested in GetAllTypes(type))
-                yield return nested;
-
-        foreach (var ns in root.GetNamespaceMembers())
-            foreach (var type in GetAllTypes(ns))
-                yield return type;
-    }
-
-    private static IEnumerable<INamedTypeSymbol> GetAllTypes(INamedTypeSymbol type)
-    {
-        yield return type;
-        foreach (var nested in type.GetTypeMembers())
-            foreach (var child in GetAllTypes(nested))
-                yield return child;
-    }
-
-    private static bool Implements(INamedTypeSymbol type, INamedTypeSymbol interfaceSymbol)
-    {
-        return type.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(i, interfaceSymbol));
+        return type.AllInterfaces.Any(i => i.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == fullyQualifiedInterfaceMetadataName);
     }
 
     private static bool HasParameterlessConstructor(INamedTypeSymbol type)
@@ -585,13 +577,12 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         return type.InstanceConstructors.Any(ctor => ctor.Parameters.Length == 0 && !ctor.IsStatic);
     }
 
-    private static bool HasAttribute(ISymbol symbol, INamedTypeSymbol? attr)
+    private static bool HasAttribute(ISymbol symbol, string attributeMetadataName)
     {
-        if (attr == null)
-            return false;
-
-        return symbol.GetAttributes().Any(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, attr)
-                                               || SymbolEqualityComparer.Default.Equals(a.AttributeClass?.OriginalDefinition, attr));
+        var qualifiedName = "global::" + attributeMetadataName;
+        return symbol.GetAttributes().Any(a =>
+            a.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == qualifiedName
+            || a.AttributeClass?.OriginalDefinition.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == qualifiedName);
     }
 
     private static bool IsPartial(INamedTypeSymbol type)
@@ -609,27 +600,24 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         return serialize && deserialize;
     }
 
-    private static ImmutableArray<IPropertySymbol> GetStateProperties(
-        INamedTypeSymbol type,
-        INamedTypeSymbol? componentStateAttribute,
-        INamedTypeSymbol? componentStateGenericAttribute)
+    private static ImmutableArray<IPropertySymbol> GetStateProperties(INamedTypeSymbol type)
     {
         return type.GetMembers().OfType<IPropertySymbol>()
             .Where(p => !p.IsStatic)
             .Where(p => p.GetMethod != null && p.SetMethod != null)
             .Where(p => p.GetAttributes().Any(a =>
-                SymbolEqualityComparer.Default.Equals(a.AttributeClass, componentStateAttribute)
-                || SymbolEqualityComparer.Default.Equals(a.AttributeClass?.OriginalDefinition, componentStateGenericAttribute)))
+                a.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == FullyQualifiedComponentStateAttributeMetadataName
+                || a.AttributeClass?.OriginalDefinition.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == "global::MinionLib.Component.Core.ComponentStateAttribute<T>"))
             .OrderBy(p => p.Name, System.StringComparer.Ordinal)
             .ToImmutableArray();
     }
 
-    private static bool InheritsFrom(INamedTypeSymbol type, INamedTypeSymbol baseType)
+    private static bool InheritsFrom(INamedTypeSymbol type, string fullyQualifiedBaseTypeMetadataName)
     {
-        var current = type.BaseType;
+        var current = type;
         while (current != null)
         {
-            if (SymbolEqualityComparer.Default.Equals(current, baseType))
+            if (current.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == fullyQualifiedBaseTypeMetadataName)
                 return true;
             current = current.BaseType;
         }

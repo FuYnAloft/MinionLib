@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
@@ -19,6 +20,10 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
     private const string DynamicVarMetadataName = "MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar";
     private const string LocStringMetadataName = "MegaCrit.Sts2.Core.Localization.LocString";
     private const string IListMetadataName = "System.Collections.Generic.IList`1";
+    private const string FullyQualifiedCardComponentMetadataName = "global::" + CardComponentMetadataName;
+    private const string FullyQualifiedDynamicVarMetadataName = "global::" + DynamicVarMetadataName;
+    private const string FullyQualifiedLocStringMetadataName = "global::" + LocStringMetadataName;
+    private const string FullyQualifiedIListMetadataName = "global::" + IListMetadataName;
 
     private static readonly DiagnosticDescriptor CardComponentTypeMustBePartial = new(
         id: "MLSG200",
@@ -38,31 +43,41 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterSourceOutput(context.CompilationProvider, static (spc, compilation) => Emit(spc, compilation));
+        var typeCandidates = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                static (node, _) => node is ClassDeclarationSyntax { BaseList: not null },
+                static (ctx, _) => GetTypeCandidate(ctx))
+            .Where(static x => x != null)
+            .Select(static (x, _) => x!);
+
+        context.RegisterSourceOutput(typeCandidates.Collect(), static (spc, types) => Emit(spc, types));
     }
 
-    private static void Emit(SourceProductionContext context, Compilation compilation)
+    private static INamedTypeSymbol? GetTypeCandidate(GeneratorSyntaxContext context)
     {
-        var cardComponentType = compilation.GetTypeByMetadataName(CardComponentMetadataName);
-        var dynamicVarType = compilation.GetTypeByMetadataName(DynamicVarMetadataName);
-        var locStringType = compilation.GetTypeByMetadataName(LocStringMetadataName);
-        var iListOpenType = compilation.GetTypeByMetadataName(IListMetadataName);
-        if (cardComponentType == null || dynamicVarType == null || locStringType == null || iListOpenType == null)
-            return;
+        if (context.Node is not ClassDeclarationSyntax classSyntax)
+            return null;
 
-        var componentStateAttribute = compilation.GetTypeByMetadataName(ComponentStateAttributeMetadataName);
-        var componentStateGenericAttribute = compilation.GetTypeByMetadataName(ComponentStateGenericAttributeMetadataName);
+        return context.SemanticModel.GetDeclaredSymbol(classSyntax) as INamedTypeSymbol;
+    }
 
-        foreach (var type in GetAllTypes(compilation.Assembly.GlobalNamespace))
+    private static void Emit(SourceProductionContext context, ImmutableArray<INamedTypeSymbol> types)
+    {
+        var visited = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var type in types)
         {
+            var typeName = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            if (!visited.Add(typeName))
+                continue;
+
             if (type.TypeKind != TypeKind.Class)
                 continue;
-            if (SymbolEqualityComparer.Default.Equals(type, cardComponentType))
+            if (typeName == FullyQualifiedCardComponentMetadataName)
                 continue;
-            if (!InheritsFrom(type, cardComponentType))
+            if (!InheritsFromMetadataName(type, FullyQualifiedCardComponentMetadataName))
                 continue;
 
-            var ownRules = GetOwnComponentStateRules(type, componentStateAttribute, componentStateGenericAttribute);
+            var ownRules = GetOwnComponentStateRules(type);
             if (ownRules.Length == 0)
                 continue;
 
@@ -73,11 +88,11 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
                 continue;
             }
 
-            var allRules = GetAllComponentStateRules(type, componentStateAttribute, componentStateGenericAttribute);
+            var allRules = GetAllComponentStateRules(type);
             if (allRules.Length == 0)
                 continue;
 
-            ValidateDynamicVarTypes(context, allRules, dynamicVarType);
+            ValidateDynamicVarTypes(context, allRules);
 
             var smartVarRules = allRules
                 .Where(static r => r.GeneratorType != null)
@@ -89,20 +104,19 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
                 .OrderBy(static r => r.PropertyName, StringComparer.Ordinal)
                 .ToImmutableArray();
 
-            var source = BuildSource(type, smartVarRules, smartArgRules, dynamicVarType, locStringType, iListOpenType);
+            var source = BuildSource(type, smartVarRules, smartArgRules);
             context.AddSource(BuildHintName(type), SourceText.From(source, Encoding.UTF8));
         }
     }
 
-    private static void ValidateDynamicVarTypes(SourceProductionContext context, ImmutableArray<ComponentStateRule> rules,
-        INamedTypeSymbol dynamicVarType)
+    private static void ValidateDynamicVarTypes(SourceProductionContext context, ImmutableArray<ComponentStateRule> rules)
     {
         foreach (var rule in rules)
         {
             if (rule.GeneratorType == null)
                 continue;
 
-            if (!InheritsFrom(rule.GeneratorType, dynamicVarType))
+            if (!InheritsFromMetadataName(rule.GeneratorType, FullyQualifiedDynamicVarMetadataName))
             {
                 context.ReportDiagnostic(Diagnostic.Create(
                     DynamicVarTypeMustInheritDynamicVar,
@@ -113,23 +127,17 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
         }
     }
 
-    private static ImmutableArray<ComponentStateRule> GetOwnComponentStateRules(
-        INamedTypeSymbol type,
-        INamedTypeSymbol? componentStateAttribute,
-        INamedTypeSymbol? componentStateGenericAttribute)
+    private static ImmutableArray<ComponentStateRule> GetOwnComponentStateRules(INamedTypeSymbol type)
     {
         return type.GetMembers()
             .OfType<IPropertySymbol>()
-            .Select(p => BuildRule(p, componentStateAttribute, componentStateGenericAttribute))
+            .Select(BuildRule)
             .Where(static r => r != null)
             .Select(static r => r!)
             .ToImmutableArray();
     }
 
-    private static ImmutableArray<ComponentStateRule> GetAllComponentStateRules(
-        INamedTypeSymbol type,
-        INamedTypeSymbol? componentStateAttribute,
-        INamedTypeSymbol? componentStateGenericAttribute)
+    private static ImmutableArray<ComponentStateRule> GetAllComponentStateRules(INamedTypeSymbol type)
     {
         var map = new Dictionary<string, ComponentStateRule>(StringComparer.Ordinal);
         var current = type;
@@ -145,7 +153,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             var node = chain.Pop();
             foreach (var property in node.GetMembers().OfType<IPropertySymbol>())
             {
-                var rule = BuildRule(property, componentStateAttribute, componentStateGenericAttribute);
+                var rule = BuildRule(property);
                 if (rule == null)
                     continue;
 
@@ -159,16 +167,13 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
         return map.Values.ToImmutableArray();
     }
 
-    private static ComponentStateRule? BuildRule(
-        IPropertySymbol property,
-        INamedTypeSymbol? componentStateAttribute,
-        INamedTypeSymbol? componentStateGenericAttribute)
+    private static ComponentStateRule? BuildRule(IPropertySymbol property)
     {
         if (property.IsStatic || property.GetMethod == null || property.Parameters.Length != 0)
             return null;
 
         var attribute = property.GetAttributes()
-            .FirstOrDefault(a => IsComponentStateAttribute(a, componentStateAttribute, componentStateGenericAttribute));
+            .FirstOrDefault(IsComponentStateAttribute);
         if (attribute == null)
             return null;
 
@@ -197,14 +202,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             return true;
         }
 
-        if (attribute.ConstructorArguments.Length == 0)
-            return true;
-
-        var first = attribute.ConstructorArguments[0];
-        if (first.Kind == TypedConstantKind.Type && first.Value is INamedTypeSymbol typeSymbol)
-            generatorType = typeSymbol;
-
-        constructorArgs = NormalizeConstructorArgs(attribute.ConstructorArguments, 1);
+        constructorArgs = NormalizeConstructorArgs(attribute.ConstructorArguments, 0);
         return true;
     }
 
@@ -219,17 +217,15 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
         return args.Skip(startIndex).ToImmutableArray();
     }
 
-    private static bool IsComponentStateAttribute(
-        AttributeData attribute,
-        INamedTypeSymbol? componentStateAttribute,
-        INamedTypeSymbol? componentStateGenericAttribute)
+    private static bool IsComponentStateAttribute(AttributeData attribute)
     {
-        var original = attribute.AttributeClass?.OriginalDefinition;
-        if (original == null)
+        var originalName = attribute.AttributeClass?.OriginalDefinition
+            .ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        if (string.IsNullOrEmpty(originalName))
             return false;
 
-        return SymbolEqualityComparer.Default.Equals(original, componentStateAttribute)
-               || SymbolEqualityComparer.Default.Equals(original, componentStateGenericAttribute);
+        return originalName == "global::" + ComponentStateAttributeMetadataName
+               || originalName == "global::MinionLib.Component.Core.ComponentStateAttribute<T>";
     }
 
     private static bool IsAccessibleFromType(IPropertySymbol property, INamedTypeSymbol type)
@@ -251,10 +247,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
     private static string BuildSource(
         INamedTypeSymbol type,
         ImmutableArray<ComponentStateRule> smartVarRules,
-        ImmutableArray<ComponentStateRule> smartArgRules,
-        INamedTypeSymbol dynamicVarType,
-        INamedTypeSymbol locStringType,
-        INamedTypeSymbol iListOpenType)
+        ImmutableArray<ComponentStateRule> smartArgRules)
     {
         var sb = new StringBuilder();
         sb.AppendLine("// <auto-generated />");
@@ -301,7 +294,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             sb.AppendLine("        base.SmartAddArgs(loc);");
             foreach (var rule in smartArgRules)
             {
-                EmitSmartArg(sb, rule, dynamicVarType, locStringType, iListOpenType);
+                EmitSmartArg(sb, rule);
             }
 
             sb.AppendLine("    }");
@@ -311,8 +304,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
         return sb.ToString();
     }
 
-    private static void EmitSmartArg(StringBuilder sb, ComponentStateRule rule,
-        INamedTypeSymbol dynamicVarType, INamedTypeSymbol locStringType, INamedTypeSymbol iListOpenType)
+    private static void EmitSmartArg(StringBuilder sb, ComponentStateRule rule)
     {
         var type = rule.Property.Type;
         var valueExpr = "this." + rule.PropertyName;
@@ -325,19 +317,19 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             sb.Append("        if (").Append(local).AppendLine(" == null)");
             sb.Append("            loc.Add(\"").Append(rule.PropertyName).AppendLine("\", 0m);");
             sb.AppendLine("        else");
-            EmitNonNullSmartArg(sb, type, rule.PropertyName, local, dynamicVarType, locStringType, iListOpenType, 3);
+            EmitNonNullSmartArg(sb, type, rule.PropertyName, local, 3);
             return;
         }
 
-        EmitNonNullSmartArg(sb, type, rule.PropertyName, valueExpr, dynamicVarType, locStringType, iListOpenType, 2);
+        EmitNonNullSmartArg(sb, type, rule.PropertyName, valueExpr, 2);
     }
 
     private static void EmitNonNullSmartArg(StringBuilder sb, ITypeSymbol type, string name, string valueExpr,
-        INamedTypeSymbol dynamicVarType, INamedTypeSymbol locStringType, INamedTypeSymbol iListOpenType, int indent)
+        int indent)
     {
         var p = new string(' ', indent * 4);
 
-        if (IsTypeOrDerived(type, dynamicVarType))
+        if (IsTypeOrDerived(type, FullyQualifiedDynamicVarMetadataName))
         {
             sb.Append(p).Append("loc.Add(").Append(valueExpr).AppendLine(");");
             return;
@@ -360,13 +352,13 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
                 return;
         }
 
-        if (IsTypeOrDerived(type, locStringType))
+        if (IsTypeOrDerived(type, FullyQualifiedLocStringMetadataName))
         {
             sb.Append(p).Append("loc.Add(\"").Append(name).Append("\", ").Append(valueExpr).AppendLine(");");
             return;
         }
 
-        if (IsIListOfString(type, iListOpenType))
+        if (IsIListOfString(type))
         {
             sb.Append(p).Append("loc.Add(\"").Append(name).Append("\", ").Append(valueExpr).AppendLine(");");
             return;
@@ -402,7 +394,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             or SpecialType.System_Decimal;
     }
 
-    private static bool IsIListOfString(ITypeSymbol type, INamedTypeSymbol iListOpenType)
+    private static bool IsIListOfString(ITypeSymbol type)
     {
         if (type is not INamedTypeSymbol named)
             return false;
@@ -411,7 +403,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
         {
             if (!iface.IsGenericType)
                 continue;
-            if (!SymbolEqualityComparer.Default.Equals(iface.OriginalDefinition, iListOpenType))
+            if (iface.OriginalDefinition.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) != FullyQualifiedIListMetadataName)
                 continue;
             if (iface.TypeArguments.Length != 1)
                 continue;
@@ -422,12 +414,12 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
         return false;
     }
 
-    private static bool IsTypeOrDerived(ITypeSymbol type, INamedTypeSymbol baseType)
+    private static bool IsTypeOrDerived(ITypeSymbol type, string baseTypeMetadataName)
     {
         if (type is not INamedTypeSymbol named)
             return false;
 
-        return InheritsFrom(named, baseType);
+        return InheritsFromMetadataName(named, baseTypeMetadataName);
     }
 
     private static string TypedConstantToCode(TypedConstant constant)
@@ -494,35 +486,11 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
         return containingType + ".DynamicVars.g.cs";
     }
 
-    private static IEnumerable<INamedTypeSymbol> GetAllTypes(INamespaceSymbol ns)
-    {
-        foreach (var type in ns.GetTypeMembers())
-        {
-            yield return type;
-            foreach (var nested in GetAllNestedTypes(type))
-                yield return nested;
-        }
-
-        foreach (var child in ns.GetNamespaceMembers())
-            foreach (var type in GetAllTypes(child))
-                yield return type;
-    }
-
-    private static IEnumerable<INamedTypeSymbol> GetAllNestedTypes(INamedTypeSymbol type)
-    {
-        foreach (var nested in type.GetTypeMembers())
-        {
-            yield return nested;
-            foreach (var child in GetAllNestedTypes(nested))
-                yield return child;
-        }
-    }
-
-    private static bool InheritsFrom(INamedTypeSymbol type, INamedTypeSymbol baseType)
+    private static bool InheritsFromMetadataName(INamedTypeSymbol type, string fullyQualifiedMetadataName)
     {
         for (var current = type; current != null; current = current.BaseType)
         {
-            if (SymbolEqualityComparer.Default.Equals(current, baseType))
+            if (current.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == fullyQualifiedMetadataName)
                 return true;
         }
 

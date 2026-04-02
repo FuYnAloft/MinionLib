@@ -34,36 +34,35 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var propertyCandidates = context.SyntaxProvider
-            .CreateSyntaxProvider(
-                static (node, _) => IsCandidateProperty(node),
-                static (ctx, _) => GetCandidate(ctx))
-            .Where(static x => x != null)
-            .Select(static (x, _) => x!);
+        var nonGeneric = context.SyntaxProvider.ForAttributeWithMetadataName(
+            ComponentStateAttributeMetadataName,
+            static (node, _) => node is PropertyDeclarationSyntax,
+            static (ctx, _) => GetCandidate(ctx));
 
-        var compilationAndProperties = context.CompilationProvider.Combine(propertyCandidates.Collect());
+        var generic = context.SyntaxProvider.ForAttributeWithMetadataName(
+            ComponentStateGenericAttributeMetadataName,
+            static (node, _) => node is PropertyDeclarationSyntax,
+            static (ctx, _) => GetCandidate(ctx));
 
-        context.RegisterSourceOutput(compilationAndProperties, static (spc, source) =>
-        {
-            var (_, properties) = source;
-            Emit(spc, properties);
-        });
+        context.RegisterSourceOutput(
+            nonGeneric.Where(static x => x != null).Select(static (x, _) => x!),
+            static (spc, candidate) => Emit(spc, candidate));
+
+        context.RegisterSourceOutput(
+            generic.Where(static x => x != null).Select(static (x, _) => x!),
+            static (spc, candidate) => Emit(spc, candidate));
     }
 
-    private static bool IsCandidateProperty(SyntaxNode node)
+    private static PropertyCandidate? GetCandidate(GeneratorAttributeSyntaxContext context)
     {
-        return node is PropertyDeclarationSyntax property
-               && property.AttributeLists.Count > 0
-               && property.Modifiers.Any(SyntaxKind.PartialKeyword);
-    }
-
-    private static PropertyCandidate? GetCandidate(GeneratorSyntaxContext context)
-    {
-        var propertySyntax = (PropertyDeclarationSyntax)context.Node;
-        var declaredSymbol = context.SemanticModel.GetDeclaredSymbol(propertySyntax);
-        if (declaredSymbol is null)
+        if (context.TargetSymbol is not IPropertySymbol propertySymbol)
             return null;
-        if (declaredSymbol is not IPropertySymbol propertySymbol)
+
+        var propertySyntax = propertySymbol.DeclaringSyntaxReferences
+            .Select(static r => r.GetSyntax())
+            .OfType<PropertyDeclarationSyntax>()
+            .FirstOrDefault();
+        if (propertySyntax == null)
             return null;
 
         var componentStateAttribute = propertySymbol
@@ -87,22 +86,19 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
                || fullName == "global::MinionLib.Component.Core.ComponentStateAttribute<T>";
     }
 
-    private static void Emit(SourceProductionContext context, ImmutableArray<PropertyCandidate> properties)
+    private static void Emit(SourceProductionContext context, PropertyCandidate candidate)
     {
-        foreach (var candidate in properties.Distinct(PropertyCandidateComparer.Instance))
+        if (!TryValidateCandidate(candidate, out var reason))
         {
-            if (!TryValidateCandidate(candidate, out var reason))
-            {
-                if (reason != null)
-                    context.ReportDiagnostic(reason);
+            if (reason != null)
+                context.ReportDiagnostic(reason);
 
-                continue;
-            }
-
-            var hintName = BuildHintName(candidate.Symbol);
-            var source = BuildSource(candidate);
-            context.AddSource(hintName, SourceText.From(source, Encoding.UTF8));
+            return;
         }
+
+        var hintName = BuildHintName(candidate.Symbol);
+        var source = BuildSource(candidate);
+        context.AddSource(hintName, SourceText.From(source, Encoding.UTF8));
     }
 
     private static bool TryValidateCandidate(
@@ -143,14 +139,9 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
         if (attributeClass == null)
             return false;
 
-        if (attributeClass.IsGenericType)
-            return attributeClass.TypeArguments.Length == 1 && attributeClass.TypeArguments[0].SpecialType != SpecialType.System_Object;
-
-        if (attribute.ConstructorArguments.Length == 0)
-            return false;
-
-        var firstArg = attribute.ConstructorArguments[0];
-        return firstArg.Kind == TypedConstantKind.Type && firstArg.Value is ITypeSymbol;
+        return attributeClass.IsGenericType
+               && attributeClass.TypeArguments.Length == 1
+               && attributeClass.TypeArguments[0].SpecialType != SpecialType.System_Object;
     }
 
     private static bool IsPartialType(INamedTypeSymbol type)
@@ -334,27 +325,6 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
         public PropertyDeclarationSyntax Syntax { get; }
         public IPropertySymbol Symbol { get; }
         public AttributeData Attribute { get; }
-    }
-
-    private sealed class PropertyCandidateComparer : IEqualityComparer<PropertyCandidate>
-    {
-        public static readonly PropertyCandidateComparer Instance = new();
-
-        public bool Equals(PropertyCandidate? x, PropertyCandidate? y)
-        {
-            if (ReferenceEquals(x, y))
-                return true;
-
-            if (x is null || y is null)
-                return false;
-
-            return SymbolEqualityComparer.Default.Equals(x.Symbol, y.Symbol);
-        }
-
-        public int GetHashCode(PropertyCandidate obj)
-        {
-            return SymbolEqualityComparer.Default.GetHashCode(obj.Symbol);
-        }
     }
 }
 
