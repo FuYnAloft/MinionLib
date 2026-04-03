@@ -9,7 +9,7 @@ using MinionLib.Example.Components;
 namespace MinionLib.Example.Cards;
 
 [Pool(typeof(ColorlessCardPool))]
-public sealed class HealSelfComponentCard() : ComponentsCardModel(0, CardType.Skill, CardRarity.Common, TargetType.Self)
+public sealed class HealSelfComponentCard() : CustomComponentsCardModel(0, CardType.Skill, CardRarity.Common, TargetType.Self)
 {
     public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
 

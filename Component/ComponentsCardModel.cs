@@ -1,7 +1,10 @@
 using BaseLib.Abstracts;
+using BaseLib.Patches.Content;
+using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using MinionLib.Component.Core;
 using MinionLib.Component.Interfaces;
@@ -13,9 +16,8 @@ public abstract partial class ComponentsCardModel(
     CardType type,
     CardRarity rarity,
     TargetType targetType,
-    bool shouldShowInCardLibrary = true,
-    bool autoAdd = true)
-    : CustomCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary, autoAdd),
+    bool shouldShowInCardLibrary = true)
+    : CardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary),
         IComponentsCardModel
 {
     // ReSharper disable once ConvertToConstant.Local
@@ -222,4 +224,29 @@ public abstract partial class ComponentsCardModel(
         _components?.SelectMany(c => c.HoverTips).Concat(ExtraHoverTipsC) ?? ExtraHoverTipsC;
 
     protected virtual IEnumerable<IHoverTip> ExtraHoverTipsC => [];
+}
+
+public abstract class CustomComponentsCardModel : ComponentsCardModel, ICustomModel, ILocalizationProvider
+{
+    protected CustomComponentsCardModel(
+        int canonicalEnergyCost,
+        CardType type,
+        CardRarity rarity,
+        TargetType targetType,
+        bool shouldShowInCardLibrary = true,
+        bool autoAdd = true)
+        : base(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    {
+        if (!autoAdd)
+            return;
+        CustomContentDictionary.AddModel(this.GetType());
+    }
+
+    public virtual Texture2D? CustomFrame => null;
+
+    public virtual string? CustomPortraitPath => null;
+
+    public virtual Texture2D? CustomPortrait => null;
+
+    public virtual List<(string, string)>? Localization => null;
 }
