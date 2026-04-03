@@ -487,7 +487,16 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 sb.Append(p).Append("if (!global::MinionLib.Component.Core.SerializationUtils.TryReadJson<").Append(type.DisplayName)
                     .Append(">(ref reader, out var ").Append(jsonVar).AppendLine("))");
                 sb.Append(p).AppendLine("    return false;");
-                sb.Append(p).Append(targetExpr).Append(" = ").Append(jsonVar).AppendLine(";");
+                if (type.CanAssignNullOnDeserialize)
+                {
+                    sb.Append(p).Append(targetExpr).Append(" = ").Append(jsonVar).AppendLine(";");
+                }
+                else
+                {
+                    sb.Append(p).Append("if (").Append(jsonVar).AppendLine(" == null)");
+                    sb.Append(p).AppendLine("    return false;");
+                    sb.Append(p).Append(targetExpr).Append(" = ").Append(jsonVar).AppendLine("!;");
+                }
                 return;
             }
         }
@@ -894,15 +903,13 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
 
             if (ImplementsSerializable(type))
             {
-                var namedType = (INamedTypeSymbol)type;
-                var canUseSerializablePath = CanUseSerializablePath(namedType);
                 return new TypeShapeData(
                     DisplayName: type.WithNullableAnnotation(NullableAnnotation.NotAnnotated)
                         .ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                    Kind: canUseSerializablePath ? TypeSerializationKind.Serializable : TypeSerializationKind.Json,
+                    Kind: TypeSerializationKind.Serializable,
                     PrimitiveKind: PrimitiveSerializationKind.None,
                     CanAssignNullOnDeserialize: canAssignNull,
-                    SuppressJsonFallbackWarning: !canUseSerializablePath,
+                    SuppressJsonFallbackWarning: false,
                     HasNullableWrapper: false,
                     NullableUnderlying: null,
                     ElementType: null,
@@ -924,20 +931,6 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 EnumUnderlying: null);
         }
 
-        private static bool CanUseSerializablePath(INamedTypeSymbol type)
-        {
-            if (type.TypeKind != TypeKind.Class || type.IsAbstract)
-                return false;
-
-            if (type.InstanceConstructors.Length == 0)
-                return true;
-
-            var ctor = type.InstanceConstructors.FirstOrDefault(static c => c.Parameters.Length == 0 && !c.IsStatic);
-            if (ctor != null)
-                return ctor.DeclaredAccessibility == Accessibility.Public;
-
-            return IsPartial(type) && !HasAttribute(type, NoGeneratedSerializationMetadataName);
-        }
 
         private static bool TryGetNullableValueUnderlyingType(ITypeSymbol type, out ITypeSymbol underlying)
         {

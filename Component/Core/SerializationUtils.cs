@@ -336,10 +336,7 @@ public static class SerializationUtils
         try
         {
             var deserialized = JsonSerializer.Deserialize<T>(json, JsonOptions);
-            if (deserialized == null)
-                return false;
-
-            value = deserialized;
+            value = deserialized!;
             return true;
         }
         catch
