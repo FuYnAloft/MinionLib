@@ -90,6 +90,7 @@ public static class CardComponentStateSerializer
         public T? AddComponent<T>(T component) where T : ICardComponent => component;
         public bool RemoveComponent<T>() where T : ICardComponent => false;
         public int RemoveComponents<T>() where T : ICardComponent => 0;
+        public bool RefRemoveComponent(ICardComponent component) => false;
         public T? GetComponent<T>() where T : ICardComponent => default;
         public IEnumerable<T> GetComponents<T>() where T : ICardComponent => [];
         public void EnsureComponentsInitialized(){}

@@ -13,6 +13,8 @@ public interface IComponentsCardModel
     bool RemoveComponent<T>() where T : ICardComponent;
 
     int RemoveComponents<T>() where T : ICardComponent;
+    
+    bool RefRemoveComponent(ICardComponent component);
 
     T? GetComponent<T>() where T : ICardComponent;
 

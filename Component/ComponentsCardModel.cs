@@ -93,6 +93,19 @@ public abstract partial class ComponentsCardModel(
         return removed;
     }
 
+    public bool RefRemoveComponent(ICardComponent component)
+    {
+        EnsureComponentsInitialized();
+
+        var index = _components!.FindIndex(c => ReferenceEquals(c, component));
+        if (index < 0)
+            return false;
+
+        _components[index].Detach();
+        _components.RemoveAt(index);
+        return true;
+    }
+
     public T? GetComponent<T>() where T : ICardComponent
     {
         EnsureComponentsInitialized();
