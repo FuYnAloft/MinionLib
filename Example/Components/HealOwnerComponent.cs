@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MinionLib.Component;
 using MinionLib.Component.Core;
 using MinionLib.Component.Interfaces;
+using AmountCardComponent = MinionLib.Component.Utils.AmountCardComponent;
 
 namespace MinionLib.Example.Components;
 
