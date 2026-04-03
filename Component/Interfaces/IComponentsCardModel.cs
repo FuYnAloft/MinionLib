@@ -22,5 +22,11 @@ public interface IComponentsCardModel
 
     void EnsureComponentsInitialized();
 
-    Task ComponentCallBack(string name, params object[] args);
+    Task ComponentCallBack(string name, params object?[] args);
+
+    bool ComponentPredicate(string name, params object?[] args);
+
+    object? ComponentQuery(string name, params object?[] args);
+
+    Task<object?> ComponentQueryAsync(string name, params object?[] args);
 }

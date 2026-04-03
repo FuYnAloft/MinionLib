@@ -214,10 +214,26 @@ public abstract partial class ComponentsCardModel(
         component.Attach(owner);
     }
 
-    public virtual Task ComponentCallBack(string name, params object[] args)
+    public virtual Task ComponentCallBack(string name, params object?[] args)
     {
         return Task.CompletedTask;
     }
+
+    public virtual bool ComponentPredicate(string name, params object?[] args)
+    {
+        return false;
+    }
+    
+    public virtual object? ComponentQuery(string name, params object?[] args)
+    {
+        return null;
+    }
+    
+    public virtual Task<object?> ComponentQueryAsync(string name, params object?[] args)
+    {
+        return Task.FromResult<object?>(null);
+    }
+    
 
     protected sealed override bool ShouldGlowGoldInternal =>
         (_components?.Any(c => c.ShouldGlowGoldInternal) ?? false) || ShouldGlowGoldInternalC;
