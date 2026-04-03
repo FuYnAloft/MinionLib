@@ -220,6 +220,18 @@ namespace MinionLib.Component;
     return buffer
 
 
+def generate_timing_enum(signatures: list[Signature]) -> str:
+    buffer = ""
+    buffer += AUTO_GENERATED_HEADER
+    buffer += "namespace MinionLib.Component.Utils;\n\n"
+    buffer += "public enum Timing\n"
+    buffer += "{\n"
+    for s in signatures:
+        buffer += f"    {s.name},\n"
+    buffer += "}\n"
+    return buffer
+
+
 def parse_csharp_signature(line: str) -> Signature:
     # 正则表达式说明：
     # ^\s*                      : 匹配行首空白
@@ -278,6 +290,10 @@ def main():
         f.write(code)
     with open(COMPONENT_DIR / "CardComponent.g.cs", 'w') as f:
         code = generate_card_component(signatures)
+        f.write(code)
+        
+    with open(COMPONENT_DIR / "Utils" / "Timing.g.cs", 'w') as f:
+        code = generate_timing_enum(signatures)
         f.write(code)
 
 
