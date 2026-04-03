@@ -4,6 +4,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using MinionLib.Component.Core;
@@ -21,7 +22,7 @@ public abstract partial class ComponentsCardModel(
         IComponentsCardModel
 {
     // ReSharper disable once ConvertToConstant.Local
-    private static readonly int MaxPhaseTransitions = 32;
+    private static readonly int MaxPhaseTransitions = 64;
 
     private List<ICardComponent>? _components;
 
@@ -237,6 +238,18 @@ public abstract partial class ComponentsCardModel(
         _components?.SelectMany(c => c.HoverTips).Concat(ExtraHoverTipsC) ?? ExtraHoverTipsC;
 
     protected virtual IEnumerable<IHoverTip> ExtraHoverTipsC => [];
+
+    private void HandlePhaseTransitionLimitExceeded(ComponentPhase lastPhase)
+    {
+        Log.Warn($"""
+Card '{Id.Entry}' exceeded the maximum of {MaxPhaseTransitions} phase transitions. Last phase: {lastPhase}.
+       This likely indicates an infinite loop in the card's logic, and no further phase transitions will be processed to prevent game instability.
+       At the time, there are {_components!.Count} component(s) attached to the card, with the following types:
+       {string.Join(", ", _components.Select(c => c.ComponentId))}
+       If you are sure it's a false positive, try modify ComponentsCardModel.MaxPhaseTransitions via reflection.
+""");
+        
+    }
 }
 
 public abstract class CustomComponentsCardModel : ComponentsCardModel, ICustomModel, ILocalizationProvider

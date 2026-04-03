@@ -79,8 +79,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -156,8 +155,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -233,8 +231,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -310,8 +307,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -387,8 +383,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -464,8 +459,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -541,8 +535,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -618,8 +611,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -695,8 +687,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -772,8 +763,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -849,8 +839,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -926,8 +915,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -1003,8 +991,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -1080,8 +1067,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -1157,8 +1143,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -1234,8 +1219,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -1311,8 +1295,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -1388,8 +1371,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -1465,8 +1447,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -1542,8 +1523,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -1619,8 +1599,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -1696,8 +1675,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -1773,8 +1751,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -1850,8 +1827,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -1927,8 +1903,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -2004,8 +1979,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -2081,8 +2055,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -2158,8 +2131,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -2235,8 +2207,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -2312,8 +2283,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -2389,8 +2359,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -2466,8 +2435,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -2543,8 +2511,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -2620,8 +2587,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -2697,8 +2663,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -2774,8 +2739,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -2851,8 +2815,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -2928,8 +2891,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -3005,8 +2967,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -3082,8 +3043,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -3159,8 +3119,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -3236,8 +3195,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -3313,8 +3271,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -3390,8 +3347,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -3467,8 +3423,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -3544,8 +3499,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -3621,8 +3575,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -3698,8 +3651,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -3775,8 +3727,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -3852,8 +3803,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -3929,8 +3879,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -4006,8 +3955,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -4083,8 +4031,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -4160,8 +4107,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -4237,8 +4183,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -4314,8 +4259,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -4391,8 +4335,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -4468,8 +4411,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -4545,8 +4487,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -4622,8 +4563,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -4699,8 +4639,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -4776,8 +4715,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -4853,8 +4791,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -4930,8 +4867,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -5007,8 +4943,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -5084,8 +5019,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -5161,8 +5095,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -5238,8 +5171,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -5315,8 +5247,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -5392,8 +5323,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -5469,8 +5399,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -5546,8 +5475,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -5623,8 +5551,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -5700,8 +5627,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -5777,8 +5703,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -5854,8 +5779,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -5931,8 +5855,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -6008,8 +5931,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -6085,8 +6007,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -6162,8 +6083,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -6239,8 +6159,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -6316,8 +6235,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -6393,8 +6311,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -6470,8 +6387,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -6547,8 +6463,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -6624,8 +6539,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -6701,8 +6615,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -6778,8 +6691,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -6855,8 +6767,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -6932,8 +6843,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -7009,8 +6919,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -7086,8 +6995,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -7163,8 +7071,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -7240,8 +7147,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -7317,8 +7223,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -7394,8 +7299,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -7471,8 +7375,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -7548,8 +7451,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -7625,8 +7527,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {
@@ -7702,8 +7603,7 @@ public abstract partial class ComponentsCardModel
             }
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {MaxPhaseTransitions}. Last phase: {componentContext.Phase}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }
         finally
         {

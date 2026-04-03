@@ -108,8 +108,7 @@ namespace MinionLib.Component;
             }}
 
             if (componentContext.Phase != ComponentPhase.Final)
-                throw new InvalidOperationException(
-                    $"Component phase transition exceeded {{MaxPhaseTransitions}}. Last phase: {{componentContext.Phase}}");
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
         }}
         finally
         {{
