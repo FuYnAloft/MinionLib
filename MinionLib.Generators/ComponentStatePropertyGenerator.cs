@@ -76,7 +76,7 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
         var namespaceName = propertySymbol.ContainingNamespace.IsGlobalNamespace
             ? null
             : propertySymbol.ContainingNamespace.ToDisplayString();
-        var location = DiagnosticLocationData.FromLocation(propertySyntax.Identifier.GetLocation());
+        var location = propertySyntax.Identifier.GetLocation();
 
         return new PropertyData(
             HintName: BuildHintName(containingType, propertyName),
@@ -155,7 +155,7 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
         {
             context.ReportDiagnostic(Diagnostic.Create(
                 ContainingTypeMustBePartial,
-                data.DiagnosticLocation.ToLocation(),
+                data.DiagnosticLocation,
                 data.ContainingTypeName));
             return;
         }
@@ -318,45 +318,5 @@ public sealed class ComponentStatePropertyGenerator : IIncrementalGenerator
         bool IsPropertyPartial,
         bool IsContainingTypePartial,
         bool HasDynamicVarGenerator,
-        DiagnosticLocationData DiagnosticLocation);
-
-    private readonly record struct DiagnosticLocationData(
-        string? Path,
-        int Start,
-        int Length,
-        int StartLine,
-        int StartCharacter,
-        int EndLine,
-        int EndCharacter)
-    {
-        public static DiagnosticLocationData FromLocation(Location? location)
-        {
-            if (location == null || location == Location.None || !location.IsInSource || location.SourceTree == null)
-                return default;
-
-            var span = location.SourceSpan;
-            var lineSpan = location.GetLineSpan().Span;
-            return new DiagnosticLocationData(
-                location.SourceTree.FilePath,
-                span.Start,
-                span.Length,
-                lineSpan.Start.Line,
-                lineSpan.Start.Character,
-                lineSpan.End.Line,
-                lineSpan.End.Character);
-        }
-
-        public Location? ToLocation()
-        {
-            if (string.IsNullOrWhiteSpace(Path) || Length < 0 || Start < 0)
-                return null;
-
-            return Location.Create(
-                Path!,
-                new TextSpan(Start, Length),
-                new LinePositionSpan(
-                    new LinePosition(StartLine, StartCharacter),
-                    new LinePosition(EndLine, EndCharacter)));
-        }
-    }
+        Location? DiagnosticLocation);
 }

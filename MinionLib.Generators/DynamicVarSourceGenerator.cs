@@ -98,7 +98,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             NamespaceName: namespaceName,
             ContainingTypes: BuildContainingTypeChain(type),
             IsPartial: IsPartial(type),
-            TypeLocation: DiagnosticLocationData.FromLocation(type.Locations.FirstOrDefault()),
+            TypeLocation: GetSourceLocation(type),
             OwnRules: ownRules,
             AllRules: allRules,
             InvalidRules: invalidRules);
@@ -163,7 +163,12 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             GeneratorTypeName: generatorTypeName,
             GeneratorTypeIsDynamicVar: generatorTypeIsDynamicVar,
             ConstructorArgCode: constructorArgs,
-            Location: DiagnosticLocationData.FromLocation(property.Locations.FirstOrDefault()));
+            Location: GetSourceLocation(property));
+    }
+
+    private static Location? GetSourceLocation(ISymbol symbol)
+    {
+        return symbol.Locations.FirstOrDefault(static l => l != null && l.IsInSource);
     }
 
     private static bool TryExtractGenerator(
@@ -242,7 +247,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             {
                 context.ReportDiagnostic(Diagnostic.Create(
                     CardComponentTypeMustBePartial,
-                    type.TypeLocation.ToLocation(),
+                    type.TypeLocation,
                     type.TypeDisplayName));
                 continue;
             }
@@ -251,7 +256,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             {
                 context.ReportDiagnostic(Diagnostic.Create(
                     DynamicVarTypeMustInheritDynamicVar,
-                    invalid.Location.ToLocation(),
+                    invalid.Location,
                     invalid.PropertyName,
                     invalid.GeneratorTypeName));
             }
@@ -539,7 +544,7 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
         string? NamespaceName,
         ImmutableArray<ContainingTypeData> ContainingTypes,
         bool IsPartial,
-        DiagnosticLocationData TypeLocation,
+        Location? TypeLocation,
         ImmutableArray<ComponentStateRuleData> OwnRules,
         ImmutableArray<ComponentStateRuleData> AllRules,
         ImmutableArray<InvalidDynamicVarRuleData> InvalidRules);
@@ -550,12 +555,12 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
         string? GeneratorTypeName,
         bool GeneratorTypeIsDynamicVar,
         ImmutableArray<string> ConstructorArgCode,
-        DiagnosticLocationData Location);
+        Location? Location);
 
     private readonly record struct InvalidDynamicVarRuleData(
         string PropertyName,
         string GeneratorTypeName,
-        DiagnosticLocationData Location);
+        Location? Location);
 
     private readonly record struct PropertyTypeInfo(
         SpecialType SpecialType,
@@ -627,44 +632,4 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
         string Keyword,
         string Name,
         ImmutableArray<string> TypeParameters);
-
-    private readonly record struct DiagnosticLocationData(
-        string? Path,
-        int Start,
-        int Length,
-        int StartLine,
-        int StartCharacter,
-        int EndLine,
-        int EndCharacter)
-    {
-        public static DiagnosticLocationData FromLocation(Location? location)
-        {
-            if (location == null || location == Location.None || !location.IsInSource || location.SourceTree == null)
-                return default;
-
-            var span = location.SourceSpan;
-            var lineSpan = location.GetLineSpan().Span;
-            return new DiagnosticLocationData(
-                location.SourceTree.FilePath,
-                span.Start,
-                span.Length,
-                lineSpan.Start.Line,
-                lineSpan.Start.Character,
-                lineSpan.End.Line,
-                lineSpan.End.Character);
-        }
-
-        public Location? ToLocation()
-        {
-            if (string.IsNullOrWhiteSpace(Path) || Length < 0 || Start < 0)
-                return null;
-
-            return Location.Create(
-                Path!,
-                new TextSpan(Start, Length),
-                new LinePositionSpan(
-                    new LinePosition(StartLine, StartCharacter),
-                    new LinePosition(EndLine, EndCharacter)));
-        }
-    }
 }

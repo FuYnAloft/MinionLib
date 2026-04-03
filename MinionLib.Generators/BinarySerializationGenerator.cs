@@ -114,8 +114,13 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             IsSealed: type.IsSealed,
             ImplementsICardComponent: Implements(type, FullyQualifiedICardComponentMetadataName),
             IsCardComponentDerived: InheritsFrom(type, FullyQualifiedCardComponentMetadataName),
-            TypeLocation: DiagnosticLocationData.FromLocation(type.Locations.FirstOrDefault()),
+            TypeLocation: GetSourceLocation(type),
             Properties: properties);
+    }
+
+    private static Location? GetSourceLocation(ISymbol symbol)
+    {
+        return symbol.Locations.FirstOrDefault(static l => l != null && l.IsInSource);
     }
 
     private static ImmutableArray<PropertyGenerationData> GetStateProperties(INamedTypeSymbol type)
@@ -127,7 +132,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
             .OrderBy(static p => p.Name, StringComparer.Ordinal)
             .Select(static p => new PropertyGenerationData(
                 p.Name,
-                DiagnosticLocationData.FromLocation(p.Locations.FirstOrDefault()),
+                GetSourceLocation(p),
                 TypeShapeData.FromSymbol(p.Type)))
             .ToImmutableArray();
     }
@@ -148,12 +153,12 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         {
             if (!type.IsClass)
             {
-                context.ReportDiagnostic(Diagnostic.Create(ImplementationMustBeClass, type.TypeLocation.ToLocation(), type.TypeDisplayName));
+                context.ReportDiagnostic(Diagnostic.Create(ImplementationMustBeClass, type.TypeLocation, type.TypeDisplayName));
                 continue;
             }
 
             if (type.ImplementsICardComponent && !type.IsAbstract && !type.IsSealed)
-                context.ReportDiagnostic(Diagnostic.Create(ICardComponentShouldBeSealedOrAbstract, type.TypeLocation.ToLocation(), type.TypeDisplayName));
+                context.ReportDiagnostic(Diagnostic.Create(ICardComponentShouldBeSealedOrAbstract, type.TypeLocation, type.TypeDisplayName));
 
             foreach (var property in type.Properties)
             {
@@ -162,7 +167,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
 
                 context.ReportDiagnostic(Diagnostic.Create(
                     JsonFallbackWarning,
-                    property.PropertyLocation.ToLocation(),
+                    property.PropertyLocation,
                     property.PropertyName,
                     type.TypeDisplayName));
             }
@@ -180,12 +185,12 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 && type.ParameterlessCtorAccessibility is not null
                 && type.ParameterlessCtorAccessibility != Accessibility.Public)
             {
-                context.ReportDiagnostic(Diagnostic.Create(ParameterlessCtorMustBePublic, type.TypeLocation.ToLocation(), type.TypeDisplayName));
+                context.ReportDiagnostic(Diagnostic.Create(ParameterlessCtorMustBePublic, type.TypeLocation, type.TypeDisplayName));
             }
 
             if (!type.IsPartial)
             {
-                context.ReportDiagnostic(Diagnostic.Create(TypeMustBePartialForGeneration, type.TypeLocation.ToLocation(), type.TypeDisplayName));
+                context.ReportDiagnostic(Diagnostic.Create(TypeMustBePartialForGeneration, type.TypeLocation, type.TypeDisplayName));
                 continue;
             }
 
@@ -756,12 +761,12 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         bool IsSealed,
         bool ImplementsICardComponent,
         bool IsCardComponentDerived,
-        DiagnosticLocationData TypeLocation,
+        Location? TypeLocation,
         ImmutableArray<PropertyGenerationData> Properties);
 
     private readonly record struct PropertyGenerationData(
         string PropertyName,
-        DiagnosticLocationData PropertyLocation,
+        Location? PropertyLocation,
         TypeShapeData Type);
 
     private readonly record struct ContainingTypeData(
@@ -1027,45 +1032,5 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         Single,
         Double,
         Decimal
-    }
-
-    private readonly record struct DiagnosticLocationData(
-        string? Path,
-        int Start,
-        int Length,
-        int StartLine,
-        int StartCharacter,
-        int EndLine,
-        int EndCharacter)
-    {
-        public static DiagnosticLocationData FromLocation(Location? location)
-        {
-            if (location == null || location == Location.None || !location.IsInSource || location.SourceTree == null)
-                return default;
-
-            var span = location.SourceSpan;
-            var lineSpan = location.GetLineSpan().Span;
-            return new DiagnosticLocationData(
-                location.SourceTree.FilePath,
-                span.Start,
-                span.Length,
-                lineSpan.Start.Line,
-                lineSpan.Start.Character,
-                lineSpan.End.Line,
-                lineSpan.End.Character);
-        }
-
-        public Location? ToLocation()
-        {
-            if (string.IsNullOrWhiteSpace(Path) || Length < 0 || Start < 0)
-                return null;
-
-            return Location.Create(
-                Path!,
-                new TextSpan(Start, Length),
-                new LinePositionSpan(
-                    new LinePosition(StartLine, StartCharacter),
-                    new LinePosition(EndLine, EndCharacter)));
-        }
     }
 }

@@ -9,7 +9,9 @@ namespace MinionLib.Example.Components;
 public sealed partial class TestComponent : CardComponent
 {
     [ComponentState] public MyClass? MyClass { get; set; }
+#pragma warning disable MLSG104
     [ComponentState] public Creature? MyCreature { get; set; }
+#pragma warning restore MLSG104
 }
 
 
