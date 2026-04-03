@@ -22,9 +22,9 @@ public sealed class MinionStrengthPotion : CustomPotionModel
 
     public override TargetType TargetType => MinionTargetTypes.AnyMinion;
 
-    public override string PackedImagePath => "res://Example/MinionTest/minionlib-minion_strength_potion.tres";
+    public override string CustomPackedImagePath => "res://Example/MinionTest/minionlib-minion_strength_potion.tres";
 
-    public override string PackedOutlinePath =>
+    public override string CustomPackedOutlinePath =>
         "res://Example/MinionTest/minionlib-minion_strength_potion_outline.tres";
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
