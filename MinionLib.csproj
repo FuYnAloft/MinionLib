@@ -163,7 +163,7 @@
 
     <PropertyGroup>
         <PackageId>FuYnAloft.Sts2.MinionLib</PackageId>
-        <Version>0.2.0</Version>
+        <Version>0.2.1-alpha.1</Version>
         <Authors>FuYnAloft</Authors>
         <Description>A framework library for Slay the Spire 2 modding. Provides standardized systems for implementing "Minions" (summoned allies) and "Component-based Cards" (modular card logic). Includes source generators to minimize boilerplate.</Description>
         <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
