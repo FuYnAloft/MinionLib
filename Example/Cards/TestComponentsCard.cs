@@ -13,8 +13,9 @@ public partial class TestComponentsCard()
     {
         return card.Id.Entry == "Test";
     }
+
     [ComponentDelegate]
-    private static bool MyPredicate2(CardModel card)
+    private static bool MyPredicate(CardModel card, int arg)
     {
         return card.Id.Entry == "Test";
     }

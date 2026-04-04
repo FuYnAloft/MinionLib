@@ -16,6 +16,13 @@ public sealed class DelegateRegisterSourceGenerator : IIncrementalGenerator
 {
     private const string ComponentDelegateAttributeMetadataName = "MinionLib.Component.Core.ComponentDelegateAttribute";
 
+    // Keep nullable annotations in generated generic delegate arguments.
+    private static readonly SymbolDisplayFormat FullyQualifiedNullableFormat =
+        SymbolDisplayFormat.FullyQualifiedFormat.WithMiscellaneousOptions(
+            SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers |
+            SymbolDisplayMiscellaneousOptions.UseSpecialTypes |
+            SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+
     private static readonly DiagnosticDescriptor ContainingTypeMustBePartial = new(
         id: "MLSG203",
         title: "Containing type must be partial",
@@ -28,6 +35,14 @@ public sealed class DelegateRegisterSourceGenerator : IIncrementalGenerator
         id: "MLSG204",
         title: "ComponentDelegate method must be static",
         messageFormat: "Method '{0}' is marked with [ComponentDelegate] but is not static",
+        category: "MinionLib.Generators",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor UnsupportedDelegateSignature = new(
+        id: "MLSG205",
+        title: "Unsupported ComponentDelegate signature",
+        messageFormat: "Method '{0}' cannot be mapped to Action/Func delegate type: {1}",
         category: "MinionLib.Generators",
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -62,6 +77,8 @@ public sealed class DelegateRegisterSourceGenerator : IIncrementalGenerator
         if (containingType == null)
             return null;
 
+        var isSupported = TryGetDelegateTypeDisplayName(methodSymbol, out var delegateTypeDisplayName, out var unsupportedReason);
+
         return new DelegateMethodData(
             HintName: BuildHintName(containingType),
             NamespaceName: containingType.ContainingNamespace.IsGlobalNamespace ? null : containingType.ContainingNamespace.ToDisplayString(),
@@ -72,7 +89,10 @@ public sealed class DelegateRegisterSourceGenerator : IIncrementalGenerator
             MethodName: methodSymbol.Name,
             RegistrationKey: BuildRegistrationKey(containingType, methodSymbol, attribute),
             IsStatic: methodSymbol.IsStatic,
-            MethodLocation: GetSourceLocation(methodSymbol));
+            MethodLocation: GetSourceLocation(methodSymbol),
+            DelegateTypeDisplayName: delegateTypeDisplayName,
+            IsSupportedSignature: isSupported,
+            UnsupportedReason: unsupportedReason);
     }
 
     private static string BuildRegistrationKey(INamedTypeSymbol containingType, IMethodSymbol methodSymbol, AttributeData attribute)
@@ -121,10 +141,6 @@ public sealed class DelegateRegisterSourceGenerator : IIncrementalGenerator
                 continue;
             }
 
-            var validMethods = typeMethods
-                .Where(static x => x.IsStatic)
-                .ToImmutableArray();
-
             foreach (var method in typeMethods.Where(static x => !x.IsStatic))
             {
                 context.ReportDiagnostic(Diagnostic.Create(
@@ -132,6 +148,19 @@ public sealed class DelegateRegisterSourceGenerator : IIncrementalGenerator
                     method.MethodLocation,
                     method.MethodName));
             }
+
+            foreach (var method in typeMethods.Where(static x => !x.IsSupportedSignature))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(
+                    UnsupportedDelegateSignature,
+                    method.MethodLocation,
+                    method.MethodName,
+                    method.UnsupportedReason ?? "unknown reason"));
+            }
+
+            var validMethods = typeMethods
+                .Where(static x => x.IsStatic && x.IsSupportedSignature)
+                .ToImmutableArray();
 
             if (validMethods.Length == 0)
                 continue;
@@ -161,7 +190,9 @@ public sealed class DelegateRegisterSourceGenerator : IIncrementalGenerator
 
         foreach (var method in methods)
         {
-            sb.Append("        global::MinionLib.Component.Core.DelegateRegistry.Register(\"")
+            sb.Append("        global::MinionLib.Component.Core.DelegateRegistry.Register<")
+                .Append(method.DelegateTypeDisplayName)
+                .Append(">(\"")
                 .Append(method.RegistrationKey)
                 .Append("\", ")
                 .Append(method.MethodName)
@@ -215,6 +246,59 @@ public sealed class DelegateRegisterSourceGenerator : IIncrementalGenerator
             .Select(static r => r.GetSyntax())
             .OfType<TypeDeclarationSyntax>()
             .Any(static s => s.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)));
+    }
+
+    private static bool TryGetDelegateTypeDisplayName(IMethodSymbol methodSymbol, out string? delegateTypeDisplayName, out string? unsupportedReason)
+    {
+        delegateTypeDisplayName = null;
+        unsupportedReason = null;
+
+        if (methodSymbol.ReturnsByRef || methodSymbol.ReturnsByRefReadonly)
+        {
+            unsupportedReason = "ref return is not supported";
+            return false;
+        }
+
+        if (methodSymbol.Parameters.Any(static p => p.RefKind != RefKind.None || p.IsParams))
+        {
+            unsupportedReason = "ref/out/in/params parameters are not supported";
+            return false;
+        }
+
+        var typeArguments = new List<string>(methodSymbol.Parameters.Length + 1);
+        foreach (var parameter in methodSymbol.Parameters)
+            typeArguments.Add(parameter.Type.ToDisplayString(FullyQualifiedNullableFormat));
+
+        var isVoid = methodSymbol.ReturnsVoid;
+        if (!isVoid)
+            typeArguments.Add(methodSymbol.ReturnType.ToDisplayString(FullyQualifiedNullableFormat));
+
+        if (isVoid)
+        {
+            if (typeArguments.Count == 0)
+            {
+                delegateTypeDisplayName = "global::System.Action";
+                return true;
+            }
+
+            if (typeArguments.Count > 16)
+            {
+                unsupportedReason = "Action supports at most 16 parameters";
+                return false;
+            }
+
+            delegateTypeDisplayName = "global::System.Action<" + string.Join(", ", typeArguments) + ">";
+            return true;
+        }
+
+        if (typeArguments.Count > 17)
+        {
+            unsupportedReason = "Func supports at most 16 parameters plus return type";
+            return false;
+        }
+
+        delegateTypeDisplayName = "global::System.Func<" + string.Join(", ", typeArguments) + ">";
+        return true;
     }
 
     private static string BuildHintName(INamedTypeSymbol type)
@@ -285,7 +369,10 @@ public sealed class DelegateRegisterSourceGenerator : IIncrementalGenerator
         string MethodName,
         string RegistrationKey,
         bool IsStatic,
-        Location? MethodLocation);
+        Location? MethodLocation,
+        string? DelegateTypeDisplayName,
+        bool IsSupportedSignature,
+        string? UnsupportedReason);
 
     private readonly record struct ContainingTypeData(
         string Keyword,

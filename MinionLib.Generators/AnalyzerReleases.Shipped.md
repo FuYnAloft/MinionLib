@@ -11,4 +11,5 @@ MLSG200 | MinionLib.Generators | Error | CardComponent subtype with ComponentSta
 MLSG201 | MinionLib.Generators | Error | ComponentState dynamic var type must inherit DynamicVar
 MLSG202 | MinionLib.Generators | Warning | ICardComponent implementations should be sealed or abstract
 MLSG203 | MinionLib.Generators | Error | Containing type must be partial for generated delegate registrations
-MLSG204 | MinionLib.Generators | Error | ComponentDelegate method must be static
+MLSG204 | MinionLib.Generators | Error | `[ComponentDelegate]` method must be static
+MLSG205 | MinionLib.Generators | Error | `[ComponentDelegate]` method signature cannot be mapped to Action/Func
