@@ -23,802 +23,2976 @@ public abstract partial class TimingCardComponent
 {
     public override Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
     {
-        return Timing == Timing.OnPlay ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.OnPlay))
+        {
+            var ctx = new OnTimingContext(
+                Timing.OnPlay,
+                ChoiceContext: choiceContext,
+                CardPlay: cardPlay
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task OnPlayPostfix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
     {
-        return Timing == Timing.OnPlay ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.OnPlay))
+        {
+            var ctx = new OnTimingContext(
+                Timing.OnPlay,
+                ChoiceContext: choiceContext,
+                CardPlay: cardPlay
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task OnEnqueuePlayVfxPrefix(Creature? target, ComponentContext componentContext)
     {
-        return Timing == Timing.OnEnqueuePlayVfx ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.OnEnqueuePlayVfx))
+        {
+            var ctx = new OnTimingContext(
+                Timing.OnEnqueuePlayVfx,
+                Target: target
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task OnEnqueuePlayVfxPostfix(Creature? target, ComponentContext componentContext)
     {
-        return Timing == Timing.OnEnqueuePlayVfx ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.OnEnqueuePlayVfx))
+        {
+            var ctx = new OnTimingContext(
+                Timing.OnEnqueuePlayVfx,
+                Target: target
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task OnTurnEndInHandPrefix(PlayerChoiceContext choiceContext, ComponentContext componentContext)
     {
-        return Timing == Timing.OnTurnEndInHand ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.OnTurnEndInHand))
+        {
+            var ctx = new OnTimingContext(
+                Timing.OnTurnEndInHand,
+                ChoiceContext: choiceContext
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task OnTurnEndInHandPostfix(PlayerChoiceContext choiceContext, ComponentContext componentContext)
     {
-        return Timing == Timing.OnTurnEndInHand ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.OnTurnEndInHand))
+        {
+            var ctx = new OnTimingContext(
+                Timing.OnTurnEndInHand,
+                ChoiceContext: choiceContext
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeCardPlayedPrefix(CardPlay cardPlay, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeCardPlayed ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeCardPlayed))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeCardPlayed,
+                CardPlay: cardPlay
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeCardPlayedPostfix(CardPlay cardPlay, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeCardPlayed ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeCardPlayed))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeCardPlayed,
+                CardPlay: cardPlay
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardPlayedPrefix(PlayerChoiceContext context, CardPlay cardPlay, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardPlayed ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardPlayed))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardPlayed,
+                Context: context,
+                CardPlay: cardPlay
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardPlayedPostfix(PlayerChoiceContext context, CardPlay cardPlay, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardPlayed ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardPlayed))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardPlayed,
+                Context: context,
+                CardPlay: cardPlay
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardPlayedLatePrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardPlayedLate ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardPlayedLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardPlayedLate,
+                ChoiceContext: choiceContext,
+                CardPlay: cardPlay
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardPlayedLatePostfix(PlayerChoiceContext choiceContext, CardPlay cardPlay, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardPlayedLate ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardPlayedLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardPlayedLate,
+                ChoiceContext: choiceContext,
+                CardPlay: cardPlay
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPlayerTurnStartPrefix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPlayerTurnStart ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPlayerTurnStart))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPlayerTurnStart,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPlayerTurnStartPostfix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPlayerTurnStart ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPlayerTurnStart))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPlayerTurnStart,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeTurnEndPrefix(PlayerChoiceContext choiceContext, CombatSide side, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeTurnEnd ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeTurnEnd))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeTurnEnd,
+                ChoiceContext: choiceContext,
+                Side: side
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeTurnEndPostfix(PlayerChoiceContext choiceContext, CombatSide side, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeTurnEnd ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeTurnEnd))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeTurnEnd,
+                ChoiceContext: choiceContext,
+                Side: side
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterTurnEndPrefix(PlayerChoiceContext choiceContext, CombatSide side, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterTurnEnd ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterTurnEnd))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterTurnEnd,
+                ChoiceContext: choiceContext,
+                Side: side
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterTurnEndPostfix(PlayerChoiceContext choiceContext, CombatSide side, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterTurnEnd ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterTurnEnd))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterTurnEnd,
+                ChoiceContext: choiceContext,
+                Side: side
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterActEnteredPrefix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterActEntered ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterActEntered))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterActEntered
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterActEnteredPostfix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterActEntered ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterActEntered))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterActEntered
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterAddToDeckPreventedPrefix(CardModel card, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterAddToDeckPrevented ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterAddToDeckPrevented))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterAddToDeckPrevented,
+                Card: card
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterAddToDeckPreventedPostfix(CardModel card, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterAddToDeckPrevented ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterAddToDeckPrevented))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterAddToDeckPrevented,
+                Card: card
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeAttackPrefix(AttackCommand command, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeAttack ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeAttack))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeAttack,
+                Command: command
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeAttackPostfix(AttackCommand command, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeAttack ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeAttack))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeAttack,
+                Command: command
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterAttackPrefix(AttackCommand command, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterAttack ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterAttack))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterAttack,
+                Command: command
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterAttackPostfix(AttackCommand command, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterAttack ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterAttack))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterAttack,
+                Command: command
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterBlockClearedPrefix(Creature creature, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterBlockCleared ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterBlockCleared))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterBlockCleared,
+                Creature: creature
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterBlockClearedPostfix(Creature creature, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterBlockCleared ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterBlockCleared))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterBlockCleared,
+                Creature: creature
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeBlockGainedPrefix(Creature creature, decimal amount, ValueProp props, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeBlockGained ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeBlockGained))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeBlockGained,
+                Creature: creature,
+                Amount: amount,
+                Props: props,
+                CardSource: cardSource
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeBlockGainedPostfix(Creature creature, decimal amount, ValueProp props, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeBlockGained ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeBlockGained))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeBlockGained,
+                Creature: creature,
+                Amount: amount,
+                Props: props,
+                CardSource: cardSource
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterBlockGainedPrefix(Creature creature, decimal amount, ValueProp props, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterBlockGained ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterBlockGained))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterBlockGained,
+                Creature: creature,
+                Amount: amount,
+                Props: props,
+                CardSource: cardSource
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterBlockGainedPostfix(Creature creature, decimal amount, ValueProp props, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterBlockGained ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterBlockGained))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterBlockGained,
+                Creature: creature,
+                Amount: amount,
+                Props: props,
+                CardSource: cardSource
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterBlockBrokenPrefix(Creature creature, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterBlockBroken ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterBlockBroken))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterBlockBroken,
+                Creature: creature
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterBlockBrokenPostfix(Creature creature, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterBlockBroken ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterBlockBroken))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterBlockBroken,
+                Creature: creature
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardChangedPilesPrefix(CardModel card, PileType oldPileType, AbstractModel? source, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardChangedPiles ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardChangedPiles))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardChangedPiles,
+                Card: card,
+                OldPileType: oldPileType,
+                Source: source
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardChangedPilesPostfix(CardModel card, PileType oldPileType, AbstractModel? source, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardChangedPiles ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardChangedPiles))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardChangedPiles,
+                Card: card,
+                OldPileType: oldPileType,
+                Source: source
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardChangedPilesLatePrefix(CardModel card, PileType oldPileType, AbstractModel? source, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardChangedPilesLate ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardChangedPilesLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardChangedPilesLate,
+                Card: card,
+                OldPileType: oldPileType,
+                Source: source
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardChangedPilesLatePostfix(CardModel card, PileType oldPileType, AbstractModel? source, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardChangedPilesLate ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardChangedPilesLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardChangedPilesLate,
+                Card: card,
+                OldPileType: oldPileType,
+                Source: source
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardDiscardedPrefix(PlayerChoiceContext choiceContext, CardModel card, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardDiscarded ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardDiscarded))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardDiscarded,
+                ChoiceContext: choiceContext,
+                Card: card
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardDiscardedPostfix(PlayerChoiceContext choiceContext, CardModel card, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardDiscarded ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardDiscarded))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardDiscarded,
+                ChoiceContext: choiceContext,
+                Card: card
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardDrawnEarlyPrefix(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardDrawnEarly ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardDrawnEarly))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardDrawnEarly,
+                ChoiceContext: choiceContext,
+                Card: card,
+                FromHandDraw: fromHandDraw
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardDrawnEarlyPostfix(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardDrawnEarly ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardDrawnEarly))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardDrawnEarly,
+                ChoiceContext: choiceContext,
+                Card: card,
+                FromHandDraw: fromHandDraw
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardDrawnPrefix(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardDrawn ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardDrawn))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardDrawn,
+                ChoiceContext: choiceContext,
+                Card: card,
+                FromHandDraw: fromHandDraw
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardDrawnPostfix(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardDrawn ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardDrawn))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardDrawn,
+                ChoiceContext: choiceContext,
+                Card: card,
+                FromHandDraw: fromHandDraw
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardEnteredCombatPrefix(CardModel card, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardEnteredCombat ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardEnteredCombat))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardEnteredCombat,
+                Card: card
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardEnteredCombatPostfix(CardModel card, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardEnteredCombat ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardEnteredCombat))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardEnteredCombat,
+                Card: card
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardGeneratedForCombatPrefix(CardModel card, bool addedByPlayer, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardGeneratedForCombat ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardGeneratedForCombat))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardGeneratedForCombat,
+                Card: card,
+                AddedByPlayer: addedByPlayer
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardGeneratedForCombatPostfix(CardModel card, bool addedByPlayer, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardGeneratedForCombat ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardGeneratedForCombat))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardGeneratedForCombat,
+                Card: card,
+                AddedByPlayer: addedByPlayer
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardExhaustedPrefix(PlayerChoiceContext choiceContext, CardModel card, bool causedByEthereal, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardExhausted ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardExhausted))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardExhausted,
+                ChoiceContext: choiceContext,
+                Card: card,
+                CausedByEthereal: causedByEthereal
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardExhaustedPostfix(PlayerChoiceContext choiceContext, CardModel card, bool causedByEthereal, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardExhausted ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardExhausted))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardExhausted,
+                ChoiceContext: choiceContext,
+                Card: card,
+                CausedByEthereal: causedByEthereal
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeCardAutoPlayedPrefix(CardModel card, Creature? target, AutoPlayType type, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeCardAutoPlayed ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeCardAutoPlayed))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeCardAutoPlayed,
+                Card: card,
+                Target: target,
+                Type: type
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeCardAutoPlayedPostfix(CardModel card, Creature? target, AutoPlayType type, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeCardAutoPlayed ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeCardAutoPlayed))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeCardAutoPlayed,
+                Card: card,
+                Target: target,
+                Type: type
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardRetainedPrefix(CardModel card, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardRetained ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardRetained))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardRetained,
+                Card: card
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCardRetainedPostfix(CardModel card, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCardRetained ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCardRetained))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCardRetained,
+                Card: card
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeCombatStartPrefix(ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeCombatStart ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeCombatStart))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeCombatStart
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeCombatStartPostfix(ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeCombatStart ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeCombatStart))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeCombatStart
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeCombatStartLatePrefix(ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeCombatStartLate ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeCombatStartLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeCombatStartLate
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeCombatStartLatePostfix(ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeCombatStartLate ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeCombatStartLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeCombatStartLate
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCombatEndPrefix(CombatRoom room, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCombatEnd ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCombatEnd))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCombatEnd,
+                Room: room
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCombatEndPostfix(CombatRoom room, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCombatEnd ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCombatEnd))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCombatEnd,
+                Room: room
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCombatVictoryEarlyPrefix(CombatRoom room, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCombatVictoryEarly ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCombatVictoryEarly))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCombatVictoryEarly,
+                Room: room
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCombatVictoryEarlyPostfix(CombatRoom room, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCombatVictoryEarly ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCombatVictoryEarly))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCombatVictoryEarly,
+                Room: room
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCombatVictoryPrefix(CombatRoom room, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCombatVictory ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCombatVictory))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCombatVictory,
+                Room: room
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCombatVictoryPostfix(CombatRoom room, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCombatVictory ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCombatVictory))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCombatVictory,
+                Room: room
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCreatureAddedToCombatPrefix(Creature creature, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCreatureAddedToCombat ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCreatureAddedToCombat))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCreatureAddedToCombat,
+                Creature: creature
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCreatureAddedToCombatPostfix(Creature creature, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCreatureAddedToCombat ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCreatureAddedToCombat))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCreatureAddedToCombat,
+                Creature: creature
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCurrentHpChangedPrefix(Creature creature, decimal delta, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCurrentHpChanged ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCurrentHpChanged))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCurrentHpChanged,
+                Creature: creature,
+                Delta: delta
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterCurrentHpChangedPostfix(Creature creature, decimal delta, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterCurrentHpChanged ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterCurrentHpChanged))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterCurrentHpChanged,
+                Creature: creature,
+                Delta: delta
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterDamageGivenPrefix(PlayerChoiceContext choiceContext, Creature? dealer, DamageResult result, ValueProp props, Creature target, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterDamageGiven ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterDamageGiven))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterDamageGiven,
+                ChoiceContext: choiceContext,
+                Dealer: dealer,
+                Result: result,
+                Props: props,
+                Target: target,
+                CardSource: cardSource
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterDamageGivenPostfix(PlayerChoiceContext choiceContext, Creature? dealer, DamageResult result, ValueProp props, Creature target, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterDamageGiven ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterDamageGiven))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterDamageGiven,
+                ChoiceContext: choiceContext,
+                Dealer: dealer,
+                Result: result,
+                Props: props,
+                Target: target,
+                CardSource: cardSource
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeDamageReceivedPrefix(PlayerChoiceContext choiceContext, Creature target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeDamageReceived ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeDamageReceived))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeDamageReceived,
+                ChoiceContext: choiceContext,
+                Target: target,
+                Amount: amount,
+                Props: props,
+                Dealer: dealer,
+                CardSource: cardSource
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeDamageReceivedPostfix(PlayerChoiceContext choiceContext, Creature target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeDamageReceived ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeDamageReceived))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeDamageReceived,
+                ChoiceContext: choiceContext,
+                Target: target,
+                Amount: amount,
+                Props: props,
+                Dealer: dealer,
+                CardSource: cardSource
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterDamageReceivedPrefix(PlayerChoiceContext choiceContext, Creature target, DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterDamageReceived ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterDamageReceived))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterDamageReceived,
+                ChoiceContext: choiceContext,
+                Target: target,
+                Result: result,
+                Props: props,
+                Dealer: dealer,
+                CardSource: cardSource
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterDamageReceivedPostfix(PlayerChoiceContext choiceContext, Creature target, DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterDamageReceived ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterDamageReceived))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterDamageReceived,
+                ChoiceContext: choiceContext,
+                Target: target,
+                Result: result,
+                Props: props,
+                Dealer: dealer,
+                CardSource: cardSource
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterDamageReceivedLatePrefix(PlayerChoiceContext choiceContext, Creature target, DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterDamageReceivedLate ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterDamageReceivedLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterDamageReceivedLate,
+                ChoiceContext: choiceContext,
+                Target: target,
+                Result: result,
+                Props: props,
+                Dealer: dealer,
+                CardSource: cardSource
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterDamageReceivedLatePostfix(PlayerChoiceContext choiceContext, Creature target, DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterDamageReceivedLate ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterDamageReceivedLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterDamageReceivedLate,
+                ChoiceContext: choiceContext,
+                Target: target,
+                Result: result,
+                Props: props,
+                Dealer: dealer,
+                CardSource: cardSource
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeDeathPrefix(Creature creature, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeDeath ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeDeath))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeDeath,
+                Creature: creature
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeDeathPostfix(Creature creature, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeDeath ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeDeath))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeDeath,
+                Creature: creature
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterDeathPrefix(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterDeath ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterDeath))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterDeath,
+                ChoiceContext: choiceContext,
+                Creature: creature,
+                WasRemovalPrevented: wasRemovalPrevented,
+                DeathAnimLength: deathAnimLength
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterDeathPostfix(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterDeath ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterDeath))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterDeath,
+                ChoiceContext: choiceContext,
+                Creature: creature,
+                WasRemovalPrevented: wasRemovalPrevented,
+                DeathAnimLength: deathAnimLength
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterDiedToDoomPrefix(PlayerChoiceContext choiceContext, IReadOnlyList<Creature> creatures, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterDiedToDoom ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterDiedToDoom))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterDiedToDoom,
+                ChoiceContext: choiceContext,
+                Creatures: creatures
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterDiedToDoomPostfix(PlayerChoiceContext choiceContext, IReadOnlyList<Creature> creatures, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterDiedToDoom ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterDiedToDoom))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterDiedToDoom,
+                ChoiceContext: choiceContext,
+                Creatures: creatures
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterEnergyResetPrefix(Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterEnergyReset ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterEnergyReset))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterEnergyReset,
+                Player: player
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterEnergyResetPostfix(Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterEnergyReset ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterEnergyReset))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterEnergyReset,
+                Player: player
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterEnergyResetLatePrefix(Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterEnergyResetLate ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterEnergyResetLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterEnergyResetLate,
+                Player: player
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterEnergyResetLatePostfix(Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterEnergyResetLate ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterEnergyResetLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterEnergyResetLate,
+                Player: player
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterEnergySpentPrefix(CardModel card, int amount, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterEnergySpent ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterEnergySpent))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterEnergySpent,
+                Card: card,
+                Amount: amount
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterEnergySpentPostfix(CardModel card, int amount, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterEnergySpent ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterEnergySpent))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterEnergySpent,
+                Card: card,
+                Amount: amount
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeCardRemovedPrefix(CardModel card, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeCardRemoved ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeCardRemoved))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeCardRemoved,
+                Card: card
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeCardRemovedPostfix(CardModel card, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeCardRemoved ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeCardRemoved))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeCardRemoved,
+                Card: card
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeFlushPrefix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeFlush ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeFlush))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeFlush,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeFlushPostfix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeFlush ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeFlush))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeFlush,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeFlushLatePrefix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeFlushLate ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeFlushLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeFlushLate,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeFlushLatePostfix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeFlushLate ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeFlushLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeFlushLate,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterGoldGainedPrefix(Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterGoldGained ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterGoldGained))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterGoldGained,
+                Player: player
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterGoldGainedPostfix(Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterGoldGained ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterGoldGained))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterGoldGained,
+                Player: player
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeHandDrawPrefix(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeHandDraw ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeHandDraw))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeHandDraw,
+                Player: player,
+                ChoiceContext: choiceContext,
+                CombatState: combatState
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeHandDrawPostfix(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeHandDraw ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeHandDraw))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeHandDraw,
+                Player: player,
+                ChoiceContext: choiceContext,
+                CombatState: combatState
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeHandDrawLatePrefix(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeHandDrawLate ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeHandDrawLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeHandDrawLate,
+                Player: player,
+                ChoiceContext: choiceContext,
+                CombatState: combatState
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeHandDrawLatePostfix(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeHandDrawLate ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeHandDrawLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeHandDrawLate,
+                Player: player,
+                ChoiceContext: choiceContext,
+                CombatState: combatState
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterHandEmptiedPrefix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterHandEmptied ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterHandEmptied))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterHandEmptied,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterHandEmptiedPostfix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterHandEmptied ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterHandEmptied))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterHandEmptied,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterItemPurchasedPrefix(Player player, MerchantEntry itemPurchased, int goldSpent, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterItemPurchased ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterItemPurchased))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterItemPurchased,
+                Player: player,
+                ItemPurchased: itemPurchased,
+                GoldSpent: goldSpent
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterItemPurchasedPostfix(Player player, MerchantEntry itemPurchased, int goldSpent, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterItemPurchased ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterItemPurchased))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterItemPurchased,
+                Player: player,
+                ItemPurchased: itemPurchased,
+                GoldSpent: goldSpent
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterMapGeneratedPrefix(ActMap map, int actIndex, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterMapGenerated ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterMapGenerated))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterMapGenerated,
+                Map: map,
+                ActIndex: actIndex
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterMapGeneratedPostfix(ActMap map, int actIndex, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterMapGenerated ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterMapGenerated))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterMapGenerated,
+                Map: map,
+                ActIndex: actIndex
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingBlockAmountPrefix(decimal modifiedAmount, CardModel? cardSource, CardPlay? cardPlay, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingBlockAmount ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingBlockAmount))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingBlockAmount,
+                ModifiedAmount: modifiedAmount,
+                CardSource: cardSource,
+                CardPlay: cardPlay
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingBlockAmountPostfix(decimal modifiedAmount, CardModel? cardSource, CardPlay? cardPlay, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingBlockAmount ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingBlockAmount))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingBlockAmount,
+                ModifiedAmount: modifiedAmount,
+                CardSource: cardSource,
+                CardPlay: cardPlay
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingCardPlayCountPrefix(CardModel card, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingCardPlayCount ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingCardPlayCount))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingCardPlayCount,
+                Card: card
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingCardPlayCountPostfix(CardModel card, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingCardPlayCount ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingCardPlayCount))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingCardPlayCount,
+                Card: card
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingCardPlayResultPileOrPositionPrefix(CardModel card, PileType pileType, CardPilePosition position, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingCardPlayResultPileOrPosition ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingCardPlayResultPileOrPosition))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingCardPlayResultPileOrPosition,
+                Card: card,
+                PileType: pileType,
+                Position: position
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingCardPlayResultPileOrPositionPostfix(CardModel card, PileType pileType, CardPilePosition position, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingCardPlayResultPileOrPosition ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingCardPlayResultPileOrPosition))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingCardPlayResultPileOrPosition,
+                Card: card,
+                PileType: pileType,
+                Position: position
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingOrbPassiveTriggerCountPrefix(OrbModel orb, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingOrbPassiveTriggerCount ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingOrbPassiveTriggerCount))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingOrbPassiveTriggerCount,
+                Orb: orb
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingOrbPassiveTriggerCountPostfix(OrbModel orb, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingOrbPassiveTriggerCount ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingOrbPassiveTriggerCount))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingOrbPassiveTriggerCount,
+                Orb: orb
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingCardRewardOptionsPrefix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingCardRewardOptions ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingCardRewardOptions))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingCardRewardOptions
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingCardRewardOptionsPostfix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingCardRewardOptions ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingCardRewardOptions))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingCardRewardOptions
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingDamageAmountPrefix(CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingDamageAmount ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingDamageAmount))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingDamageAmount,
+                CardSource: cardSource
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingDamageAmountPostfix(CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingDamageAmount ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingDamageAmount))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingDamageAmount,
+                CardSource: cardSource
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingEnergyGainPrefix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingEnergyGain ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingEnergyGain))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingEnergyGain
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingEnergyGainPostfix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingEnergyGain ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingEnergyGain))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingEnergyGain
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingHandDrawPrefix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingHandDraw ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingHandDraw))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingHandDraw
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingHandDrawPostfix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingHandDraw ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingHandDraw))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingHandDraw
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPreventingDrawPrefix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPreventingDraw ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPreventingDraw))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPreventingDraw
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPreventingDrawPostfix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPreventingDraw ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPreventingDraw))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPreventingDraw
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingHpLostBeforeOstyPrefix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingHpLostBeforeOsty ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingHpLostBeforeOsty))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingHpLostBeforeOsty
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingHpLostBeforeOstyPostfix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingHpLostBeforeOsty ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingHpLostBeforeOsty))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingHpLostBeforeOsty
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingHpLostAfterOstyPrefix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingHpLostAfterOsty ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingHpLostAfterOsty))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingHpLostAfterOsty
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingHpLostAfterOstyPostfix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingHpLostAfterOsty ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingHpLostAfterOsty))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingHpLostAfterOsty
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingPowerAmountReceivedPrefix(PowerModel power, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingPowerAmountReceived ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingPowerAmountReceived))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingPowerAmountReceived,
+                Power: power
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingPowerAmountReceivedPostfix(PowerModel power, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingPowerAmountReceived ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingPowerAmountReceived))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingPowerAmountReceived,
+                Power: power
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingPowerAmountGivenPrefix(PowerModel power, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingPowerAmountGiven ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingPowerAmountGiven))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingPowerAmountGiven,
+                Power: power
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingPowerAmountGivenPostfix(PowerModel power, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingPowerAmountGiven ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingPowerAmountGiven))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingPowerAmountGiven,
+                Power: power
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingRewardsPrefix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingRewards ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingRewards))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingRewards
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterModifyingRewardsPostfix(ComponentContext componentContext)
     {
-        return Timing == Timing.AfterModifyingRewards ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterModifyingRewards))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingRewards
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeRewardsOfferedPrefix(Player player, IReadOnlyList<Reward> rewards, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeRewardsOffered ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeRewardsOffered))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeRewardsOffered,
+                Player: player,
+                Rewards: rewards
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeRewardsOfferedPostfix(Player player, IReadOnlyList<Reward> rewards, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeRewardsOffered ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeRewardsOffered))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeRewardsOffered,
+                Player: player,
+                Rewards: rewards
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterOrbChanneledPrefix(PlayerChoiceContext choiceContext, Player player, OrbModel orb, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterOrbChanneled ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterOrbChanneled))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterOrbChanneled,
+                ChoiceContext: choiceContext,
+                Player: player,
+                Orb: orb
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterOrbChanneledPostfix(PlayerChoiceContext choiceContext, Player player, OrbModel orb, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterOrbChanneled ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterOrbChanneled))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterOrbChanneled,
+                ChoiceContext: choiceContext,
+                Player: player,
+                Orb: orb
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterOrbEvokedPrefix(PlayerChoiceContext choiceContext, OrbModel orb, IEnumerable<Creature> targets, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterOrbEvoked ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterOrbEvoked))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterOrbEvoked,
+                ChoiceContext: choiceContext,
+                Orb: orb,
+                Targets: targets
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterOrbEvokedPostfix(PlayerChoiceContext choiceContext, OrbModel orb, IEnumerable<Creature> targets, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterOrbEvoked ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterOrbEvoked))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterOrbEvoked,
+                ChoiceContext: choiceContext,
+                Orb: orb,
+                Targets: targets
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterOstyRevivedPrefix(Creature osty, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterOstyRevived ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterOstyRevived))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterOstyRevived,
+                Osty: osty
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterOstyRevivedPostfix(Creature osty, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterOstyRevived ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterOstyRevived))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterOstyRevived,
+                Osty: osty
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforePotionUsedPrefix(PotionModel potion, Creature? target, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforePotionUsed ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforePotionUsed))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforePotionUsed,
+                Potion: potion,
+                Target: target
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforePotionUsedPostfix(PotionModel potion, Creature? target, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforePotionUsed ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforePotionUsed))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforePotionUsed,
+                Potion: potion,
+                Target: target
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPotionUsedPrefix(PotionModel potion, Creature? target, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPotionUsed ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPotionUsed))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPotionUsed,
+                Potion: potion,
+                Target: target
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPotionUsedPostfix(PotionModel potion, Creature? target, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPotionUsed ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPotionUsed))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPotionUsed,
+                Potion: potion,
+                Target: target
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPotionDiscardedPrefix(PotionModel potion, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPotionDiscarded ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPotionDiscarded))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPotionDiscarded,
+                Potion: potion
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPotionDiscardedPostfix(PotionModel potion, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPotionDiscarded ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPotionDiscarded))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPotionDiscarded,
+                Potion: potion
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPotionProcuredPrefix(PotionModel potion, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPotionProcured ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPotionProcured))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPotionProcured,
+                Potion: potion
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPotionProcuredPostfix(PotionModel potion, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPotionProcured ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPotionProcured))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPotionProcured,
+                Potion: potion
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforePowerAmountChangedPrefix(PowerModel power, decimal amount, Creature target, Creature? applier, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforePowerAmountChanged ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforePowerAmountChanged))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforePowerAmountChanged,
+                Power: power,
+                Amount: amount,
+                Target: target,
+                Applier: applier,
+                CardSource: cardSource
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforePowerAmountChangedPostfix(PowerModel power, decimal amount, Creature target, Creature? applier, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforePowerAmountChanged ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforePowerAmountChanged))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforePowerAmountChanged,
+                Power: power,
+                Amount: amount,
+                Target: target,
+                Applier: applier,
+                CardSource: cardSource
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPowerAmountChangedPrefix(PowerModel power, decimal amount, Creature? applier, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPowerAmountChanged ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPowerAmountChanged))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPowerAmountChanged,
+                Power: power,
+                Amount: amount,
+                Applier: applier,
+                CardSource: cardSource
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPowerAmountChangedPostfix(PowerModel power, decimal amount, Creature? applier, CardModel? cardSource, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPowerAmountChanged ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPowerAmountChanged))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPowerAmountChanged,
+                Power: power,
+                Amount: amount,
+                Applier: applier,
+                CardSource: cardSource
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPreventingBlockClearPrefix(AbstractModel preventer, Creature creature, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPreventingBlockClear ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPreventingBlockClear))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPreventingBlockClear,
+                Preventer: preventer,
+                Creature: creature
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPreventingBlockClearPostfix(AbstractModel preventer, Creature creature, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPreventingBlockClear ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPreventingBlockClear))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPreventingBlockClear,
+                Preventer: preventer,
+                Creature: creature
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPreventingDeathPrefix(Creature creature, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPreventingDeath ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPreventingDeath))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPreventingDeath,
+                Creature: creature
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPreventingDeathPostfix(Creature creature, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPreventingDeath ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPreventingDeath))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPreventingDeath,
+                Creature: creature
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterRestSiteHealPrefix(Player player, bool isMimicked, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterRestSiteHeal ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterRestSiteHeal))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterRestSiteHeal,
+                Player: player,
+                IsMimicked: isMimicked
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterRestSiteHealPostfix(Player player, bool isMimicked, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterRestSiteHeal ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterRestSiteHeal))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterRestSiteHeal,
+                Player: player,
+                IsMimicked: isMimicked
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterRestSiteSmithPrefix(Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterRestSiteSmith ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterRestSiteSmith))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterRestSiteSmith,
+                Player: player
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterRestSiteSmithPostfix(Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterRestSiteSmith ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterRestSiteSmith))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterRestSiteSmith,
+                Player: player
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterRewardTakenPrefix(Player player, Reward reward, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterRewardTaken ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterRewardTaken))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterRewardTaken,
+                Player: player,
+                Reward: reward
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterRewardTakenPostfix(Player player, Reward reward, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterRewardTaken ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterRewardTaken))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterRewardTaken,
+                Player: player,
+                Reward: reward
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeRoomEnteredPrefix(AbstractRoom room, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeRoomEntered ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeRoomEntered))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeRoomEntered,
+                Room: room
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeRoomEnteredPostfix(AbstractRoom room, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeRoomEntered ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeRoomEntered))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeRoomEntered,
+                Room: room
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterRoomEnteredPrefix(AbstractRoom room, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterRoomEntered ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterRoomEntered))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterRoomEntered,
+                Room: room
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterRoomEnteredPostfix(AbstractRoom room, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterRoomEntered ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterRoomEntered))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterRoomEntered,
+                Room: room
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterShufflePrefix(PlayerChoiceContext choiceContext, Player shuffler, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterShuffle ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterShuffle))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterShuffle,
+                ChoiceContext: choiceContext,
+                Shuffler: shuffler
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterShufflePostfix(PlayerChoiceContext choiceContext, Player shuffler, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterShuffle ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterShuffle))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterShuffle,
+                ChoiceContext: choiceContext,
+                Shuffler: shuffler
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterStarsSpentPrefix(int amount, Player spender, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterStarsSpent ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterStarsSpent))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterStarsSpent,
+                Amount: amount,
+                Spender: spender
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterStarsSpentPostfix(int amount, Player spender, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterStarsSpent ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterStarsSpent))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterStarsSpent,
+                Amount: amount,
+                Spender: spender
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterStarsGainedPrefix(int amount, Player gainer, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterStarsGained ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterStarsGained))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterStarsGained,
+                Amount: amount,
+                Gainer: gainer
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterStarsGainedPostfix(int amount, Player gainer, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterStarsGained ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterStarsGained))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterStarsGained,
+                Amount: amount,
+                Gainer: gainer
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterForgePrefix(decimal amount, Player forger, AbstractModel? source, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterForge ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterForge))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterForge,
+                Amount: amount,
+                Forger: forger,
+                Source: source
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterForgePostfix(decimal amount, Player forger, AbstractModel? source, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterForge ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterForge))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterForge,
+                Amount: amount,
+                Forger: forger,
+                Source: source
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterSummonPrefix(PlayerChoiceContext choiceContext, Player summoner, decimal amount, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterSummon ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterSummon))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterSummon,
+                ChoiceContext: choiceContext,
+                Summoner: summoner,
+                Amount: amount
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterSummonPostfix(PlayerChoiceContext choiceContext, Player summoner, decimal amount, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterSummon ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterSummon))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterSummon,
+                ChoiceContext: choiceContext,
+                Summoner: summoner,
+                Amount: amount
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterTakingExtraTurnPrefix(Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterTakingExtraTurn ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterTakingExtraTurn))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterTakingExtraTurn,
+                Player: player
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterTakingExtraTurnPostfix(Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterTakingExtraTurn ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterTakingExtraTurn))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterTakingExtraTurn,
+                Player: player
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterTargetingBlockedVfxPrefix(Creature blocker, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterTargetingBlockedVfx ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterTargetingBlockedVfx))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterTargetingBlockedVfx,
+                Blocker: blocker
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterTargetingBlockedVfxPostfix(Creature blocker, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterTargetingBlockedVfx ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterTargetingBlockedVfx))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterTargetingBlockedVfx,
+                Blocker: blocker
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeSideTurnStartPrefix(PlayerChoiceContext choiceContext, CombatSide side, CombatState combatState, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeSideTurnStart ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeSideTurnStart))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeSideTurnStart,
+                ChoiceContext: choiceContext,
+                Side: side,
+                CombatState: combatState
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeSideTurnStartPostfix(PlayerChoiceContext choiceContext, CombatSide side, CombatState combatState, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeSideTurnStart ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeSideTurnStart))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeSideTurnStart,
+                ChoiceContext: choiceContext,
+                Side: side,
+                CombatState: combatState
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterSideTurnStartPrefix(CombatSide side, CombatState combatState, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterSideTurnStart ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterSideTurnStart))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterSideTurnStart,
+                Side: side,
+                CombatState: combatState
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterSideTurnStartPostfix(CombatSide side, CombatState combatState, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterSideTurnStart ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterSideTurnStart))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterSideTurnStart,
+                Side: side,
+                CombatState: combatState
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPlayerTurnStartEarlyPrefix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPlayerTurnStartEarly ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPlayerTurnStartEarly))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPlayerTurnStartEarly,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPlayerTurnStartEarlyPostfix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPlayerTurnStartEarly ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPlayerTurnStartEarly))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPlayerTurnStartEarly,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPlayerTurnStartLatePrefix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPlayerTurnStartLate ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPlayerTurnStartLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPlayerTurnStartLate,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterPlayerTurnStartLatePostfix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterPlayerTurnStartLate ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterPlayerTurnStartLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterPlayerTurnStartLate,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforePlayPhaseStartPrefix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforePlayPhaseStart ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforePlayPhaseStart))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforePlayPhaseStart,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforePlayPhaseStartPostfix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforePlayPhaseStart ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforePlayPhaseStart))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforePlayPhaseStart,
+                ChoiceContext: choiceContext,
+                Player: player
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeTurnEndVeryEarlyPrefix(PlayerChoiceContext choiceContext, CombatSide side, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeTurnEndVeryEarly ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeTurnEndVeryEarly))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeTurnEndVeryEarly,
+                ChoiceContext: choiceContext,
+                Side: side
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeTurnEndVeryEarlyPostfix(PlayerChoiceContext choiceContext, CombatSide side, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeTurnEndVeryEarly ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeTurnEndVeryEarly))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeTurnEndVeryEarly,
+                ChoiceContext: choiceContext,
+                Side: side
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeTurnEndEarlyPrefix(PlayerChoiceContext choiceContext, CombatSide side, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeTurnEndEarly ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeTurnEndEarly))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeTurnEndEarly,
+                ChoiceContext: choiceContext,
+                Side: side
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task BeforeTurnEndEarlyPostfix(PlayerChoiceContext choiceContext, CombatSide side, ComponentContext componentContext)
     {
-        return Timing == Timing.BeforeTurnEndEarly ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.BeforeTurnEndEarly))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeTurnEndEarly,
+                ChoiceContext: choiceContext,
+                Side: side
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterTurnEndLatePrefix(PlayerChoiceContext choiceContext, CombatSide side, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterTurnEndLate ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterTurnEndLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterTurnEndLate,
+                ChoiceContext: choiceContext,
+                Side: side
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override Task AfterTurnEndLatePostfix(PlayerChoiceContext choiceContext, CombatSide side, ComponentContext componentContext)
     {
-        return Timing == Timing.AfterTurnEndLate ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.AfterTurnEndLate))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterTurnEndLate,
+                ChoiceContext: choiceContext,
+                Side: side
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
     }
     public override void OnUpgradePrefix(ComponentContext componentContext)
     {
-        if (Timing == Timing.OnUpgrade) OnTimingPrefix();
+        if (Timings.Contains(Timing.OnUpgrade))
+        {
+            var ctx = new OnTimingContext(
+                Timing.OnUpgrade
+            );
+
+            OnTimingPrefix(ctx);
+        }
+
     }
     public override void OnUpgradePostfix(ComponentContext componentContext)
     {
-        if (Timing == Timing.OnUpgrade) OnTimingPostfix();
+        if (Timings.Contains(Timing.OnUpgrade))
+        {
+            var ctx = new OnTimingContext(
+                Timing.OnUpgrade
+            );
+
+            OnTimingPostfix(ctx);
+        }
+
     }
 }

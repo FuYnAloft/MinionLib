@@ -231,6 +231,15 @@ def generate_timing_enum(signatures: list[Signature]) -> str:
     buffer += "}\n"
     return buffer
 
+def build_timing_ctx(args: list[str], timing: str) -> str:
+    buffer = ""
+    buffer += "var ctx = new OnTimingContext(\n"
+    buffer += f"                Timing.{timing}{',' if args else ''}\n"
+    for i in args:
+        a = i[0].upper() + i[1:]
+        buffer += f"                {a}: {i}{',' if i != args[-1] else ''}\n"
+    buffer += "            );\n"
+    return buffer
 
 def generate_timing_component(signatures: list[Signature]) -> str:
     buffer = ""
@@ -257,28 +266,28 @@ public abstract partial class TimingCardComponent
 """
     for signature in signatures:
         (name, modifier, args, arg_names, return_type, default_impl) = signature
-        if return_type == "Task":
-            buffer += f"""\
+    
+        buffer += f"""\
     public override {return_type} {name}Prefix({args}ComponentContext componentContext)
     {{
-        return Timing == Timing.{name} ? OnTimingPrefix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.{name}))
+        {{
+            {build_timing_ctx(list(filter((lambda x: x), arg_names.split(', '))), name)}
+            {'return ' if return_type == 'Task' else ''}OnTimingPrefix(ctx);
+        }}
+{default_impl}
     }}
     public override {return_type} {name}Postfix({args}ComponentContext componentContext)
     {{
-        return Timing == Timing.{name} ? OnTimingPostfix() : Task.CompletedTask;
+        if (Timings.Contains(Timing.{name}))
+        {{
+            {build_timing_ctx(list(filter((lambda x: x), arg_names.split(', '))), name)}
+            {'return ' if return_type == 'Task' else ''}OnTimingPostfix(ctx);
+        }}
+{default_impl}
     }}
 """
-        else:
-            buffer += f"""\
-    public override {return_type} {name}Prefix({args}ComponentContext componentContext)
-    {{
-        if (Timing == Timing.{name}) OnTimingPrefix();
-    }}
-    public override {return_type} {name}Postfix({args}ComponentContext componentContext)
-    {{
-        if (Timing == Timing.{name}) OnTimingPostfix();
-    }}
-"""
+    
     buffer += "}\n"
     return buffer
 
@@ -331,6 +340,15 @@ def main():
     with open(SCRIPT_DIR / 'methods.txt') as f:
         lines = f.readlines()
     signatures = [parse_csharp_signature(line) for line in lines]
+    s = set()
+    for signature in signatures:
+        for i in signature.args.split(', '):
+            ss = i.split(' ')
+            if len(ss) < 2: continue
+            a = ss[0]
+            b = ss[1][0].upper() + ss[1][1:]
+            s.add(f"{a} {b},")
+    print('\n'.join(s))
 
     with open(COMPONENT_DIR / "ComponentsCardModel.g.cs", 'w') as f:
         code = generate_components_card(signatures)
