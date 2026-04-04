@@ -214,26 +214,41 @@ public abstract partial class ComponentsCardModel(
         component.Attach(owner);
     }
 
+    # region Deprecated
+
+    [Obsolete(
+        "This method is deprecated and should not be called or overridden. Use interface constraints or delegate registry instead.",
+        false)]
     public virtual Task ComponentCallBack(string name, params object?[] args)
     {
         return Task.CompletedTask;
     }
 
+    [Obsolete(
+        "This method is deprecated and should not be called or overridden. Use interface constraints or delegate registry instead.",
+        false)]
     public virtual bool ComponentPredicate(string name, params object?[] args)
     {
         return false;
     }
-    
+
+    [Obsolete(
+        "This method is deprecated and should not be called or overridden. Use interface constraints or delegate registry instead.",
+        false)]
     public virtual object? ComponentQuery(string name, params object?[] args)
     {
         return null;
     }
-    
+
+    [Obsolete(
+        "This method is deprecated and should not be called or overridden. Use interface constraints or delegate registry instead.",
+        false)]
     public virtual Task<object?> ComponentQueryAsync(string name, params object?[] args)
     {
         return Task.FromResult<object?>(null);
     }
-    
+
+    #endregion
 
     protected sealed override bool ShouldGlowGoldInternal =>
         (_components?.Any(c => c.ShouldGlowGoldInternal) ?? false) || ShouldGlowGoldInternalC;
@@ -258,13 +273,12 @@ public abstract partial class ComponentsCardModel(
     private void HandlePhaseTransitionLimitExceeded(ComponentPhase lastPhase)
     {
         Log.Warn($"""
-Card '{Id.Entry}' exceeded the maximum of {MaxPhaseTransitions} phase transitions. Last phase: {lastPhase}.
-       This likely indicates an infinite loop in the card's logic, and no further phase transitions will be processed to prevent game instability.
-       At the time, there are {_components!.Count} component(s) attached to the card, with the following types:
-       {string.Join(", ", _components.Select(c => c.ComponentId))}
-       If you are sure it's a false positive, try modify ComponentsCardModel.MaxPhaseTransitions via reflection.
-""");
-        
+                  Card '{Id.Entry}' exceeded the maximum of {MaxPhaseTransitions} phase transitions. Last phase: {lastPhase}.
+                         This likely indicates an infinite loop in the card's logic, and no further phase transitions will be processed to prevent game instability.
+                         At the time, there are {_components!.Count} component(s) attached to the card, with the following types:
+                         {string.Join(", ", _components.Select(c => c.ComponentId))}
+                         If you are sure it's a false positive, try modify ComponentsCardModel.MaxPhaseTransitions via reflection.
+                  """);
     }
 }
 
