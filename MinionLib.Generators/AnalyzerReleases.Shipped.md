@@ -10,3 +10,5 @@ MLSG104 | MinionLib.Generators | Warning | ComponentState property falls back to
 MLSG200 | MinionLib.Generators | Error | CardComponent subtype with ComponentState properties must be partial
 MLSG201 | MinionLib.Generators | Error | ComponentState dynamic var type must inherit DynamicVar
 MLSG202 | MinionLib.Generators | Warning | ICardComponent implementations should be sealed or abstract
+MLSG203 | MinionLib.Generators | Error | Containing type must be partial for generated delegate registrations
+MLSG204 | MinionLib.Generators | Error | ComponentDelegate method must be static
