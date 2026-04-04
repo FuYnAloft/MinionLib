@@ -3,7 +3,7 @@
   "name": "MinionLib",
   "author": "FuYnAloft",
   "description": "A library mod that provides basic functionalities for minion mechanics and component-based cards.\n一个为随从机制和基于组件的卡牌提供基础功能的库模组。",
-  "version": "0.2.1-alpha.7",
+  "version": "0.2.1-alpha.8",
   "has_pck": true,
   "has_dll": true,
   "dependencies": [

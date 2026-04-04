@@ -19,9 +19,15 @@ public abstract partial class TimingCardComponent(params Timing[] timings) : Car
 {
     [ComponentState] protected Timing[] Timings { get; set; } = timings;
 
-    protected abstract Task OnTimingPrefix(OnTimingContext context);
+    protected virtual Task OnTimingPrefix(OnTimingContext context)
+    {
+        return Task.CompletedTask;
+    }
 
-    protected abstract Task OnTimingPostfix(OnTimingContext context);
+    protected virtual Task OnTimingPostfix(OnTimingContext context)
+    {
+        return Task.CompletedTask;
+    }
 }
 
 // ReSharper disable PreferConcreteValueOverDefault
