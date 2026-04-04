@@ -11,7 +11,7 @@ namespace MinionLib.Component;
 public abstract partial class CardComponent : ICardComponent
 {
     public abstract string ComponentId { get; }
-    
+
 
     public IComponentsCardModel? ComponentsCard { get; private set; }
 
@@ -57,7 +57,7 @@ public abstract partial class CardComponent : ICardComponent
     }
 
     protected virtual IEnumerable<DynamicVar> SmartVars => [];
-    
+
     protected virtual IEnumerable<DynamicVar> ExtraVars => [];
 
     public DynamicVarSet DynamicVars
@@ -79,9 +79,13 @@ public abstract partial class CardComponent : ICardComponent
 
     public virtual IEnumerable<IHoverTip> HoverTips => [];
 
+    protected virtual LocString PrefixLocString => new LocString("cards", ComponentId + ".prefix");
+
+    protected virtual LocString PostfixLocString => new LocString("cards", ComponentId + ".postfix");
+
     private LocString SmartPrefix()
     {
-        var loc = new LocString("cards", ComponentId + ".prefix");
+        var loc = PrefixLocString;
         DynamicVars.AddTo(loc);
         SmartAddArgs(loc);
         return loc;
@@ -89,7 +93,7 @@ public abstract partial class CardComponent : ICardComponent
 
     private LocString SmartPostfix()
     {
-        var loc = new LocString("cards", ComponentId + ".postfix");
+        var loc = PostfixLocString;
         DynamicVars.AddTo(loc);
         SmartAddArgs(loc);
         return loc;
