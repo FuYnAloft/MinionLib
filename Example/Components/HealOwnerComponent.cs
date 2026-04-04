@@ -8,7 +8,7 @@ using AmountCardComponent = MinionLib.Component.Utils.AmountCardComponent;
 
 namespace MinionLib.Example.Components;
 
-public sealed class HealOwnerComponent : AmountCardComponent
+public sealed partial class HealOwnerComponent : AmountCardComponent
 {
     public override async Task OnPlayPrefix(PlayerChoiceContext choiceContext, CardPlay cardPlay,
         ComponentContext componentContext)

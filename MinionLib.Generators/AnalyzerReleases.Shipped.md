@@ -13,3 +13,4 @@ MLSG202 | MinionLib.Generators | Warning | ICardComponent implementations should
 MLSG203 | MinionLib.Generators | Error | Containing type must be partial for generated delegate registrations
 MLSG204 | MinionLib.Generators | Error | `[ComponentDelegate]` method must be static
 MLSG205 | MinionLib.Generators | Error | `[ComponentDelegate]` method signature cannot be mapped to Action/Func
+MLSG206 | MinionLib.Generators | Error | ICardComponent implementation must be partial for SG-generated registration

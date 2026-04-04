@@ -39,7 +39,7 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
 /// <summary>
 ///     Marker return value for MergeWith: keep both components and skip merge replacement.
 /// </summary>
-public sealed class KeepsTwo : ICardComponent
+public sealed partial class KeepsTwo : ICardComponent
 {
     public static KeepsTwo Instance { get; } = new();
 

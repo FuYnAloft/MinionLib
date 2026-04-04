@@ -10,7 +10,8 @@ namespace MinionLib.Component;
 
 public abstract partial class CardComponent : ICardComponent
 {
-    public string ComponentId => CardComponentRegistry.GetComponentId(GetType());
+    public abstract string ComponentId { get; }
+    
 
     public IComponentsCardModel? ComponentsCard { get; private set; }
 
