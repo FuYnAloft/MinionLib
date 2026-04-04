@@ -2,18 +2,18 @@ namespace MinionLib.Component.Core;
 
 public static class DelegateRegistry
 {
-    private static readonly Dictionary<string, Delegate> Delegates = new();
+    private static readonly Dictionary<(string name, Type type), Delegate> Delegates = new();
     
-    public static void Register<T>(string key, T del) where T : Delegate
+    public static void Register<T>(string name, T del) where T : Delegate
     {
-        Delegates[key] = del;
+        Delegates[(name, typeof(T))] = del;
     }
 
-    public static T? Get<T>(string key) where T : Delegate
+    public static T? Get<T>(string name) where T : Delegate
     {
-        if (Delegates.TryGetValue(key, out var del) && del is T typed)
+        if (Delegates.TryGetValue((name, typeof(T)), out var del))
         {
-            return typed;
+            return (T)del;
         }
 
         return null;
