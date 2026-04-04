@@ -232,6 +232,57 @@ def generate_timing_enum(signatures: list[Signature]) -> str:
     return buffer
 
 
+def generate_timing_component(signatures: list[Signature]) -> str:
+    buffer = ""
+    buffer += AUTO_GENERATED_HEADER
+    buffer += """\
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands.Builders;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Merchant;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Map;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Rewards;
+using MegaCrit.Sts2.Core.Rooms;
+using MegaCrit.Sts2.Core.ValueProps;
+using MinionLib.Component.Core;
+"""
+    buffer += "namespace MinionLib.Component.Utils;\n\n"
+    buffer += """\
+public abstract partial class TimingCardComponent
+{
+"""
+    for signature in signatures:
+        (name, modifier, args, arg_names, return_type, default_impl) = signature
+        if return_type == "Task":
+            buffer += f"""\
+    public override {return_type} {name}Prefix({args}ComponentContext componentContext)
+    {{
+        return Timing == Timing.{name} ? OnTimingPrefix() : Task.CompletedTask;
+    }}
+    public override {return_type} {name}Postfix({args}ComponentContext componentContext)
+    {{
+        return Timing == Timing.{name} ? OnTimingPostfix() : Task.CompletedTask;
+    }}
+"""
+        else:
+            buffer += f"""\
+    public override {return_type} {name}Prefix({args}ComponentContext componentContext)
+    {{
+        if (Timing == Timing.{name}) OnTimingPrefix();
+    }}
+    public override {return_type} {name}Postfix({args}ComponentContext componentContext)
+    {{
+        if (Timing == Timing.{name}) OnTimingPostfix();
+    }}
+"""
+    buffer += "}\n"
+    return buffer
+
+
 def parse_csharp_signature(line: str) -> Signature:
     # 正则表达式说明：
     # ^\s*                      : 匹配行首空白
@@ -284,16 +335,20 @@ def main():
     with open(COMPONENT_DIR / "ComponentsCardModel.g.cs", 'w') as f:
         code = generate_components_card(signatures)
         f.write(code)
-        
+
     with open(COMPONENT_DIR / "Interfaces" / "ICardComponent.g.cs", 'w') as f:
         code = generate_i_card_component(signatures)
         f.write(code)
     with open(COMPONENT_DIR / "CardComponent.g.cs", 'w') as f:
         code = generate_card_component(signatures)
         f.write(code)
-        
+
     with open(COMPONENT_DIR / "Utils" / "Timing.g.cs", 'w') as f:
         code = generate_timing_enum(signatures)
+        f.write(code)
+
+    with open(COMPONENT_DIR / "Utils" / "TimingCardComponent.g.cs", 'w') as f:
+        code = generate_timing_component(signatures)
         f.write(code)
 
 
