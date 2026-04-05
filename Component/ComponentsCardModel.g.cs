@@ -20,10 +20,15 @@ using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Component.Core;
 using MinionLib.Component.Interfaces;
+using System.ComponentModel;
 
 namespace MinionLib.Component;
+
+#pragma warning disable CS0809
 public abstract partial class ComponentsCardModel
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     protected sealed override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         EnsureComponentsInitialized();
@@ -100,6 +105,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task OnEnqueuePlayVfx(Creature? target)
     {
         EnsureComponentsInitialized();
@@ -176,6 +183,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task OnTurnEndInHand(PlayerChoiceContext choiceContext)
     {
         EnsureComponentsInitialized();
@@ -252,6 +261,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeCardPlayed(CardPlay cardPlay)
     {
         EnsureComponentsInitialized();
@@ -328,6 +339,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay cardPlay)
     {
         EnsureComponentsInitialized();
@@ -404,6 +417,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCardPlayedLate(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         EnsureComponentsInitialized();
@@ -480,6 +495,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
         EnsureComponentsInitialized();
@@ -556,6 +573,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeTurnEnd(PlayerChoiceContext choiceContext, CombatSide side)
     {
         EnsureComponentsInitialized();
@@ -632,6 +651,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterTurnEnd(PlayerChoiceContext choiceContext, CombatSide side)
     {
         EnsureComponentsInitialized();
@@ -708,6 +729,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterActEntered()
     {
         EnsureComponentsInitialized();
@@ -784,6 +807,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterAddToDeckPrevented(CardModel card)
     {
         EnsureComponentsInitialized();
@@ -860,6 +885,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeAttack(AttackCommand command)
     {
         EnsureComponentsInitialized();
@@ -936,6 +963,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterAttack(AttackCommand command)
     {
         EnsureComponentsInitialized();
@@ -1012,6 +1041,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterBlockCleared(Creature creature)
     {
         EnsureComponentsInitialized();
@@ -1088,6 +1119,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeBlockGained(Creature creature, decimal amount, ValueProp props, CardModel? cardSource)
     {
         EnsureComponentsInitialized();
@@ -1164,6 +1197,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterBlockGained(Creature creature, decimal amount, ValueProp props, CardModel? cardSource)
     {
         EnsureComponentsInitialized();
@@ -1240,6 +1275,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterBlockBroken(Creature creature)
     {
         EnsureComponentsInitialized();
@@ -1316,6 +1353,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCardChangedPiles(CardModel card, PileType oldPileType, AbstractModel? source)
     {
         EnsureComponentsInitialized();
@@ -1392,6 +1431,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCardChangedPilesLate(CardModel card, PileType oldPileType, AbstractModel? source)
     {
         EnsureComponentsInitialized();
@@ -1468,6 +1509,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCardDiscarded(PlayerChoiceContext choiceContext, CardModel card)
     {
         EnsureComponentsInitialized();
@@ -1544,6 +1587,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCardDrawnEarly(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw)
     {
         EnsureComponentsInitialized();
@@ -1620,6 +1665,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCardDrawn(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw)
     {
         EnsureComponentsInitialized();
@@ -1696,6 +1743,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCardEnteredCombat(CardModel card)
     {
         EnsureComponentsInitialized();
@@ -1772,6 +1821,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCardGeneratedForCombat(CardModel card, bool addedByPlayer)
     {
         EnsureComponentsInitialized();
@@ -1848,6 +1899,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCardExhausted(PlayerChoiceContext choiceContext, CardModel card, bool causedByEthereal)
     {
         EnsureComponentsInitialized();
@@ -1924,6 +1977,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeCardAutoPlayed(CardModel card, Creature? target, AutoPlayType type)
     {
         EnsureComponentsInitialized();
@@ -2000,6 +2055,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCardRetained(CardModel card)
     {
         EnsureComponentsInitialized();
@@ -2076,6 +2133,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeCombatStart()
     {
         EnsureComponentsInitialized();
@@ -2152,6 +2211,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeCombatStartLate()
     {
         EnsureComponentsInitialized();
@@ -2228,6 +2289,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCombatEnd(CombatRoom room)
     {
         EnsureComponentsInitialized();
@@ -2304,6 +2367,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCombatVictoryEarly(CombatRoom room)
     {
         EnsureComponentsInitialized();
@@ -2380,6 +2445,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCombatVictory(CombatRoom room)
     {
         EnsureComponentsInitialized();
@@ -2456,6 +2523,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCreatureAddedToCombat(Creature creature)
     {
         EnsureComponentsInitialized();
@@ -2532,6 +2601,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCurrentHpChanged(Creature creature, decimal delta)
     {
         EnsureComponentsInitialized();
@@ -2608,6 +2679,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterDamageGiven(PlayerChoiceContext choiceContext, Creature? dealer, DamageResult result, ValueProp props, Creature target, CardModel? cardSource)
     {
         EnsureComponentsInitialized();
@@ -2684,6 +2757,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeDamageReceived(PlayerChoiceContext choiceContext, Creature target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
         EnsureComponentsInitialized();
@@ -2760,6 +2835,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterDamageReceived(PlayerChoiceContext choiceContext, Creature target, DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
         EnsureComponentsInitialized();
@@ -2836,6 +2913,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterDamageReceivedLate(PlayerChoiceContext choiceContext, Creature target, DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
         EnsureComponentsInitialized();
@@ -2912,6 +2991,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeDeath(Creature creature)
     {
         EnsureComponentsInitialized();
@@ -2988,6 +3069,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength)
     {
         EnsureComponentsInitialized();
@@ -3064,6 +3147,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterDiedToDoom(PlayerChoiceContext choiceContext, IReadOnlyList<Creature> creatures)
     {
         EnsureComponentsInitialized();
@@ -3140,6 +3225,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterEnergyReset(Player player)
     {
         EnsureComponentsInitialized();
@@ -3216,6 +3303,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterEnergyResetLate(Player player)
     {
         EnsureComponentsInitialized();
@@ -3292,6 +3381,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterEnergySpent(CardModel card, int amount)
     {
         EnsureComponentsInitialized();
@@ -3368,6 +3459,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeCardRemoved(CardModel card)
     {
         EnsureComponentsInitialized();
@@ -3444,6 +3537,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeFlush(PlayerChoiceContext choiceContext, Player player)
     {
         EnsureComponentsInitialized();
@@ -3520,6 +3615,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeFlushLate(PlayerChoiceContext choiceContext, Player player)
     {
         EnsureComponentsInitialized();
@@ -3596,6 +3693,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterGoldGained(Player player)
     {
         EnsureComponentsInitialized();
@@ -3672,6 +3771,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeHandDraw(Player player, PlayerChoiceContext choiceContext, CombatState combatState)
     {
         EnsureComponentsInitialized();
@@ -3748,6 +3849,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeHandDrawLate(Player player, PlayerChoiceContext choiceContext, CombatState combatState)
     {
         EnsureComponentsInitialized();
@@ -3824,6 +3927,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterHandEmptied(PlayerChoiceContext choiceContext, Player player)
     {
         EnsureComponentsInitialized();
@@ -3900,6 +4005,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterItemPurchased(Player player, MerchantEntry itemPurchased, int goldSpent)
     {
         EnsureComponentsInitialized();
@@ -3976,6 +4083,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterMapGenerated(ActMap map, int actIndex)
     {
         EnsureComponentsInitialized();
@@ -4052,6 +4161,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterModifyingBlockAmount(decimal modifiedAmount, CardModel? cardSource, CardPlay? cardPlay)
     {
         EnsureComponentsInitialized();
@@ -4128,6 +4239,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterModifyingCardPlayCount(CardModel card)
     {
         EnsureComponentsInitialized();
@@ -4204,6 +4317,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterModifyingCardPlayResultPileOrPosition(CardModel card, PileType pileType, CardPilePosition position)
     {
         EnsureComponentsInitialized();
@@ -4280,6 +4395,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterModifyingOrbPassiveTriggerCount(OrbModel orb)
     {
         EnsureComponentsInitialized();
@@ -4356,6 +4473,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterModifyingCardRewardOptions()
     {
         EnsureComponentsInitialized();
@@ -4432,6 +4551,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterModifyingDamageAmount(CardModel? cardSource)
     {
         EnsureComponentsInitialized();
@@ -4508,6 +4629,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterModifyingEnergyGain()
     {
         EnsureComponentsInitialized();
@@ -4584,6 +4707,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterModifyingHandDraw()
     {
         EnsureComponentsInitialized();
@@ -4660,6 +4785,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterPreventingDraw()
     {
         EnsureComponentsInitialized();
@@ -4736,6 +4863,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterModifyingHpLostBeforeOsty()
     {
         EnsureComponentsInitialized();
@@ -4812,6 +4941,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterModifyingHpLostAfterOsty()
     {
         EnsureComponentsInitialized();
@@ -4888,6 +5019,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterModifyingPowerAmountReceived(PowerModel power)
     {
         EnsureComponentsInitialized();
@@ -4964,6 +5097,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterModifyingPowerAmountGiven(PowerModel power)
     {
         EnsureComponentsInitialized();
@@ -5040,6 +5175,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterModifyingRewards()
     {
         EnsureComponentsInitialized();
@@ -5116,6 +5253,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeRewardsOffered(Player player, IReadOnlyList<Reward> rewards)
     {
         EnsureComponentsInitialized();
@@ -5192,6 +5331,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterOrbChanneled(PlayerChoiceContext choiceContext, Player player, OrbModel orb)
     {
         EnsureComponentsInitialized();
@@ -5268,6 +5409,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterOrbEvoked(PlayerChoiceContext choiceContext, OrbModel orb, IEnumerable<Creature> targets)
     {
         EnsureComponentsInitialized();
@@ -5344,6 +5487,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterOstyRevived(Creature osty)
     {
         EnsureComponentsInitialized();
@@ -5420,6 +5565,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforePotionUsed(PotionModel potion, Creature? target)
     {
         EnsureComponentsInitialized();
@@ -5496,6 +5643,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterPotionUsed(PotionModel potion, Creature? target)
     {
         EnsureComponentsInitialized();
@@ -5572,6 +5721,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterPotionDiscarded(PotionModel potion)
     {
         EnsureComponentsInitialized();
@@ -5648,6 +5799,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterPotionProcured(PotionModel potion)
     {
         EnsureComponentsInitialized();
@@ -5724,6 +5877,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforePowerAmountChanged(PowerModel power, decimal amount, Creature target, Creature? applier, CardModel? cardSource)
     {
         EnsureComponentsInitialized();
@@ -5800,6 +5955,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterPowerAmountChanged(PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
     {
         EnsureComponentsInitialized();
@@ -5876,6 +6033,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterPreventingBlockClear(AbstractModel preventer, Creature creature)
     {
         EnsureComponentsInitialized();
@@ -5952,6 +6111,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterPreventingDeath(Creature creature)
     {
         EnsureComponentsInitialized();
@@ -6028,6 +6189,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterRestSiteHeal(Player player, bool isMimicked)
     {
         EnsureComponentsInitialized();
@@ -6104,6 +6267,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterRestSiteSmith(Player player)
     {
         EnsureComponentsInitialized();
@@ -6180,6 +6345,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterRewardTaken(Player player, Reward reward)
     {
         EnsureComponentsInitialized();
@@ -6256,6 +6423,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeRoomEntered(AbstractRoom room)
     {
         EnsureComponentsInitialized();
@@ -6332,6 +6501,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterRoomEntered(AbstractRoom room)
     {
         EnsureComponentsInitialized();
@@ -6408,6 +6579,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterShuffle(PlayerChoiceContext choiceContext, Player shuffler)
     {
         EnsureComponentsInitialized();
@@ -6484,6 +6657,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterStarsSpent(int amount, Player spender)
     {
         EnsureComponentsInitialized();
@@ -6560,6 +6735,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterStarsGained(int amount, Player gainer)
     {
         EnsureComponentsInitialized();
@@ -6636,6 +6813,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterForge(decimal amount, Player forger, AbstractModel? source)
     {
         EnsureComponentsInitialized();
@@ -6712,6 +6891,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterSummon(PlayerChoiceContext choiceContext, Player summoner, decimal amount)
     {
         EnsureComponentsInitialized();
@@ -6788,6 +6969,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterTakingExtraTurn(Player player)
     {
         EnsureComponentsInitialized();
@@ -6864,6 +7047,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterTargetingBlockedVfx(Creature blocker)
     {
         EnsureComponentsInitialized();
@@ -6940,6 +7125,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, CombatState combatState)
     {
         EnsureComponentsInitialized();
@@ -7016,6 +7203,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterSideTurnStart(CombatSide side, CombatState combatState)
     {
         EnsureComponentsInitialized();
@@ -7092,6 +7281,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterPlayerTurnStartEarly(PlayerChoiceContext choiceContext, Player player)
     {
         EnsureComponentsInitialized();
@@ -7168,6 +7359,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterPlayerTurnStartLate(PlayerChoiceContext choiceContext, Player player)
     {
         EnsureComponentsInitialized();
@@ -7244,6 +7437,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforePlayPhaseStart(PlayerChoiceContext choiceContext, Player player)
     {
         EnsureComponentsInitialized();
@@ -7320,6 +7515,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeTurnEndVeryEarly(PlayerChoiceContext choiceContext, CombatSide side)
     {
         EnsureComponentsInitialized();
@@ -7396,6 +7593,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeTurnEndEarly(PlayerChoiceContext choiceContext, CombatSide side)
     {
         EnsureComponentsInitialized();
@@ -7472,6 +7671,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterTurnEndLate(PlayerChoiceContext choiceContext, CombatSide side)
     {
         EnsureComponentsInitialized();
@@ -7548,6 +7749,8 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     protected sealed override void OnUpgrade()
     {
         EnsureComponentsInitialized();

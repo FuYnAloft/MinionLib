@@ -45,14 +45,19 @@ using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Component.Core;
 using MinionLib.Component.Interfaces;
+using System.ComponentModel;
 
 namespace MinionLib.Component;
+
+#pragma warning disable CS0809
 """
     buffer += "public abstract partial class ComponentsCardModel\n{\n"
     for signature in signatures:
         args: str
         (name, modifier, args, arg_names, return_type, default_impl) = signature
         Xxx = f"""\
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     {modifier} sealed override {"async " if return_type == "Task" else ""}{return_type} {name}({args[:-2] if args.endswith(", ") else args})
     {{
         EnsureComponentsInitialized();
