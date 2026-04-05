@@ -55,7 +55,7 @@ public static class CardComponentStateSerializer
                 continue;
             }
 
-            Attach(component, owner);
+            component.Attach(owner);
             result.Add(component);
         }
 
@@ -77,17 +77,11 @@ public static class CardComponentStateSerializer
         return clone;
     }
 
-    private static void Attach(object component, IComponentsCardModel owner)
-    {
-        var attachMethod = component.GetType().GetMethod("Attach", [typeof(IComponentsCardModel)]);
-        attachMethod?.Invoke(component, [owner]);
-    }
-
     private sealed class NullOwner : IComponentsCardModel
     {
         public static readonly NullOwner Instance = new();
         public IReadOnlyList<ICardComponent> Components => [];
-        public T? AddComponent<T>(T component) where T : ICardComponent => component;
+        public T AddComponent<T>(T component) where T : ICardComponent => component;
         public bool RemoveComponent<T>() where T : ICardComponent => false;
         public int RemoveComponents<T>() where T : ICardComponent => 0;
         public bool RefRemoveComponent(ICardComponent component) => false;

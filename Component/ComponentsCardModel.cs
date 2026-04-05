@@ -129,7 +129,7 @@ public abstract partial class ComponentsCardModel(
             : CardComponentStateSerializer.Deserialize(_componentStateBlob, this);
 
         foreach (var component in _components)
-            Attach(component, this);
+            component.Attach(this);
 
         _componentStateBlob = CardComponentStateSerializer.Serialize(_components);
     }
@@ -155,7 +155,7 @@ public abstract partial class ComponentsCardModel(
         {
             _components = _components.Select(c => c.DeepClone()).ToList();
             foreach (var component in _components)
-                Attach(component, this);
+                component.Attach(this);
 
             _componentStateBlob = CardComponentStateSerializer.Serialize(_components);
         }
@@ -207,11 +207,6 @@ public abstract partial class ComponentsCardModel(
         merged.Attach(this);
         _components[existingIndex] = merged;
         return (T)merged;
-    }
-
-    private static void Attach(ICardComponent component, IComponentsCardModel owner)
-    {
-        component.Attach(owner);
     }
 
     # region Deprecated
