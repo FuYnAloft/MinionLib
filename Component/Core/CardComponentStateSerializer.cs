@@ -19,7 +19,7 @@ public static class CardComponentStateSerializer
         return SerializationUtils.ToIntArray(writer.WrittenSpan);
     }
 
-    public static List<ICardComponent> Deserialize(int[] state, IComponentsCardModel owner)
+    public static List<ICardComponent> Deserialize(int[] state, IComponentsCardModel? owner)
     {
         if (!SerializationUtils.TryFromIntArray(state, out var bytes) || bytes.Length == 0)
             return [];
@@ -55,7 +55,8 @@ public static class CardComponentStateSerializer
                 continue;
             }
 
-            component.Attach(owner);
+            if (owner != null)
+                component.Attach(owner, true);
             result.Add(component);
         }
 
@@ -66,31 +67,11 @@ public static class CardComponentStateSerializer
     {
         var owner = component.ComponentsCard;
         var serialized = Serialize([component]);
-        var clone = Deserialize(serialized, owner ?? NullOwner.Instance).FirstOrDefault();
+        var clone = Deserialize(serialized, owner).FirstOrDefault();
 
         if (clone == null)
             throw new InvalidOperationException($"Failed to clone component {component.GetType().FullName}");
-
-        if (owner == null)
-            clone.Detach();
-
+        
         return clone;
-    }
-
-    private sealed class NullOwner : IComponentsCardModel
-    {
-        public static readonly NullOwner Instance = new();
-        public IReadOnlyList<ICardComponent> Components => [];
-        public T AddComponent<T>(T component) where T : ICardComponent => component;
-        public bool RemoveComponent<T>() where T : ICardComponent => false;
-        public int RemoveComponents<T>() where T : ICardComponent => 0;
-        public bool RefRemoveComponent(ICardComponent component) => false;
-        public T? GetComponent<T>() where T : ICardComponent => default;
-        public IEnumerable<T> GetComponents<T>() where T : ICardComponent => [];
-        public void EnsureComponentsInitialized(){}
-        public Task ComponentCallBack(string name, params object?[] args) => Task.CompletedTask;
-        public bool ComponentPredicate(string name, params object?[] args) => false;
-        public object? ComponentQuery(string name, params object?[] args) => null;
-        public Task<object?> ComponentQueryAsync(string name, params object?[] args) => Task.FromResult<object?>(null);
     }
 }

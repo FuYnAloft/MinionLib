@@ -13,9 +13,9 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
 
     CardModel? Card => ComponentsCard as CardModel;
 
-    void Attach(IComponentsCardModel card);
+    void Attach(IComponentsCardModel card, bool isInternal = false);
 
-    void Detach();
+    void Detach(bool isInternal = false);
 
     ICardComponent DeepClone();
 
@@ -51,11 +51,11 @@ public sealed partial class KeepsTwo : ICardComponent
 
     public IComponentsCardModel? ComponentsCard => null;
 
-    public void Attach(IComponentsCardModel card)
+    public void Attach(IComponentsCardModel card, bool isInternal = false)
     {
     }
 
-    public void Detach()
+    public void Detach(bool isInternal = false)
     {
     }
 
@@ -64,7 +64,7 @@ public sealed partial class KeepsTwo : ICardComponent
         return Instance;
     }
 
-    public ICardComponent? MergeWith(ICardComponent incoming)
+    public ICardComponent MergeWith(ICardComponent incoming)
     {
         return Instance;
     }

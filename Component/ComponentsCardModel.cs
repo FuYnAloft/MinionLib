@@ -155,7 +155,7 @@ public abstract partial class ComponentsCardModel(
         {
             _components = _components.Select(c => c.DeepClone()).ToList();
             foreach (var component in _components)
-                component.Attach(this);
+                component.Attach(this, true);
 
             _componentStateBlob = CardComponentStateSerializer.Serialize(_components);
         }

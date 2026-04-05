@@ -17,19 +17,21 @@ public abstract partial class CardComponent : ICardComponent
 
     public CardModel? Card => ComponentsCard as CardModel;
 
-    public void Attach(IComponentsCardModel card)
+    public void Attach(IComponentsCardModel card, bool isInternal = false)
     {
         ComponentsCard = card;
-        OnAttach();
+        if (!isInternal)
+            OnAttach();
     }
 
     protected virtual void OnAttach()
     {
     }
 
-    public void Detach()
+    public void Detach(bool isInternal = false)
     {
-        OnDetach();
+        if (!isInternal)
+            OnDetach();
         ComponentsCard = null;
     }
 
