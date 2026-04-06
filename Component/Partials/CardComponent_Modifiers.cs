@@ -18,7 +18,7 @@ using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
 
-namespace MinionLib.Component.Partials;
+namespace MinionLib.Component;
 
 public abstract partial class CardComponent
 {
