@@ -17,6 +17,8 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
 {
     private const string ComponentStateAttributeMetadataName = "MinionLib.Component.Core.ComponentStateAttribute";
     private const string ComponentStateGenericAttributeMetadataName = "MinionLib.Component.Core.ComponentStateAttribute`1";
+    private const string LocArgAttributeMetadataName = "MinionLib.Component.Core.LocArgAttribute";
+    private const string NotLocArgAttributeMetadataName = "MinionLib.Component.Core.NotLocArgAttribute";
     private const string CardComponentMetadataName = "MinionLib.Component.CardComponent";
     private const string DynamicVarMetadataName = "MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar";
     private const string LocStringMetadataName = "MegaCrit.Sts2.Core.Localization.LocString";
@@ -150,20 +152,56 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
         if (property.IsStatic || property.GetMethod == null || property.Parameters.Length != 0)
             return null;
 
-        var attribute = property.GetAttributes().FirstOrDefault(IsComponentStateAttribute);
-        if (attribute == null)
+        var attributes = property.GetAttributes();
+        var componentStateAttribute = attributes.FirstOrDefault(IsComponentStateAttribute);
+        var locArgAttribute = attributes.FirstOrDefault(IsLocArgAttribute);
+        var hasNotLocArg = attributes.Any(IsNotLocArgAttribute);
+
+        if (componentStateAttribute == null && locArgAttribute == null)
             return null;
 
-        if (!TryExtractGenerator(attribute, out var generatorTypeName, out var generatorTypeIsDynamicVar, out var constructorArgs))
+        string? generatorTypeName = null;
+        var generatorTypeIsDynamicVar = false;
+        var constructorArgs = ImmutableArray<string>.Empty;
+
+        if (componentStateAttribute != null &&
+            !TryExtractGenerator(componentStateAttribute, out generatorTypeName, out generatorTypeIsDynamicVar, out constructorArgs))
             return null;
+
+        var hasLocArgName = TryExtractLocArgName(locArgAttribute, out var locArgName);
+        var smartArgName = hasLocArgName && !string.IsNullOrWhiteSpace(locArgName)
+            ? locArgName
+            : property.Name;
+
+        var hasNonGenericComponentState = componentStateAttribute != null && !IsGenericComponentStateAttribute(componentStateAttribute);
+        var includeInSmartArgs = !hasNotLocArg && (hasNonGenericComponentState || locArgAttribute != null);
 
         return new ComponentStateRuleData(
             PropertyName: property.Name,
+            SmartArgName: smartArgName,
             TypeInfo: PropertyTypeInfo.FromType(property.Type),
+            HasComponentState: componentStateAttribute != null,
+            IncludeInSmartArgs: includeInSmartArgs,
             GeneratorTypeName: generatorTypeName,
             GeneratorTypeIsDynamicVar: generatorTypeIsDynamicVar,
             ConstructorArgCode: constructorArgs,
             Location: GetSourceLocation(property));
+    }
+
+    private static bool TryExtractLocArgName(AttributeData? attribute, out string name)
+    {
+        name = string.Empty;
+        if (attribute == null)
+            return false;
+
+        if (attribute.ConstructorArguments.Length == 0)
+            return true;
+
+        var arg = attribute.ConstructorArguments[0];
+        if (arg.Kind == TypedConstantKind.Primitive && arg.Value is string provided && !string.IsNullOrWhiteSpace(provided))
+            name = provided;
+
+        return true;
     }
 
     private static Location? GetSourceLocation(ISymbol symbol)
@@ -223,6 +261,25 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
                || originalName == "global::MinionLib.Component.Core.ComponentStateAttribute<T>";
     }
 
+    private static bool IsGenericComponentStateAttribute(AttributeData attribute)
+    {
+        var originalName = attribute.AttributeClass?.OriginalDefinition.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        return originalName == "global::" + ComponentStateGenericAttributeMetadataName
+               || originalName == "global::MinionLib.Component.Core.ComponentStateAttribute<T>";
+    }
+
+    private static bool IsLocArgAttribute(AttributeData attribute)
+    {
+        var originalName = attribute.AttributeClass?.OriginalDefinition.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        return originalName == "global::" + LocArgAttributeMetadataName;
+    }
+
+    private static bool IsNotLocArgAttribute(AttributeData attribute)
+    {
+        var originalName = attribute.AttributeClass?.OriginalDefinition.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        return originalName == "global::" + NotLocArgAttributeMetadataName;
+    }
+
     private static bool IsAccessibleFromType(IPropertySymbol property, INamedTypeSymbol targetType)
     {
         if (SymbolEqualityComparer.Default.Equals(property.ContainingType, targetType))
@@ -262,12 +319,12 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             }
 
             var smartVarRules = type.AllRules
-                .Where(static r => r.GeneratorTypeName != null)
+                .Where(static r => r.HasComponentState && r.GeneratorTypeName != null)
                 .OrderBy(static r => r.PropertyName, StringComparer.Ordinal)
                 .ToImmutableArray();
 
             var smartArgRules = type.OwnRules
-                .Where(static r => r.GeneratorTypeName == null)
+                .Where(static r => r.IncludeInSmartArgs)
                 .OrderBy(static r => r.PropertyName, StringComparer.Ordinal)
                 .ToImmutableArray();
 
@@ -343,13 +400,13 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
             var local = "__v_" + rule.PropertyName;
             sb.Append("        var ").Append(local).Append(" = ").Append(valueExpr).AppendLine(";");
             sb.Append("        if (").Append(local).AppendLine(" == null)");
-            sb.Append("            loc.Add(\"").Append(rule.PropertyName).AppendLine("\", 0m);");
+            sb.Append("            loc.Add(\"").Append(rule.SmartArgName).AppendLine("\", 0m);");
             sb.AppendLine("        else");
-            EmitNonNullSmartArg(sb, rule.PropertyName, local, rule.TypeInfo, 3);
+            EmitNonNullSmartArg(sb, rule.SmartArgName, local, rule.TypeInfo, 3);
             return;
         }
 
-        EmitNonNullSmartArg(sb, rule.PropertyName, valueExpr, rule.TypeInfo, 2);
+        EmitNonNullSmartArg(sb, rule.SmartArgName, valueExpr, rule.TypeInfo, 2);
     }
 
     private static void EmitNonNullSmartArg(StringBuilder sb, string name, string valueExpr, PropertyTypeInfo typeInfo, int indent)
@@ -551,7 +608,10 @@ public sealed class DynamicVarSourceGenerator : IIncrementalGenerator
 
     private readonly record struct ComponentStateRuleData(
         string PropertyName,
+        string SmartArgName,
         PropertyTypeInfo TypeInfo,
+        bool HasComponentState,
+        bool IncludeInSmartArgs,
         string? GeneratorTypeName,
         bool GeneratorTypeIsDynamicVar,
         ImmutableArray<string> ConstructorArgCode,
