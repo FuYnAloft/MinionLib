@@ -52,6 +52,7 @@ public class EasyRightClickCardAction : GameAction
         var choiceContext = new GameActionPlayerChoiceContext(this);
         var clickContent = new RightClickContext(Player, _card, Meta);
         await rightClickableCard.OnRightClick(choiceContext, clickContent);
+        _card.InvokeExecutionFinished();
     }
 
     public override INetAction ToNetAction()
