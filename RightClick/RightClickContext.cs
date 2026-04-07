@@ -3,4 +3,4 @@ using MegaCrit.Sts2.Core.Models;
 
 namespace MinionLib.RightClick;
 
-public record RightClickContext(Player Player, AbstractModel Model);
+public record RightClickContext(Player Player, AbstractModel Model, string? Meta = null);
