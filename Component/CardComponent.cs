@@ -1,10 +1,12 @@
 using System.Buffers;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MinionLib.Component.Core;
 using MinionLib.Component.Interfaces;
+using MinionLib.RightClick;
 
 namespace MinionLib.Component;
 
@@ -125,5 +127,15 @@ public abstract partial class CardComponent : ICardComponent
     {
         var postfix = SmartPostfix();
         return postfix.Exists() ? FormatPostfix(postfix) : "";
+    }
+    
+    public virtual bool CanHandleRightClickLocal(RightClickContext context)
+    {
+        return false;
+    }
+
+    public virtual Task OnRightClick(PlayerChoiceContext choiceContext, RightClickContext clickContext)
+    {
+        return Task.CompletedTask;
     }
 }

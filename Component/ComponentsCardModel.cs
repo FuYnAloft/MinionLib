@@ -2,6 +2,7 @@ using BaseLib.Abstracts;
 using BaseLib.Patches.Content;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Logging;
@@ -9,6 +10,8 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using MinionLib.Component.Core;
 using MinionLib.Component.Interfaces;
+using MinionLib.RightClick;
+using MinionLib.RightClick.Easy;
 
 namespace MinionLib.Component;
 
@@ -19,7 +22,7 @@ public abstract partial class ComponentsCardModel(
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
     : CardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary),
-        IComponentsCardModel
+        IComponentsCardModel, IEasyRightClickableCard
 {
     // ReSharper disable once ConvertToConstant.Local
     private static readonly int MaxPhaseTransitions = 64;
@@ -274,6 +277,29 @@ public abstract partial class ComponentsCardModel(
                          {string.Join(", ", _components.Select(c => c.ComponentId))}
                          If you are sure it's a false positive, try modify ComponentsCardModel.MaxPhaseTransitions via reflection.
                   """);
+    }
+
+    public bool CanHandleRightClickLocal(RightClickContext context)
+    {
+        EnsureComponentsInitialized();
+        return _components!.Any(c => c.CanHandleRightClickLocal(context)) || CanHandleRightClickLocalC(context);
+    }
+
+    protected virtual bool CanHandleRightClickLocalC(RightClickContext context) => false;
+
+    public async Task OnRightClick(PlayerChoiceContext choiceContext, RightClickContext clickContext)
+    {
+        EnsureComponentsInitialized();
+        foreach (var component in _components!)
+        {
+            await component.OnRightClick(choiceContext, clickContext);
+        }
+        await OnRightClickC(choiceContext, clickContext);
+    }
+
+    protected virtual Task OnRightClickC(PlayerChoiceContext choiceContext, RightClickContext clickContext)
+    {
+        return Task.CompletedTask;
     }
 }
 
