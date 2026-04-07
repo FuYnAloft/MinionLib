@@ -1,6 +1,4 @@
-using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
-using MegaCrit.Sts2.Core.Nodes.Combat;
+using MinionLib.RightClick.Easy;
 
 namespace MinionLib.RightClick;
 
@@ -12,6 +10,7 @@ public static class RightClickDispatcher
         #if DEBUG
         new LogIdRightClickHandler(),
         #endif
+        new EasyRightClickableCardHandler(),
     ];
 
     public static void Register(IRightClickHandler handler)
