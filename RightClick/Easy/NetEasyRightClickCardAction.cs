@@ -11,26 +11,24 @@ public struct NetEasyRightClickCardAction : INetAction
 {
     public NetCombatCard Card;
     public ModelId ModelId;
-    public string? Meta;
+    public RightClickContext.Payload Extra;
 
     public void Serialize(PacketWriter writer)
     {
         writer.Write(Card);
         writer.WriteModelEntry(ModelId);
-        writer.WriteBool(Meta != null);
-        if (Meta != null)
-            writer.WriteString(Meta);
+        writer.Write(Extra);
     }
 
     public void Deserialize(PacketReader reader)
     {
         Card = reader.Read<NetCombatCard>();
         ModelId = reader.ReadModelIdAssumingType<CardModel>();
-        Meta = reader.ReadBool() ? reader.ReadString() : null;
+        Extra = reader.Read<RightClickContext.Payload>();
     }
 
     public GameAction ToGameAction(Player player)
     {
-        return new EasyRightClickCardAction(player, Card, ModelId, Meta);
+        return new EasyRightClickCardAction(player, Card, ModelId, Extra);
     }
 }

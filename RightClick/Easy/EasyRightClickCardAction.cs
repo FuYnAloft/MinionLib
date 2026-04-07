@@ -17,7 +17,7 @@ public class EasyRightClickCardAction : GameAction
 
     public NetCombatCard NetCombatCard { get; }
     public ModelId CardModelId { get; }
-    public string? Meta { get; }
+    public RightClickContext.Payload Extra { get; }
 
     public EasyRightClickCardAction(RightClickContext context)
     {
@@ -27,19 +27,19 @@ public class EasyRightClickCardAction : GameAction
         _card = cardModel;
         NetCombatCard = NetCombatCard.FromModel(cardModel);
         CardModelId = cardModel.Id;
-        Meta = context.Meta;
+        Extra = context.Extra;
     }
 
     public EasyRightClickCardAction(
         Player player,
         NetCombatCard netCombatCard,
         ModelId cardModelId,
-        string? meta)
+        RightClickContext.Payload extra)
     {
         Player = player;
         NetCombatCard = netCombatCard;
         CardModelId = cardModelId;
-        Meta = meta;
+        Extra = extra;
     }
 
 
@@ -50,7 +50,7 @@ public class EasyRightClickCardAction : GameAction
         if (_card.Pile?.Type != PileType.Hand) return;
 
         var choiceContext = new GameActionPlayerChoiceContext(this);
-        var clickContent = new RightClickContext(Player, _card, Meta);
+        var clickContent = new RightClickContext(Player, _card, Extra);
         await rightClickableCard.OnRightClick(choiceContext, clickContent);
         _card.InvokeExecutionFinished();
     }
@@ -61,7 +61,7 @@ public class EasyRightClickCardAction : GameAction
         {
             Card = NetCombatCard,
             ModelId = CardModelId,
-            Meta = Meta
+            Extra = Extra
         };
     }
 }
