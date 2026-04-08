@@ -60,7 +60,7 @@ public abstract partial class ComponentsCardModel(
     protected virtual IEnumerable<ICardComponent> CanonicalComponents => [];
 
     public T? AddComponent<T>(T incoming, bool matchExactType = true, bool allowMerge = true,
-        bool useSubtractiveMerge = false) where T : ICardComponent
+        bool useSubtractiveMerge = false) where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
         var existingIndex = allowMerge
@@ -90,15 +90,16 @@ public abstract partial class ComponentsCardModel(
         if (merged == null)
         {
             _components.RemoveAt(existingIndex);
-            return default;
+            return null;
         }
 
         merged.Attach(this);
         _components[existingIndex] = merged;
-        return (T)merged;
+        return merged as T ?? throw new InvalidCastException(
+            $"AddComponent<{typeof(T).FullName}> tried to merge incoming component of type {incoming.GetType().FullName} with existing component of type {existing.GetType().FullName}, and the resulting merged component is of type {merged.GetType().FullName}, which cannot be cast back to {typeof(T).FullName}.");
     }
 
-    public bool RemoveComponent<T>() where T : ICardComponent
+    public bool RemoveComponent<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
 
@@ -111,7 +112,7 @@ public abstract partial class ComponentsCardModel(
         return true;
     }
 
-    public int RemoveComponents<T>() where T : ICardComponent
+    public int RemoveComponents<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
 
@@ -142,13 +143,13 @@ public abstract partial class ComponentsCardModel(
         return true;
     }
 
-    public T? GetComponent<T>() where T : ICardComponent
+    public T? GetComponent<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
         return _components!.OfType<T>().FirstOrDefault();
     }
 
-    public IEnumerable<T> GetComponents<T>() where T : ICardComponent
+    public IEnumerable<T> GetComponents<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
         return _components!.OfType<T>().ToArray();
