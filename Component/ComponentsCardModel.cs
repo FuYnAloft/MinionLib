@@ -59,14 +59,47 @@ public abstract partial class ComponentsCardModel(
 
     protected virtual IEnumerable<ICardComponent> CanonicalComponents => [];
 
-    public T? AddComponent<T>(T component) where T : ICardComponent
+    public T? AddComponent<T>(T incoming, bool matchExactType = true, bool allowMerge = true,
+        bool useSubtractiveMerge = false) where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
-        var finalComponent = AddOrMergeComponent(component);
-        return finalComponent;
+        var existingIndex = allowMerge
+            ? _components!.FindIndex(c => matchExactType ? c.GetType() == incoming.GetType() : c is T)
+            : -1;
+        if (existingIndex < 0)
+        {
+            incoming.Attach(this);
+            _components!.Add(incoming);
+            return incoming;
+        }
+
+        var existing = _components![existingIndex];
+        var merged = useSubtractiveMerge ? existing.SubtractiveMergeWith(incoming) : existing.MergeWith(incoming);
+
+        if (ReferenceEquals(merged, KeepBoth.Instance))
+        {
+            incoming.Attach(this);
+            _components.Add(incoming);
+            return incoming;
+        }
+
+        if (ReferenceEquals(merged, existing)) return (T)merged;
+
+        existing.Detach();
+
+        if (merged == null)
+        {
+            _components.RemoveAt(existingIndex);
+            return null;
+        }
+
+        merged.Attach(this);
+        _components[existingIndex] = merged;
+        return merged as T ?? throw new InvalidCastException(
+            $"AddComponent<{typeof(T).FullName}> tried to merge incoming component of type {incoming.GetType().FullName} with existing component of type {existing.GetType().FullName}, and the resulting merged component is of type {merged.GetType().FullName}, which cannot be cast back to {typeof(T).FullName}.");
     }
 
-    public bool RemoveComponent<T>() where T : ICardComponent
+    public bool RemoveComponent<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
 
@@ -79,7 +112,7 @@ public abstract partial class ComponentsCardModel(
         return true;
     }
 
-    public int RemoveComponents<T>() where T : ICardComponent
+    public int RemoveComponents<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
 
@@ -110,13 +143,13 @@ public abstract partial class ComponentsCardModel(
         return true;
     }
 
-    public T? GetComponent<T>() where T : ICardComponent
+    public T? GetComponent<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
         return _components!.OfType<T>().FirstOrDefault();
     }
 
-    public IEnumerable<T> GetComponents<T>() where T : ICardComponent
+    public IEnumerable<T> GetComponents<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
         return _components!.OfType<T>().ToArray();
@@ -175,41 +208,6 @@ public abstract partial class ComponentsCardModel(
     private List<ICardComponent> BuildComponentsFromCanonical()
     {
         return CanonicalComponents.Select(c => c.DeepClone()).ToList();
-    }
-
-    private T? AddOrMergeComponent<T>(T incoming) where T : ICardComponent
-    {
-        var existingIndex = _components!.FindIndex(c => c is T);
-        if (existingIndex < 0)
-        {
-            incoming.Attach(this);
-            _components.Add(incoming);
-            return incoming;
-        }
-
-        var existing = _components[existingIndex];
-        var merged = existing.MergeWith(incoming);
-
-        if (ReferenceEquals(merged, KeepsTwo.Instance))
-        {
-            incoming.Attach(this);
-            _components.Add(incoming);
-            return incoming;
-        }
-
-        if (ReferenceEquals(merged, existing)) return (T)merged;
-
-        existing.Detach();
-
-        if (merged == null)
-        {
-            _components.RemoveAt(existingIndex);
-            return default;
-        }
-
-        merged.Attach(this);
-        _components[existingIndex] = merged;
-        return (T)merged;
     }
 
     # region Deprecated
@@ -294,6 +292,7 @@ public abstract partial class ComponentsCardModel(
         {
             await component.OnRightClick(choiceContext, clickContext);
         }
+
         await OnRightClickC(choiceContext, clickContext);
     }
 

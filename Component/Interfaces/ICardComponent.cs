@@ -22,6 +22,8 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
     ICardComponent DeepClone();
 
     ICardComponent? MergeWith(ICardComponent incoming);
+    
+    ICardComponent? SubtractiveMergeWith(ICardComponent incoming);
 
     DynamicVarSet DynamicVars { get; }
 
@@ -45,15 +47,15 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
 /// <summary>
 ///     Marker return value for MergeWith: keep both components and skip merge replacement.
 /// </summary>
-public sealed partial class KeepsTwo : ICardComponent
+public sealed partial class KeepBoth : ICardComponent
 {
-    public static KeepsTwo Instance { get; } = new();
+    public static KeepBoth Instance { get; } = new();
 
-    private KeepsTwo()
+    private KeepBoth()
     {
     }
 
-    public string ComponentId => nameof(KeepsTwo);
+    public string ComponentId => nameof(KeepBoth);
 
     public IComponentsCardModel? ComponentsCard => null;
 
@@ -73,6 +75,11 @@ public sealed partial class KeepsTwo : ICardComponent
     public ICardComponent MergeWith(ICardComponent incoming)
     {
         return Instance;
+    }
+
+    public ICardComponent? SubtractiveMergeWith(ICardComponent incoming)
+    {
+        return null;
     }
 
     public void Serialize(ArrayBufferWriter<byte> writer)

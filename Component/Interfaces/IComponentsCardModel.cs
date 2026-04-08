@@ -8,17 +8,18 @@ public interface IComponentsCardModel
 
     IReadOnlyList<ICardComponent> Components { get; }
 
-    T? AddComponent<T>(T component) where T : ICardComponent;
+    T? AddComponent<T>(T incoming, bool matchExactType = true, bool allowMerge = true, bool useSubtractiveMerge = false)
+        where T : class, ICardComponent;
 
-    bool RemoveComponent<T>() where T : ICardComponent;
+    bool RemoveComponent<T>() where T : class, ICardComponent;
 
-    int RemoveComponents<T>() where T : ICardComponent;
+    int RemoveComponents<T>() where T : class, ICardComponent;
 
     bool RefRemoveComponent(ICardComponent component);
 
-    T? GetComponent<T>() where T : ICardComponent;
+    T? GetComponent<T>() where T : class, ICardComponent;
 
-    IEnumerable<T> GetComponents<T>() where T : ICardComponent;
+    IEnumerable<T> GetComponents<T>() where T : class, ICardComponent;
 
     void EnsureComponentsInitialized();
 
