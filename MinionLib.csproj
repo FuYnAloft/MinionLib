@@ -109,7 +109,7 @@
 
     <ItemGroup>
         <None Include=".gitignore"/>
-        <None Include="MinionLib.json"/>
+        <None Include="MinionLib.template.json" />
         <None Include="project.godot"/>
         <None Include="MinionLib/**"/>
         <None Include="images/**"/>
@@ -131,6 +131,22 @@
         <Error
                 Text=" Godot not found at path '$(GodotPath)'"
                 Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')"/>
+    </Target>
+
+    <!-- 自动更新 json 中的版本号 -->
+    <Target Name="UpdateManifestVersion" BeforeTargets="BeforeBuild;PreparePckForPack">
+        <PropertyGroup>
+            <ManifestTemplateFile>$(MSBuildProjectDirectory)\MinionLib.template.json</ManifestTemplateFile>
+            <ManifestOutputFile>$(MSBuildProjectDirectory)\MinionLib.json</ManifestOutputFile>
+        </PropertyGroup>
+
+        <Message Text="Updating version in $(ManifestOutputFile) to $(Version)" Importance="high" />
+
+        <ItemGroup>
+            <FileLines Include="$([System.IO.File]::ReadAllText($(ManifestTemplateFile)).Replace('VERSION-CODE', '$(Version)'))" />
+        </ItemGroup>
+
+        <WriteLinesToFile File="$(ManifestOutputFile)" Lines="@(FileLines)" Overwrite="true" WriteOnlyWhenDifferent="true" />
     </Target>
 
     <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent">
@@ -163,7 +179,7 @@
 
     <PropertyGroup>
         <PackageId>FuYnAloft.Sts2.MinionLib</PackageId>
-        <Version>0.2.2.1</Version>
+        <Version>0.0.0.0-dev</Version>
         <Authors>FuYnAloft</Authors>
         <Description>A framework library for Slay the Spire 2 modding. Provides standardized systems for implementing "Minions" (summoned allies) and "Component-based Cards" (modular card logic). Includes source generators to minimize boilerplate.</Description>
         <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
