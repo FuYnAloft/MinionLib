@@ -10,3 +10,4 @@ riderModule.iml
 .agent/
 docs/images/
 *.cs.uid
+MinionLib.json
