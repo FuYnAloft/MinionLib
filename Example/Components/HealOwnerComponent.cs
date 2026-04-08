@@ -24,4 +24,12 @@ public sealed partial class HealOwnerComponent : AmountCardComponent
         Amount += heal.Amount;
         return Amount <= 0 ? null : this;
     }
+
+    public override ICardComponent? SubtractiveMergeWith(ICardComponent incoming)
+    {
+        if (incoming is not HealOwnerComponent heal) return this;
+
+        Amount -= heal.Amount;
+        return Amount <= 0 ? null : this;
+    }
 }

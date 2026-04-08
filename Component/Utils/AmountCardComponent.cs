@@ -15,4 +15,12 @@ public abstract partial class AmountCardComponent : CardComponent
         Amount += component.Amount;
         return Amount == 0 ? null : this;
     }
+
+    public override ICardComponent? SubtractiveMergeWith(ICardComponent incoming)
+    {
+        if (incoming is not AmountCardComponent component) return null;
+        
+        Amount -= component.Amount;
+        return Amount == 0 ? null : this;
+    }
 }

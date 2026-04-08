@@ -34,6 +34,16 @@ public sealed partial class DamageBlockComponent : CardComponent
 
         Damage += damageBlock.Damage;
         Block += damageBlock.Block;
-        return this;
+        return Damage == 0 && Block == 0 ? null : this;
+    }
+
+    public override ICardComponent? SubtractiveMergeWith(ICardComponent incoming)
+    {
+        if (incoming is not DamageBlockComponent damageBlock)
+            return null;
+
+        Damage -= damageBlock.Damage;
+        Block -= damageBlock.Block;
+        return Damage == 0 && Block == 0 ? null : this;
     }
 }
