@@ -109,7 +109,7 @@
 
     <ItemGroup>
         <None Include=".gitignore"/>
-        <None Include="MinionLib.template.json" />
+        <None Include="MinionLib.template.json"/>
         <None Include="project.godot"/>
         <None Include="MinionLib/**"/>
         <None Include="images/**"/>
@@ -140,15 +140,16 @@
             <ManifestOutputFile>$(MSBuildProjectDirectory)\MinionLib.json</ManifestOutputFile>
         </PropertyGroup>
 
-        <Message Text="Updating version in $(ManifestOutputFile) to $(Version)" Importance="high" />
+        <Message Text="Updating version in $(ManifestOutputFile) to $(Version)" Importance="high"/>
 
         <ItemGroup>
-            <FileLines Include="$([System.IO.File]::ReadAllText($(ManifestTemplateFile)).Replace('VERSION-CODE', '$(Version)'))" />
+            <FileLines Include="$([System.IO.File]::ReadAllText($(ManifestTemplateFile)).Replace('VERSION-CODE', '$(Version)'))"/>
         </ItemGroup>
 
-        <WriteLinesToFile File="$(ManifestOutputFile)" Lines="@(FileLines)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+        <WriteLinesToFile File="$(ManifestOutputFile)" Lines="@(FileLines)" Overwrite="true" WriteOnlyWhenDifferent="true"/>
     </Target>
 
+    <!-- 构建后自动将此模组的 dll, manifest 和依赖模组的文件复制到 mods 目录 -->
     <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent">
         <Message Text="Copying .dll and manifest to mods folder." Importance="high"/>
         <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"/>
@@ -160,6 +161,7 @@
         <Copy SourceFiles="@(BaseLibFiles)" DestinationFolder="$(ModsPath)BaseLib/"/>
     </Target>
 
+    <!--执行 Godot 导出命令将 .pck 导出到 mods 目录 -->
     <Target Name="GodotPublish" AfterTargets="Publish" Condition="'$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
         <Message Text="Exporting Godot .pck to mods folder" Importance="high"/>
         <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExport&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
@@ -179,7 +181,7 @@
 
     <PropertyGroup>
         <PackageId>FuYnAloft.Sts2.MinionLib</PackageId>
-        <Version>0.0.0.0-dev</Version>
+        <Version>0.0.0.0-dev</Version> <!-- 版本号由命令行参数传入 -->
         <Authors>FuYnAloft</Authors>
         <Description>A framework library for Slay the Spire 2 modding. Provides standardized systems for implementing "Minions" (summoned allies) and "Component-based Cards" (modular card logic). Includes source generators to minimize boilerplate.</Description>
         <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
@@ -198,7 +200,7 @@
         <ProjectReference Include="MinionLib.Generators/MinionLib.Generators.csproj"
                           OutputItemType="Analyzer"
                           ReferenceOutputAssembly="false"
-                          Pack="false" />
+                          Pack="false"/>
     </ItemGroup>
 
     <PropertyGroup>
@@ -210,17 +212,17 @@
     <Target Name="PreparePckForPack"
             BeforeTargets="AddFilesToNuGetPackage"
             Condition="'$(GodotPath)' != '' and Exists('$(GodotPath)')">
-        <MakeDir Directories="$(BaseIntermediateOutputPath)pack" />
+        <MakeDir Directories="$(BaseIntermediateOutputPath)pack"/>
 
         <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExport&quot; &quot;$(PackPckPath)&quot;"
               EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
               ContinueOnError="WarnAndContinue"
-              Condition="'$(Configuration)' != 'ExportRelease'" />
+              Condition="'$(Configuration)' != 'ExportRelease'"/>
 
         <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExportNoExample&quot; &quot;$(PackPckPath)&quot;"
               EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
               ContinueOnError="WarnAndContinue"
-              Condition="'$(Configuration)' == 'ExportRelease'" />
+              Condition="'$(Configuration)' == 'ExportRelease'"/>
     </Target>
 
     <!-- 显式声明 NuGet 内容，避免 Godot SDK 的默认打包行为漏掉文件 -->
