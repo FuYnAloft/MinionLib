@@ -51,6 +51,11 @@ public abstract partial class CardComponent : ICardComponent
         return incoming;
     }
 
+    public virtual ICardComponent? SubtractiveMergeWith(ICardComponent incoming)
+    {
+        return null;
+    }
+
     public virtual void Serialize(ArrayBufferWriter<byte> writer)
     {
     }

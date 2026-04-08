@@ -22,6 +22,8 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
     ICardComponent DeepClone();
 
     ICardComponent? MergeWith(ICardComponent incoming);
+    
+    ICardComponent? SubtractiveMergeWith(ICardComponent incoming);
 
     DynamicVarSet DynamicVars { get; }
 
@@ -73,6 +75,11 @@ public sealed partial class KeepsTwo : ICardComponent
     public ICardComponent MergeWith(ICardComponent incoming)
     {
         return Instance;
+    }
+
+    public ICardComponent? SubtractiveMergeWith(ICardComponent incoming)
+    {
+        return null;
     }
 
     public void Serialize(ArrayBufferWriter<byte> writer)

@@ -59,11 +59,43 @@ public abstract partial class ComponentsCardModel(
 
     protected virtual IEnumerable<ICardComponent> CanonicalComponents => [];
 
-    public T? AddComponent<T>(T component) where T : ICardComponent
+    public T? AddComponent<T>(T incoming, bool matchExactType = true, bool allowMerge = true,
+        bool useSubtractiveMerge = false) where T : ICardComponent
     {
         EnsureComponentsInitialized();
-        var finalComponent = AddOrMergeComponent(component);
-        return finalComponent;
+        var existingIndex = allowMerge
+            ? _components!.FindIndex(c => matchExactType ? c.GetType() == incoming.GetType() : c is T)
+            : -1;
+        if (existingIndex < 0)
+        {
+            incoming.Attach(this);
+            _components!.Add(incoming);
+            return incoming;
+        }
+
+        var existing = _components![existingIndex];
+        var merged = useSubtractiveMerge ? existing.SubtractiveMergeWith(incoming) : existing.MergeWith(incoming);
+
+        if (ReferenceEquals(merged, KeepsTwo.Instance))
+        {
+            incoming.Attach(this);
+            _components.Add(incoming);
+            return incoming;
+        }
+
+        if (ReferenceEquals(merged, existing)) return (T)merged;
+
+        existing.Detach();
+
+        if (merged == null)
+        {
+            _components.RemoveAt(existingIndex);
+            return default;
+        }
+
+        merged.Attach(this);
+        _components[existingIndex] = merged;
+        return (T)merged;
     }
 
     public bool RemoveComponent<T>() where T : ICardComponent
@@ -177,41 +209,6 @@ public abstract partial class ComponentsCardModel(
         return CanonicalComponents.Select(c => c.DeepClone()).ToList();
     }
 
-    private T? AddOrMergeComponent<T>(T incoming) where T : ICardComponent
-    {
-        var existingIndex = _components!.FindIndex(c => c is T);
-        if (existingIndex < 0)
-        {
-            incoming.Attach(this);
-            _components.Add(incoming);
-            return incoming;
-        }
-
-        var existing = _components[existingIndex];
-        var merged = existing.MergeWith(incoming);
-
-        if (ReferenceEquals(merged, KeepsTwo.Instance))
-        {
-            incoming.Attach(this);
-            _components.Add(incoming);
-            return incoming;
-        }
-
-        if (ReferenceEquals(merged, existing)) return (T)merged;
-
-        existing.Detach();
-
-        if (merged == null)
-        {
-            _components.RemoveAt(existingIndex);
-            return default;
-        }
-
-        merged.Attach(this);
-        _components[existingIndex] = merged;
-        return (T)merged;
-    }
-
     # region Deprecated
 
     [Obsolete(
@@ -294,6 +291,7 @@ public abstract partial class ComponentsCardModel(
         {
             await component.OnRightClick(choiceContext, clickContext);
         }
+
         await OnRightClickC(choiceContext, clickContext);
     }
 
