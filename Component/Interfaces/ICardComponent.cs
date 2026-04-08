@@ -1,7 +1,9 @@
 using System.Buffers;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MinionLib.RightClick;
 
 namespace MinionLib.Component.Interfaces;
 
@@ -34,6 +36,10 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
     string GetFormattedPrefix();
 
     string GetFormattedPostfix();
+    
+    bool CanHandleRightClickLocal(RightClickContext context) => false;
+    
+    Task OnRightClick(PlayerChoiceContext choiceContext, RightClickContext clickContext) => Task.CompletedTask;
 }
 
 /// <summary>
