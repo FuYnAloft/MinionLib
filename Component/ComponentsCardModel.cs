@@ -76,7 +76,7 @@ public abstract partial class ComponentsCardModel(
         var existing = _components![existingIndex];
         var merged = useSubtractiveMerge ? existing.SubtractiveMergeWith(incoming) : existing.MergeWith(incoming);
 
-        if (ReferenceEquals(merged, KeepsTwo.Instance))
+        if (ReferenceEquals(merged, KeepBoth.Instance))
         {
             incoming.Attach(this);
             _components.Add(incoming);
