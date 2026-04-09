@@ -31,6 +31,8 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
 
     bool ShouldGlowRedInternal => false;
 
+    System.Drawing.Color? GlowColorInternal => null;
+
     bool HasTurnEndInHandEffect => false;
 
     IEnumerable<IHoverTip> HoverTips => [];

@@ -23,6 +23,8 @@ public interface IComponentsCardModel
 
     void EnsureComponentsInitialized();
 
+    System.Drawing.Color? GlowColor => null;
+
     # region Deprecated
 
     [Obsolete(
