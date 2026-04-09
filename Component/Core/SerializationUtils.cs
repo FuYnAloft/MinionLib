@@ -3,6 +3,7 @@ using System.Buffers.Binary;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
+using MegaCrit.Sts2.Core.Multiplayer.Serialization;
 using MinionLib.Component.Interfaces;
 
 namespace MinionLib.Component.Core;
@@ -352,5 +353,43 @@ public static class SerializationUtils
 
         bytes.CopyTo(writer.GetSpan(bytes.Length));
         writer.Advance(bytes.Length);
+    }
+
+    public static void WriteIPacketSerializable<T>(ArrayBufferWriter<byte> writer, T value)
+        where T : IPacketSerializable, new()
+    {
+        var packetWriter = new PacketWriter();
+        value.Serialize(packetWriter);
+        packetWriter.ZeroByteRemainder();
+
+        WriteInt32(writer, packetWriter.BytePosition);
+        WriteBytes(writer, packetWriter.Buffer.AsSpan(0, packetWriter.BytePosition));
+    }
+
+    public static bool TryReadIPacketSerializable<T>(ref ReadOnlySpan<byte> reader, out T value)
+        where T : IPacketSerializable, new()
+    {
+        value = default!;
+
+        if (!TryReadInt32(ref reader, out var length) || length < 0 || reader.Length < length)
+            return false;
+
+        var buffer = reader[..length];
+        reader = reader[length..];
+
+        try
+        {
+            var packetReader = new PacketReader();
+            packetReader.Reset(buffer.ToArray());
+
+            value = new T();
+            value.Deserialize(packetReader);
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

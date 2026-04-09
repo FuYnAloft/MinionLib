@@ -1,5 +1,6 @@
 using System.Buffers;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Saves.Runs;
 using MinionLib.Component;
 using MinionLib.Component.Core;
 using MinionLib.Component.Interfaces;
@@ -12,9 +13,8 @@ public sealed partial class TestComponent : CardComponent
 #pragma warning disable MLSG104
     [ComponentState] public Creature? MyCreature { get; set; }
 #pragma warning restore MLSG104
+    [ComponentState] public SerializableCard? MyCard { get; set; } = new SerializableCard();
 }
-
-
 
 public sealed partial class MyClass : IGeneratedBinarySerializable
 {
@@ -26,6 +26,5 @@ public sealed partial class MyClass : IGeneratedBinarySerializable
 
     public MyClass(int arg)
     {
-        
     }
 }

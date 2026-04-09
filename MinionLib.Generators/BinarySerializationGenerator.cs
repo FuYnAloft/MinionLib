@@ -20,10 +20,12 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
     private const string NoGeneratedSerializationMetadataName = "MinionLib.Component.Core.NoGeneratedSerializationAttribute";
     private const string CardComponentMetadataName = "MinionLib.Component.CardComponent";
     private const string ICardComponentMetadataName = "MinionLib.Component.Interfaces.ICardComponent";
+    private const string PacketSerializableMetadataName = "MegaCrit.Sts2.Core.Multiplayer.Serialization.IPacketSerializable";
     private const string FullyQualifiedGeneratedSerializableMetadataName = "global::" + GeneratedSerializableMetadataName;
     private const string FullyQualifiedComponentStateAttributeMetadataName = "global::" + ComponentStateAttributeMetadataName;
     private const string FullyQualifiedCardComponentMetadataName = "global::" + CardComponentMetadataName;
     private const string FullyQualifiedICardComponentMetadataName = "global::" + ICardComponentMetadataName;
+    private const string FullyQualifiedPacketSerializableMetadataName = "global::" + PacketSerializableMetadataName;
 
     private static readonly DiagnosticDescriptor ImplementationMustBeClass = new(
         id: "MLSG100",
@@ -334,6 +336,18 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                     .Append(EnsureNullForgiven(expr)).AppendLine(");");
                 sb.Append(p).AppendLine("}");
                 return;
+            case TypeSerializationKind.PacketSerializable:
+                sb.Append(p).Append("if ((object?)").Append(expr).AppendLine(" == null)");
+                sb.Append(p).AppendLine("{");
+                sb.Append(p).AppendLine("    global::MinionLib.Component.Core.SerializationUtils.WriteBoolean(writer, false);");
+                sb.Append(p).AppendLine("}");
+                sb.Append(p).AppendLine("else");
+                sb.Append(p).AppendLine("{");
+                sb.Append(p).AppendLine("    global::MinionLib.Component.Core.SerializationUtils.WriteBoolean(writer, true);");
+                sb.Append(p).Append("    global::MinionLib.Component.Core.SerializationUtils.WriteIPacketSerializable<")
+                    .Append(type.DisplayName).Append(">(writer, ").Append(EnsureNullForgiven(expr)).AppendLine(");");
+                sb.Append(p).AppendLine("}");
+                return;
             default:
                 sb.Append(p).Append("global::MinionLib.Component.Core.SerializationUtils.WriteJson<")
                     .Append(type.DisplayName).Append(">(writer, ").Append(EnsureNullForgiven(expr)).AppendLine(");");
@@ -481,6 +495,29 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 sb.Append(p).Append("    var ").Append(obj).Append(" = new ").Append(type.DisplayName).AppendLine("();");
                 sb.Append(p).Append("    if (!global::MinionLib.Component.Core.SerializationUtils.TryReadSerializableBlock(ref reader, ")
                     .Append(obj).AppendLine("))");
+                sb.Append(p).AppendLine("        return false;");
+                sb.Append(p).Append("    ").Append(targetExpr).Append(" = ").Append(obj).AppendLine(";");
+                sb.Append(p).AppendLine("}");
+                return;
+            }
+            case TypeSerializationKind.PacketSerializable:
+            {
+                var has = "__has_" + id++;
+                var obj = "__obj_" + id++;
+                sb.Append(p).Append("if (!global::MinionLib.Component.Core.SerializationUtils.TryReadBoolean(ref reader, out var ")
+                    .Append(has).AppendLine("))");
+                sb.Append(p).AppendLine("    return false;");
+                sb.Append(p).Append("if (!").Append(has).AppendLine(")");
+                sb.Append(p).AppendLine("{");
+                if (type.CanAssignNullOnDeserialize)
+                    sb.Append(p).Append("    ").Append(targetExpr).AppendLine(" = null;");
+                else
+                    sb.Append(p).AppendLine("    return false;");
+                sb.Append(p).AppendLine("}");
+                sb.Append(p).AppendLine("else");
+                sb.Append(p).AppendLine("{");
+                sb.Append(p).Append("    if (!global::MinionLib.Component.Core.SerializationUtils.TryReadIPacketSerializable<")
+                    .Append(type.DisplayName).Append(">(ref reader, out var ").Append(obj).AppendLine("))");
                 sb.Append(p).AppendLine("        return false;");
                 sb.Append(p).Append("    ").Append(targetExpr).Append(" = ").Append(obj).AppendLine(";");
                 sb.Append(p).AppendLine("}");
@@ -922,6 +959,22 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                     EnumUnderlying: null);
             }
 
+            if (ImplementsPacketSerializable(type))
+            {
+                return new TypeShapeData(
+                    DisplayName: type.WithNullableAnnotation(NullableAnnotation.NotAnnotated)
+                        .ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                    Kind: TypeSerializationKind.PacketSerializable,
+                    PrimitiveKind: PrimitiveSerializationKind.None,
+                    CanAssignNullOnDeserialize: canAssignNull,
+                    SuppressJsonFallbackWarning: false,
+                    HasNullableWrapper: false,
+                    NullableUnderlying: null,
+                    ElementType: null,
+                    ListTypeName: null,
+                    EnumUnderlying: null);
+            }
+
             return new TypeShapeData(
                 DisplayName: type.WithNullableAnnotation(NullableAnnotation.NotAnnotated)
                     .ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
@@ -994,6 +1047,13 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                                                    == FullyQualifiedGeneratedSerializableMetadataName);
         }
 
+        private static bool ImplementsPacketSerializable(ITypeSymbol type)
+        {
+            return type is INamedTypeSymbol named
+                   && named.AllInterfaces.Any(i => i.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
+                                                   == FullyQualifiedPacketSerializableMetadataName);
+        }
+
         private static bool ComputeCanAssignNullOnDeserialize(ITypeSymbol type)
         {
             if (type.IsValueType)
@@ -1013,6 +1073,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         Array,
         List,
         Serializable,
+        PacketSerializable,
         Json
     }
 
