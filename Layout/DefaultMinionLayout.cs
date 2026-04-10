@@ -3,16 +3,24 @@ using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MinionLib.Models;
 
-namespace MinionLib.Positioning;
+namespace MinionLib.Layout;
 
-public class DefaultMinionsPositioner : IMinionPositioner
+public class DefaultMinionLayout : IMinionLayout
 {
     public static readonly Vector2 MinionSize = new(150f, 200f);
     public bool IsActive => true;
 
-    public IEnumerable<MinionNodePosition> CalculatePositions(NCombatRoom room)
+    public void ApplyLayout(MinionLayoutContext context)
     {
-        return CalculateMinionPositions(room);
+        var unhandled = context.UnhandledMinions.ToList();
+        if (unhandled.Count == 0) return;
+
+        var calculatedPositions = CalculateMinionPositions(context.Room, unhandled);
+        
+        foreach (var pos in calculatedPositions)
+        {
+            context.Positions[pos.Node] = pos.Position;
+        }
     }
 
     public static IReadOnlyList<Vector2> GenerateGridPoints(MinionPosition position, int count)
@@ -51,17 +59,19 @@ public class DefaultMinionsPositioner : IMinionPositioner
         return result;
     }
 
-    public static IReadOnlyList<OwnerWithMinionsNodes> GetMinionOwnerNodePairs(NCombatRoom room)
+    // 增加了 unhandledMinions 参数，只对未处理的随从进行分组
+    public static IReadOnlyList<OwnerWithMinionsNodes> GetMinionOwnerNodePairs(
+        NCombatRoom room, 
+        IEnumerable<NCreature> unhandledMinions)
     {
-        var allMinions = room.CreatureNodes.Where(n => n.IsMinionNode());
-        var grouped = allMinions.GroupBy(c => c.Entity.PetOwner!);
+        var grouped = unhandledMinions.GroupBy(c => c.Entity.PetOwner!);
         var result = grouped.Select(g =>
             {
                 var player = g.Key;
                 var creatureToNode = g.ToDictionary(c => c.Entity, c => c);
                 var pets = player.PlayerCombatState!.Pets;
                 var orderedMinions = pets
-                    .Select(p => creatureToNode.GetValueOrDefault(p))
+                    .Select(creatureToNode.GetValueOrDefault)
                     .OfType<NCreature>()
                     .ToList();
                 return new OwnerWithMinionsNodes(room.GetCreatureNode(g.Key.Creature)!, orderedMinions);
@@ -98,9 +108,11 @@ public class DefaultMinionsPositioner : IMinionPositioner
         }
     }
 
-    public static IReadOnlyList<MinionNodePosition> CalculateMinionPositions(NCombatRoom room)
+    public static IReadOnlyList<MinionNodePosition> CalculateMinionPositions(
+        NCombatRoom room, 
+        IEnumerable<NCreature> unhandledMinions)
     {
-        return GetMinionOwnerNodePairs(room).SelectMany(pair =>
+        return GetMinionOwnerNodePairs(room, unhandledMinions).SelectMany(pair =>
         {
             var (ownerNode, minionNodes) = pair;
 

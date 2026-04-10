@@ -1,15 +1,13 @@
 using Godot;
 using MegaCrit.Sts2.Core.Nodes.Combat;
-using MegaCrit.Sts2.Core.Nodes.Rooms;
 
-namespace MinionLib.Positioning;
+namespace MinionLib.Layout;
 
-public interface IMinionPositioner
+public interface IMinionLayout
 {
-    public bool IsActive { get; }
-
-    IEnumerable<MinionNodePosition> CalculatePositions(
-        NCombatRoom room);
+    bool IsActive { get; }
+    
+    void ApplyLayout(MinionLayoutContext context);
 }
 
 public readonly record struct OwnerWithMinionsNodes(NCreature Owner, IReadOnlyList<NCreature> Minions);

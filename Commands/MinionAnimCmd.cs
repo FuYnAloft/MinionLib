@@ -1,7 +1,7 @@
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
-using MinionLib.Positioning;
+using MinionLib.Layout;
 
 namespace MinionLib.Commands;
 
@@ -14,7 +14,7 @@ public static class MinionAnimCmd
         var room = NCombatRoom.Instance;
         if (room == null) return;
 
-        var dst = MinionPositioningManager.CalculatePositions(room);
+        var dst = MinionLayoutManager.CalculateLayout(room);
         if (animated)
             await AnimatedMove(dst, duration);
         else
