@@ -39,7 +39,7 @@ public static class CustomTargetTypeCardPatch
         AccessTools.Method(typeof(NCardPlay), "TryPlayCard");
 
     private static readonly MethodInfo? CardPlayCleanupMethod =
-        AccessTools.Method(typeof(NCardPlay), "Cleanup");
+        AccessTools.Method(typeof(NCardPlay), "Cleanup", [typeof(bool)]);
 
     [HarmonyPatch(typeof(ActionTargetExtensions), nameof(ActionTargetExtensions.IsSingleTarget))]
     [HarmonyPostfix]
@@ -111,7 +111,7 @@ public static class CustomTargetTypeCardPatch
             return false;
         }
 
-        CardPlayCleanupMethod?.Invoke(__instance, null);
+        CardPlayCleanupMethod?.Invoke(__instance, [true]);
         __instance.EmitSignal(NCardPlay.SignalName.Finished, true);
         NCombatRoom.Instance?.Ui.Hand.TryGrabFocus();
         Debug(Module,
