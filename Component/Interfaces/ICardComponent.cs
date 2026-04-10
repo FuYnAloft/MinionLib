@@ -1,4 +1,5 @@
 using System.Buffers;
+using Godot;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -30,6 +31,8 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
     bool ShouldGlowGoldInternal => false;
 
     bool ShouldGlowRedInternal => false;
+
+    Color? GlowColor => null;
 
     bool HasTurnEndInHandEffect => false;
 

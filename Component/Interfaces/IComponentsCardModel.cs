@@ -1,3 +1,4 @@
+using Godot;
 using MegaCrit.Sts2.Core.Models;
 
 namespace MinionLib.Component.Interfaces;
@@ -22,6 +23,8 @@ public interface IComponentsCardModel
     IEnumerable<T> GetComponents<T>() where T : class, ICardComponent;
 
     void EnsureComponentsInitialized();
+
+    Color? GlowColor => null;
 
     # region Deprecated
 
