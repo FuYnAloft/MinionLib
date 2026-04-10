@@ -256,12 +256,10 @@ public abstract partial class ComponentsCardModel(
 
     protected virtual bool ShouldGlowRedInternalC => false;
 
-    public Color? GlowColor => GlowColorInternal;
+    public Color? GlowColor => Components.Select(static c => c.GlowColor).FirstOrDefault(static c => c.HasValue) ?? GlowColorC;
 
-    protected Color? GlowColorInternal =>
-        Components.Select(static c => c.GlowColorInternal).FirstOrDefault(static c => c.HasValue) ?? GlowColorInternalC;
 
-    protected virtual Color? GlowColorInternalC => null;
+    protected virtual Color? GlowColorC => null;
 
     public sealed override bool HasTurnEndInHandEffect =>
         (_components?.Any(c => c.HasTurnEndInHandEffect) ?? false) || HasTurnEndInHandEffectC;

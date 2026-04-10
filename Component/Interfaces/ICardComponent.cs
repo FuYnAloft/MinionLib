@@ -32,7 +32,7 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
 
     bool ShouldGlowRedInternal => false;
 
-    Color? GlowColorInternal => null;
+    Color? GlowColor => null;
 
     bool HasTurnEndInHandEffect => false;
 

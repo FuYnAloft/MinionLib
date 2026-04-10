@@ -85,7 +85,7 @@ public abstract partial class CardComponent : ICardComponent
 
     public virtual bool ShouldGlowRedInternal => false;
 
-    public virtual Color? GlowColorInternal => null;
+    public virtual Color? GlowColor => null;
 
     public virtual bool HasTurnEndInHandEffect => false;
 
