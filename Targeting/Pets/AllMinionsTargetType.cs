@@ -2,7 +2,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Models;
 using MinionLib.Action;
-using MinionLib.Models;
+using MinionLib.Minion;
 
 namespace MinionLib.Targeting.Pets;
 

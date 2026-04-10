@@ -2,7 +2,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.ValueProps;
 
-namespace MinionLib.Patches;
+namespace MinionLib.Powers.Patches;
 
 [HarmonyPatch(typeof(Creature), nameof(Creature.LoseHpInternal), typeof(decimal), typeof(ValueProp))]
 public static class MinionGuardianOwnerDamageSuppressPatch

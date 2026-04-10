@@ -5,9 +5,8 @@ using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MinionLib.Commands;
 using MinionLib.Layout;
-using MinionLib.Models;
 
-namespace MinionLib.Patches;
+namespace MinionLib.Minion.Patches;
 
 [HarmonyPatch(typeof(NCreature), nameof(NCreature.ToggleIsInteractable))]
 public static class MinionInteractablePatch2

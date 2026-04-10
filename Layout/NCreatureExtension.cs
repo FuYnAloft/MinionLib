@@ -1,5 +1,5 @@
 using MegaCrit.Sts2.Core.Nodes.Combat;
-using MinionLib.Models;
+using MinionLib.Minion;
 
 namespace MinionLib.Layout;
 

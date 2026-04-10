@@ -5,9 +5,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.ValueProps;
-using MinionLib.Powers;
 
-namespace MinionLib.Patches;
+namespace MinionLib.Powers.Patches;
 
 [HarmonyPatch(typeof(CreatureCmd), nameof(CreatureCmd.GainBlock), typeof(Creature), typeof(decimal), typeof(ValueProp),
     typeof(CardPlay), typeof(bool))]

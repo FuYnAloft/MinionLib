@@ -3,7 +3,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.ValueProps;
-using MinionLib.Models;
+using MinionLib.Minion;
 
 namespace MinionLib.Powers;
 

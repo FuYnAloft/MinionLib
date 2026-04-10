@@ -4,7 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 
-namespace MinionLib.Models;
+namespace MinionLib.Minion;
 
 public interface IMinionBoundCard
 {

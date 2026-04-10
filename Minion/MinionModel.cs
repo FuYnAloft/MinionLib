@@ -3,7 +3,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 
-namespace MinionLib.Models;
+namespace MinionLib.Minion;
 
 public abstract class MinionModel : MonsterModel
 {

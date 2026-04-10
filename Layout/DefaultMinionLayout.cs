@@ -1,7 +1,7 @@
 using Godot;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
-using MinionLib.Models;
+using MinionLib.Minion;
 
 namespace MinionLib.Layout;
 

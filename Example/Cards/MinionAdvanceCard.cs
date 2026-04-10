@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MinionLib.Commands;
+using MinionLib.Minion;
 using MinionLib.Models;
 using MinionLib.Targeting;
 using MinionLib.Utilities;
