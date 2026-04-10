@@ -37,7 +37,7 @@ public static class CardGlowColorPatch
         ApplyGlowColor(flash, glowColor);
     }
 
-    private static bool TryGetGlowColor(NHandCardHolder holder, out DrawingColor glowColor)
+    private static bool TryGetGlowColor(NHandCardHolder holder, out Godot.Color glowColor)
     {
         glowColor = default;
 
@@ -45,20 +45,16 @@ public static class CardGlowColorPatch
             return false;
 
         var customGlow = componentsCard.GlowColor;
-        if (!customGlow.HasValue || customGlow.Value.IsEmpty)
+        if (!customGlow.HasValue)
             return false;
 
         glowColor = customGlow.Value;
         return true;
     }
 
-    private static void ApplyGlowColor(CanvasItem canvasItem, DrawingColor glowColor)
+    private static void ApplyGlowColor(CanvasItem canvasItem, Godot.Color glowColor)
     {
-        canvasItem.Modulate = ToGodotColor(glowColor);
+        canvasItem.Modulate = glowColor;
     }
 
-    private static Color ToGodotColor(DrawingColor color)
-    {
-        return new Color(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
-    }
 }

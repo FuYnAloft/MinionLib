@@ -84,7 +84,7 @@ public abstract partial class CardComponent : ICardComponent
 
     public virtual bool ShouldGlowRedInternal => false;
 
-    public virtual System.Drawing.Color? GlowColorInternal => null;
+    public virtual Godot.Color? GlowColorInternal => null;
 
     public virtual bool HasTurnEndInHandEffect => false;
 

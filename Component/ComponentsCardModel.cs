@@ -256,12 +256,12 @@ public abstract partial class ComponentsCardModel(
 
     protected virtual bool ShouldGlowRedInternalC => false;
 
-    public System.Drawing.Color? GlowColor => GlowColorInternal;
+    public Godot.Color? GlowColor => GlowColorInternal;
 
-    protected System.Drawing.Color? GlowColorInternal =>
+    protected Godot.Color? GlowColorInternal =>
         Components.Select(static c => c.GlowColorInternal).FirstOrDefault(static c => c.HasValue) ?? GlowColorInternalC;
 
-    protected virtual System.Drawing.Color? GlowColorInternalC => null;
+    protected virtual Godot.Color? GlowColorInternalC => null;
 
     public sealed override bool HasTurnEndInHandEffect =>
         (_components?.Any(c => c.HasTurnEndInHandEffect) ?? false) || HasTurnEndInHandEffectC;
