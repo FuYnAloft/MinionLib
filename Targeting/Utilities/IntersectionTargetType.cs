@@ -8,7 +8,6 @@ public class IntersectionTargetType(params ICustomTargetType[] targetTypes) : IC
 {
     public bool IsSingleTarget => targetTypes.Any(targetType => targetType.IsSingleTarget);
 
-    public bool IsRandomTarget => targetTypes.Any(targetType => targetType.IsRandomTarget);
 
     public bool IsValidTargetPreview(Creature target)
     {

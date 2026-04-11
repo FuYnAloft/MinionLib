@@ -8,7 +8,6 @@ public class UnionTargetType(params ICustomTargetType[] targetTypes) : ICustomTa
 {
     public bool IsSingleTarget => targetTypes.Any(targetType => targetType.IsSingleTarget);
 
-    public bool IsRandomTarget => targetTypes.Any(targetType => targetType.IsRandomTarget);
 
     public bool IsValidTargetPreview(Creature target)
     {

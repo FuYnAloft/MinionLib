@@ -7,14 +7,11 @@ namespace MinionLib.Targeting.Utilities;
 public class DifferenceTargetType(
     ICustomTargetType original,
     ICustomTargetType exclude,
-    bool? overrideIsSingleTarget = null,
-    bool? overrideIsRandomTarger = null) : ICustomTargetType
+    bool? overrideIsSingleTarget = null) : ICustomTargetType
 {
     public bool IsSingleTarget =>
         overrideIsSingleTarget ?? (original.IsSingleTarget || exclude.IsSingleTarget);
 
-    public bool IsRandomTarget =>
-        overrideIsRandomTarger ?? (original.IsRandomTarget || exclude.IsRandomTarget);
 
     public bool IsValidTargetPreview(Creature target)
     {

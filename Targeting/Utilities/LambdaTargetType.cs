@@ -9,13 +9,11 @@ public class LambdaTargetType(
     Func<Creature, bool> generalPredicate,
     Func<CardModel, Creature, bool>? cardPredicate = null,
     Func<PotionModel, Creature, bool>? potionPredicate = null,
-    Func<ActionModel, Creature, bool>? actionPredicate = null,
-    bool isRandomTarget = false
+    Func<ActionModel, Creature, bool>? actionPredicate = null
 ) : CustomTargetType
 {
     public override bool IsSingleTarget => isSingleTarget;
 
-    public override bool IsRandomTarget => isRandomTarget;
 
     protected override bool IsValidTarget(Creature target)
     {

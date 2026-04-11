@@ -7,7 +7,6 @@ namespace MinionLib.Targeting;
 public interface ICustomTargetType
 {
     bool IsSingleTarget { get; }
-    bool IsRandomTarget { get; }
 
     bool IsValidTargetPreview(Creature target);
 

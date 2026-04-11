@@ -23,8 +23,7 @@ public static class BuiltInTargetType
             target => target is { IsAlive: true, Side: CombatSide.Enemy }),
 
         [TargetType.RandomEnemy] = new LambdaTargetType(false,
-            target => target is { IsAlive: true, Side: CombatSide.Enemy },
-            isRandomTarget: true),
+            target => target is { IsAlive: true, Side: CombatSide.Enemy }),
 
         [TargetType.AnyPlayer] = new LambdaTargetType(true,
             target => target is { IsAlive: true, IsPlayer: true }),

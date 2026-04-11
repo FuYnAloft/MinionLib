@@ -8,7 +8,6 @@ public abstract class CustomTargetType : ICustomTargetType
 {
     public abstract bool IsSingleTarget { get; }
 
-    public virtual bool IsRandomTarget => false;
 
     protected abstract bool IsValidTarget(Creature target);
 
