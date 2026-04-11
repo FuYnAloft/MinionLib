@@ -5,34 +5,34 @@ using MinionLib.Action;
 namespace MinionLib.Targeting.Utilities;
 
 public class DifferenceTargetType(
-    CustomTargetType original,
-    CustomTargetType exclude,
+    ICustomTargetType original,
+    ICustomTargetType exclude,
     bool? overrideIsSingleTarget = null,
-    bool? overrideIsRandomTarger = null) : CustomTargetType
+    bool? overrideIsRandomTarger = null) : ICustomTargetType
 {
-    public override bool IsSingleTarget =>
+    public bool IsSingleTarget =>
         overrideIsSingleTarget ?? (original.IsSingleTarget || exclude.IsSingleTarget);
 
-    public override bool IsRandomTarget =>
+    public bool IsRandomTarget =>
         overrideIsRandomTarger ?? (original.IsRandomTarget || exclude.IsRandomTarget);
 
-    public override bool GeneralPredicate(Creature target)
+    public bool IsValidTargetPreview(Creature target)
     {
-        return original.GeneralPredicate(target) && !exclude.GeneralPredicate(target);
+        return original.IsValidTargetPreview(target) && !exclude.IsValidTargetPreview(target);
     }
 
-    public override bool CardPredicate(Creature target, CardModel card)
+    public bool IsValidTarget(CardModel card, Creature target)
     {
-        return original.CardPredicate(target, card) && !exclude.CardPredicate(target, card);
+        return original.IsValidTarget(card, target) && !exclude.IsValidTarget(card, target);
     }
 
-    public override bool PotionPredicate(Creature target, PotionModel potion)
+    public bool IsValidTarget(PotionModel potion, Creature target)
     {
-        return original.PotionPredicate(target, potion) && !exclude.PotionPredicate(target, potion);
+        return original.IsValidTarget(potion, target) && !exclude.IsValidTarget(potion, target);
     }
 
-    public override bool ActionPredicate(Creature target, ActionModel action)
+    public bool IsValidTarget(ActionModel action, Creature target)
     {
-        return original.ActionPredicate(target, action) && !exclude.ActionPredicate(target, action);
+        return original.IsValidTarget(action, target) && !exclude.IsValidTarget(action, target);
     }
 }

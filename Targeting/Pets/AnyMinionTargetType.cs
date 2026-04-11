@@ -10,24 +10,24 @@ public class AnyMinionTargetType : CustomTargetType
 {
     public override bool IsSingleTarget => true;
 
-    public override bool GeneralPredicate(Creature target)
+    protected override bool IsValidTarget(Creature target)
     {
         return target is { IsAlive: true, Side: CombatSide.Player, IsPet: true, Monster: MinionModel };
     }
 
-    public override bool CardPredicate(Creature target, CardModel card)
+    public override bool IsValidTarget(CardModel card, Creature target)
     {
-        return GeneralPredicate(target) && target.PetOwner == card.Owner;
+        return IsValidTarget(target) && target.PetOwner == card.Owner;
     }
 
-    public override bool PotionPredicate(Creature target, PotionModel potion)
+    public override bool IsValidTarget(PotionModel potion, Creature target)
     {
-        return GeneralPredicate(target) && target.PetOwner == potion.Owner;
+        return IsValidTarget(target) && target.PetOwner == potion.Owner;
     }
 
-    public override bool ActionPredicate(Creature target, ActionModel action)
+    public override bool IsValidTarget(ActionModel action, Creature target)
     {
         var actor = action.Owner;
-        return GeneralPredicate(target) && (target.PetOwner == actor.PetOwner || target.PetOwner == actor.Player);
+        return IsValidTarget(target) && (target.PetOwner == actor.PetOwner || target.PetOwner == actor.Player);
     }
 }

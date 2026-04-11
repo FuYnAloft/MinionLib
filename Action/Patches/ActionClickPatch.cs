@@ -178,7 +178,7 @@ public static class ActionClickPatch
                     {
                         if (node is not NCreature creatureNode) return false;
                         var target = creatureNode.Entity;
-                        return customTargetType.ActionPredicate(target, actionPower);
+                        return customTargetType.IsValidTarget(actionPower, target);
                     });
             else
                 NTargetManager.Instance.StartTargeting(targetType, startPosition, targetMode,

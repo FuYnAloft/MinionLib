@@ -4,35 +4,29 @@ using MinionLib.Action;
 
 namespace MinionLib.Targeting.Utilities;
 
-public class IntersectionTargetType(
-    CustomTargetType targetTypeA,
-    CustomTargetType targetTypeB,
-    bool? overrideIsSingleTarget = null,
-    bool? overrideIsRandomTarger = null) : CustomTargetType
+public class IntersectionTargetType(params ICustomTargetType[] targetTypes) : ICustomTargetType
 {
-    public override bool IsSingleTarget =>
-        overrideIsSingleTarget ?? (targetTypeA.IsSingleTarget || targetTypeB.IsSingleTarget);
+    public bool IsSingleTarget => targetTypes.Any(targetType => targetType.IsSingleTarget);
 
-    public override bool IsRandomTarget =>
-        overrideIsRandomTarger ?? (targetTypeA.IsRandomTarget || targetTypeB.IsRandomTarget);
+    public bool IsRandomTarget => targetTypes.Any(targetType => targetType.IsRandomTarget);
 
-    public override bool GeneralPredicate(Creature target)
+    public bool IsValidTargetPreview(Creature target)
     {
-        return targetTypeA.GeneralPredicate(target) && targetTypeB.GeneralPredicate(target);
+        return targetTypes.All(targetType => targetType.IsValidTargetPreview(target));
     }
 
-    public override bool CardPredicate(Creature target, CardModel card)
+    public bool IsValidTarget(CardModel card, Creature target)
     {
-        return targetTypeA.CardPredicate(target, card) && targetTypeB.CardPredicate(target, card);
+        return targetTypes.All(targetType => targetType.IsValidTarget(card, target));
     }
 
-    public override bool PotionPredicate(Creature target, PotionModel potion)
+    public bool IsValidTarget(PotionModel potion, Creature target)
     {
-        return targetTypeA.PotionPredicate(target, potion) && targetTypeB.PotionPredicate(target, potion);
+        return targetTypes.All(targetType => targetType.IsValidTarget(potion, target));
     }
 
-    public override bool ActionPredicate(Creature target, ActionModel action)
+    public bool IsValidTarget(ActionModel action, Creature target)
     {
-        return targetTypeA.ActionPredicate(target, action) && targetTypeB.ActionPredicate(target, action);
+        return targetTypes.All(targetType => targetType.IsValidTarget(action, target));
     }
 }

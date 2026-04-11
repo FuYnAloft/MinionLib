@@ -58,7 +58,7 @@ public static class CustomTargetTypeCardPatch
         var targetType = ValidTargetsTypeRef(__instance);
         if (!CustomTargetTypeManager.TryGetCustomTargetType(targetType, out var customType, false)) return true;
 
-        __result = customType.GeneralPredicate(creature);
+        __result = customType.IsValidTargetPreview(creature);
         Debug(Module, $"AllowedToTargetCreature {targetType} {creature.Name} -> {__result}");
         return false;
     }
@@ -71,8 +71,8 @@ public static class CustomTargetTypeCardPatch
             return true;
 
         __result = customType.IsSingleTarget
-            ? target != null && customType.CardPredicate(target, __instance)
-            : target == null || customType.CardPredicate(target, __instance);
+            ? target != null && customType.IsValidTarget(__instance, target)
+            : target == null || customType.IsValidTarget(__instance, target);
         Debug(Module,
             $"CardModel.IsValidTarget card={__instance.Id.Entry} target={target?.Name ?? "null"} -> {__result}");
         return false;
@@ -132,7 +132,7 @@ public static class CustomTargetTypeCardPatch
         if (cardNode == null) return;
 
         var validTargets = card.CombatState.Creatures
-            .Where(c => c.IsAlive && customType.CardPredicate(c, card))
+            .Where(c => c.IsAlive && customType.IsValidTarget(card, c))
             .ToList();
 
         if (validTargets.Count == 1) cardNode.SetPreviewTarget(validTargets[0]);
@@ -227,7 +227,7 @@ public static class CustomTargetTypeCardPatch
             null);
 
         var validTargets = card.CombatState.Creatures
-            .Where(c => c.IsAlive && customType.CardPredicate(c, card))
+            .Where(c => c.IsAlive && customType.IsValidTarget(card, c))
             .ToList();
 
         Debug(Module, $"Controller targetType={targetType}, validTargets={validTargets.Count}");
@@ -264,4 +264,5 @@ public static class CustomTargetTypeCardPatch
     {
         return AccessTools.Property(typeof(NCardPlay), "Card")?.GetValue(cardPlay) as CardModel;
     }
+
 }

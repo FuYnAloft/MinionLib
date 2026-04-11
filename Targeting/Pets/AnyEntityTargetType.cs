@@ -6,7 +6,7 @@ public class AnyEntityTargetType : CustomTargetType
 {
     public override bool IsSingleTarget => true;
 
-    public override bool GeneralPredicate(Creature target)
+    protected override bool IsValidTarget(Creature target)
     {
         return true;
     }

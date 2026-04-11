@@ -5,15 +5,15 @@ namespace MinionLib.Targeting.Utilities;
 
 public static class BuiltInTargetType
 {
-    internal static readonly Dictionary<TargetType, CustomTargetType> All = new()
+    internal static readonly Dictionary<TargetType, ICustomTargetType> All = new()
     {
         [TargetType.None] = new LambdaTargetType(false, _ => false),
 
         [TargetType.Self] = new LambdaTargetType(false,
             _ => false,
-            (target, card) => target.IsAlive && target == card.Owner.Creature,
-            (target, potion) => target.IsAlive && target == potion.Owner.Creature,
-            (target, action) => target is { IsAlive: true, IsPlayer: true } &&
+            (card, target) => target.IsAlive && target == card.Owner.Creature,
+            (potion, target) => target.IsAlive && target == potion.Owner.Creature,
+            (action, target) => target is { IsAlive: true, IsPlayer: true } &&
                                 (target.Player == action.Owner.PetOwner || target == action.Owner)),
 
         [TargetType.AnyEnemy] = new LambdaTargetType(true,
@@ -31,16 +31,16 @@ public static class BuiltInTargetType
 
         [TargetType.AnyAlly] = new LambdaTargetType(true,
             _ => true,
-            (target, card) => target.IsAlive && target != card.Owner.Creature,
-            (target, potion) => target.IsAlive && target != potion.Owner.Creature,
-            (target, action) => target is { IsAlive: true, IsPlayer: true } &&
+            (card, target) => target.IsAlive && target != card.Owner.Creature,
+            (potion, target) => target.IsAlive && target != potion.Owner.Creature,
+            (action, target) => target is { IsAlive: true, IsPlayer: true } &&
                                 !(target.Player == action.Owner.PetOwner || target == action.Owner)),
 
         [TargetType.AllAllies] = new LambdaTargetType(false,
             _ => true,
-            (target, card) => target.IsAlive && target != card.Owner.Creature,
-            (target, potion) => target.IsAlive && target != potion.Owner.Creature,
-            (target, action) => target is { IsAlive: true, IsPlayer: true } &&
+            (card, target) => target.IsAlive && target != card.Owner.Creature,
+            (potion, target) => target.IsAlive && target != potion.Owner.Creature,
+            (action, target) => target is { IsAlive: true, IsPlayer: true } &&
                                 !(target.Player == action.Owner.PetOwner || target == action.Owner)),
 
         [TargetType.TargetedNoCreature] = new LambdaTargetType(true, _ => false),
@@ -49,7 +49,7 @@ public static class BuiltInTargetType
             target => target is { IsAlive: true, IsPet: true } && target == target.PetOwner?.Osty)
     };
 
-    public static CustomTargetType From(TargetType targetType)
+    public static ICustomTargetType From(TargetType targetType)
     {
         return All.TryGetValue(targetType, out var result)
             ? result

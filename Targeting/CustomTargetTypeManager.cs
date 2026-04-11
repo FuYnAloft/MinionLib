@@ -9,10 +9,10 @@ public static class CustomTargetTypeManager
 {
     private static readonly HashSet<TargetType> RegisteredCustomTypes = [];
 
-    private static readonly Dictionary<TargetType, CustomTargetType> CustomTypeDefinitions = new(BuiltInTargetType.All);
+    private static readonly Dictionary<TargetType, ICustomTargetType> CustomTypeDefinitions = new(BuiltInTargetType.All);
 
 
-    public static TargetType Register(CustomTargetType customTargetType)
+    public static TargetType Register(ICustomTargetType customTargetType)
     {
         var targetType = (TargetType)CustomEnums.GenerateKey(typeof(TargetType));
         RegisteredCustomTypes.Add(targetType);
@@ -26,7 +26,7 @@ public static class CustomTargetTypeManager
     }
 
     public static bool TryGetCustomTargetType(TargetType targetType,
-        [MaybeNullWhen(false)] out CustomTargetType customTargetType, bool includeBuiltin = true)
+        [MaybeNullWhen(false)] out ICustomTargetType customTargetType, bool includeBuiltin = true)
     {
         if (includeBuiltin || IsCustomTargetType(targetType))
             return CustomTypeDefinitions.TryGetValue(targetType, out customTargetType);
