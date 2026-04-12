@@ -12,6 +12,7 @@ using MinionLib.Component.Core;
 using MinionLib.Component.Interfaces;
 using MinionLib.RightClick;
 using MinionLib.RightClick.Easy;
+using MinionLib.Targeting.Utilities;
 
 namespace MinionLib.Component;
 
@@ -174,9 +175,9 @@ public abstract partial class ComponentsCardModel(
 
         EnsureComponentsInitialized();
         var prefixText = string.Join("\u200b",
-            Components.Select(c => c.GetFormattedPrefix()).Where(s => !string.IsNullOrWhiteSpace(s)));
+            _components!.Select(c => c.GetFormattedPrefix()).Where(s => !string.IsNullOrWhiteSpace(s)));
         var postfixText = string.Join("\u200b",
-            Components.Select(c => c.GetFormattedPostfix()).Where(s => !string.IsNullOrWhiteSpace(s)));
+            _components!.Select(c => c.GetFormattedPostfix()).Where(s => !string.IsNullOrWhiteSpace(s)));
         description.Add("CompPre", prefixText);
         description.Add("CompPost", postfixText);
     }
@@ -255,10 +256,19 @@ public abstract partial class ComponentsCardModel(
     protected virtual bool ShouldGlowRedInternalC => false;
 
     public Color? GlowColor =>
-        Components.Select(static c => c.GlowColor).FirstOrDefault(static c => c.HasValue) ?? GlowColorC;
-
+        _components?.Select(c => c.GlowColor).FirstOrDefault(c => c.HasValue) ?? GlowColorC;
 
     protected virtual Color? GlowColorC => null;
+
+    public override CardType Type =>
+        _components?.Select(c => c.CardType).FirstOrDefault(t => t.HasValue) ?? base.Type;
+
+    public override CardRarity Rarity =>
+        _components?.Select(c => c.CardRarity).FirstOrDefault(r => r.HasValue) ?? base.Rarity;
+
+    public override TargetType TargetType =>
+        SingleTargetTypesUnionManager.GetWithBase(_components?.Select(c => c.TargetType).OfType<TargetType>() ?? [],
+            base.TargetType);
 
     public sealed override bool HasTurnEndInHandEffect =>
         (_components?.Any(c => c.HasTurnEndInHandEffect) ?? false) || HasTurnEndInHandEffectC;

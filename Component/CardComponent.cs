@@ -1,5 +1,6 @@
 using System.Buffers;
 using Godot;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
@@ -88,6 +89,12 @@ public abstract partial class CardComponent : ICardComponent
     public virtual bool ShouldGlowRedInternal => false;
 
     public virtual Color? GlowColor => null;
+
+    public virtual TargetType? TargetType => null;
+
+    public virtual CardType? CardType => null;
+
+    public virtual CardRarity? CardRarity => null;
 
     public virtual bool HasTurnEndInHandEffect => false;
 
