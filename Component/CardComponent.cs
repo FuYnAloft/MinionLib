@@ -47,14 +47,16 @@ public abstract partial class CardComponent : ICardComponent
         return CardComponentStateSerializer.DeepClone(this);
     }
 
-    public virtual ICardComponent? MergeWith(ICardComponent incoming)
+    public virtual bool TryMergeWith(ICardComponent incoming, out ICardComponent? merged)
     {
-        return incoming;
+        merged = null;
+        return false;
     }
 
-    public virtual ICardComponent? SubtractiveMergeWith(ICardComponent incoming)
+    public virtual bool TrySubtractiveMergeWith(ICardComponent incoming, out ICardComponent? merged)
     {
-        return null;
+        merged = null;
+        return false;
     }
 
     public virtual void Serialize(ArrayBufferWriter<byte> writer)
@@ -136,7 +138,7 @@ public abstract partial class CardComponent : ICardComponent
         var postfix = SmartPostfix();
         return postfix.Exists() ? FormatPostfix(postfix) : "";
     }
-    
+
     public virtual bool CanHandleRightClickLocal(RightClickContext context)
     {
         return false;

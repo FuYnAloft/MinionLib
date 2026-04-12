@@ -9,7 +9,8 @@ public interface IComponentsCardModel
 
     IReadOnlyList<ICardComponent> Components { get; }
 
-    T? AddComponent<T>(T incoming, bool matchExactType = true, bool allowMerge = true, bool useSubtractiveMerge = false)
+    ICardComponent? AddComponent<T>(T incoming, bool allowMerge = true,
+        bool useSubtractiveMerge = false)
         where T : class, ICardComponent;
 
     bool RemoveComponent<T>() where T : class, ICardComponent;
