@@ -5,7 +5,6 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MinionLib.Example.Cards;
-using MinionLib.Models;
 
 namespace MinionLib.Example.Powers;
 
@@ -28,10 +27,11 @@ public sealed class AttackakaGiftPower : CustomPowerModel
 
         for (var i = 0; i < Amount; i++)
         {
-            var petOwner = Owner.PetOwner;
-            var card = combatState.CreateCard<AttackakaStrikeCard>(petOwner);
-            card.BindMinion(Owner);
-            await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, false);
+            // var petOwner = Owner.PetOwner;
+            // var card = combatState.CreateCard<AttackakaStrikeCard>(petOwner);
+            // card.BindMinion(Owner);
+            // await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, false);
+            Debug("AttackakaStrikeCard was Removed");
         }
     }
 }

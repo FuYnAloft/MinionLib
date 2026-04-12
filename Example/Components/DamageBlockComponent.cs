@@ -27,23 +27,31 @@ public sealed partial class DamageBlockComponent : CardComponent
         await CreatureCmd.GainBlock(Card.Owner.Creature, DynamicVars.Block, cardPlay);
     }
 
-    public override ICardComponent? MergeWith(ICardComponent incoming)
+    public override bool TryMergeWith(ICardComponent incoming, out ICardComponent? merged)
     {
         if (incoming is not DamageBlockComponent damageBlock)
-            return this;
+        {
+            merged = null;
+            return false;
+        }
 
         Damage += damageBlock.Damage;
         Block += damageBlock.Block;
-        return Damage == 0 && Block == 0 ? null : this;
+        merged = Damage == 0 && Block == 0 ? null : this;
+        return true;
     }
 
-    public override ICardComponent? SubtractiveMergeWith(ICardComponent incoming)
+    public override bool TrySubtractiveMergeWith(ICardComponent incoming, out ICardComponent? merged)
     {
         if (incoming is not DamageBlockComponent damageBlock)
-            return null;
+        {
+            merged = null;
+            return false;
+        }
 
         Damage -= damageBlock.Damage;
         Block -= damageBlock.Block;
-        return Damage == 0 && Block == 0 ? null : this;
+        merged = Damage == 0 && Block == 0 ? null : this;
+        return true;
     }
 }
