@@ -7,33 +7,31 @@ namespace MinionLib.Targeting.Utilities;
 public class LambdaTargetType(
     bool isSingleTarget,
     Func<Creature, bool> generalPredicate,
-    Func<Creature, CardModel, bool>? cardPredicate = null,
-    Func<Creature, PotionModel, bool>? potionPredicate = null,
-    Func<Creature, ActionModel, bool>? actionPredicate = null,
-    bool isRandomTarget = false
+    Func<CardModel, Creature, bool>? cardPredicate = null,
+    Func<PotionModel, Creature, bool>? potionPredicate = null,
+    Func<ActionModel, Creature, bool>? actionPredicate = null
 ) : CustomTargetType
 {
     public override bool IsSingleTarget => isSingleTarget;
 
-    public override bool IsRandomTarget => isRandomTarget;
 
-    public override bool GeneralPredicate(Creature target)
+    protected override bool IsValidTarget(Creature target)
     {
         return generalPredicate(target);
     }
 
-    public override bool CardPredicate(Creature target, CardModel card)
+    public override bool IsValidTarget(CardModel card, Creature target)
     {
-        return cardPredicate?.Invoke(target, card) ?? generalPredicate(target);
+        return cardPredicate?.Invoke(card, target) ?? generalPredicate(target);
     }
 
-    public override bool PotionPredicate(Creature target, PotionModel potion)
+    public override bool IsValidTarget(PotionModel potion, Creature target)
     {
-        return potionPredicate?.Invoke(target, potion) ?? generalPredicate(target);
+        return potionPredicate?.Invoke(potion, target) ?? generalPredicate(target);
     }
 
-    public override bool ActionPredicate(Creature target, ActionModel action)
+    public override bool IsValidTarget(ActionModel action, Creature target)
     {
-        return actionPredicate?.Invoke(target, action) ?? generalPredicate(target);
+        return actionPredicate?.Invoke(action, target) ?? generalPredicate(target);
     }
 }

@@ -102,7 +102,7 @@ public static class CustomTargetTypePotionPatch
     }
 
     private static async Task TargetNodeCustom(NPotionHolder holder, PotionModel potion, TargetType targetType,
-        CustomTargetType customType)
+        ICustomTargetType customType)
     {
         var targetManager = NTargetManager.Instance;
         var isUsingController = NControllerManager.Instance?.IsUsingController ?? false;
@@ -124,7 +124,7 @@ public static class CustomTargetTypePotionPatch
             if (combatState != null)
             {
                 var validTargets = combatState.Creatures
-                    .Where(c => c.IsAlive && customType.PotionPredicate(c, potion))
+                    .Where(c => c.IsAlive && customType.IsValidTarget(potion, c))
                     .Select(c => NCombatRoom.Instance?.GetCreatureNode(c)?.Hitbox)
                     .Where(hitbox => hitbox != null)
                     .Cast<Control>()
@@ -158,7 +158,7 @@ public static class CustomTargetTypePotionPatch
                 return;
 
             var target = ResolveTargetFromNode(node);
-            if (target == null || !customType.PotionPredicate(target, potion))
+            if (target == null || !customType.IsValidTarget(potion, target))
                 return;
 
             potion.EnqueueManualUse(target);
@@ -171,19 +171,19 @@ public static class CustomTargetTypePotionPatch
         }
     }
 
-    private static bool IsAllowedPotionTargetNode(Node node, PotionModel potion, CustomTargetType customType)
+    private static bool IsAllowedPotionTargetNode(Node node, PotionModel potion, ICustomTargetType customType)
     {
         if (node is NCreature creatureNode)
-            return customType.PotionPredicate(creatureNode.Entity, potion);
+            return customType.IsValidTarget(potion, creatureNode.Entity);
 
         if (node is NMultiplayerPlayerState playerState)
-            return customType.PotionPredicate(playerState.Player.Creature, potion);
+            return customType.IsValidTarget(potion, playerState.Player.Creature);
 
         return false;
     }
 
     private static List<Control> GetValidPlayerStateHitboxes(NMultiplayerPlayerStateContainer container,
-        PotionModel potion, CustomTargetType customType)
+        PotionModel potion, ICustomTargetType customType)
     {
         var controls = new List<Control>();
         for (var i = 0; i < container.GetChildCount(); i++)
@@ -192,7 +192,7 @@ public static class CustomTargetTypePotionPatch
             if (state == null)
                 continue;
 
-            if (customType.PotionPredicate(state.Player.Creature, potion))
+            if (customType.IsValidTarget(potion, state.Player.Creature))
                 controls.Add(state.Hitbox);
         }
 

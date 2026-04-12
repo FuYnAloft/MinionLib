@@ -7,12 +7,12 @@ public class ItselfTargetType : CustomTargetType
 {
     public override bool IsSingleTarget => true;
 
-    public override bool GeneralPredicate(Creature target)
+    protected override bool IsValidTarget(Creature target)
     {
         return false;
     }
 
-    public override bool ActionPredicate(Creature target, ActionModel action)
+    public override bool IsValidTarget(ActionModel action, Creature target)
     {
         return target == action.Owner;
     }

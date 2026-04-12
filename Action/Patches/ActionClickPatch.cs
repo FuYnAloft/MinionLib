@@ -173,12 +173,12 @@ public static class ActionClickPatch
 
             if (CustomTargetTypeManager.IsCustomTargetType(targetType) &&
                 CustomTargetTypeManager.TryGetCustomTargetType(targetType, out var customTargetType))
-                NTargetManager.Instance.StartTargeting(MinionTargetTypes.AnyEntity, startPosition, targetMode,
+                NTargetManager.Instance.StartTargeting(MinionTargetTypes.AnyCreature, startPosition, targetMode,
                     () => !GodotObject.IsInstanceValid(actorNode) || !actor.IsAlive, node =>
                     {
                         if (node is not NCreature creatureNode) return false;
                         var target = creatureNode.Entity;
-                        return customTargetType.ActionPredicate(target, actionPower);
+                        return customTargetType.IsValidTarget(actionPower, target);
                     });
             else
                 NTargetManager.Instance.StartTargeting(targetType, startPosition, targetMode,

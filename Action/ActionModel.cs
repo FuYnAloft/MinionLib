@@ -44,7 +44,7 @@ public abstract class ActionModel : PowerModel
         if (target is not { IsAlive: true }) return false;
 
         if (CustomTargetTypeManager.TryGetCustomTargetType(TargetType, out var customType))
-            return customType.ActionPredicate(target, this);
+            return customType.IsValidTarget(this, target);
 
         return false;
     }

@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Models;
 using MinionLib.Action;
@@ -6,28 +7,33 @@ using MinionLib.Minion;
 
 namespace MinionLib.Targeting.Pets;
 
-public class AllMinionsTargetType : CustomTargetType
+public class AllMinionsTargetType : ICustomTargetType
 {
-    public override bool IsSingleTarget => false;
+    public bool IsSingleTarget => false;
 
-    public override bool GeneralPredicate(Creature target)
+    private static bool IsValidTarget(Creature target)
     {
         return target is { IsAlive: true, Side: CombatSide.Player, IsPet: true, Monster: MinionModel };
     }
 
-    public override bool CardPredicate(Creature target, CardModel card)
+    public bool IsValidTargetPreview(Creature target)
     {
-        return GeneralPredicate(target) && target.PetOwner == card.Owner;
+        return IsValidTarget(target) && LocalContext.IsMe(target.PetOwner);
     }
 
-    public override bool PotionPredicate(Creature target, PotionModel potion)
+    public bool IsValidTarget(CardModel card, Creature target)
     {
-        return GeneralPredicate(target) && target.PetOwner == potion.Owner;
+        return IsValidTarget(target) && target.PetOwner == card.Owner;
     }
 
-    public override bool ActionPredicate(Creature target, ActionModel action)
+    public bool IsValidTarget(PotionModel potion, Creature target)
+    {
+        return IsValidTarget(target) && target.PetOwner == potion.Owner;
+    }
+
+    public bool IsValidTarget(ActionModel action, Creature target)
     {
         var actor = action.Owner;
-        return GeneralPredicate(target) && (target.PetOwner == actor.PetOwner || target.PetOwner == actor.Player);
+        return IsValidTarget(target) && (target.PetOwner == actor.PetOwner || target.PetOwner == actor.Player);
     }
 }
