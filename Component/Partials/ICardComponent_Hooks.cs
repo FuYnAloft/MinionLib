@@ -1020,4 +1020,28 @@ public partial interface ICardComponent
     {
     }
     
+    void AfterDowngradedPrefix(ComponentContext componentContext)
+    {
+    }
+    
+    void AfterDowngradedPostfix(ComponentContext componentContext)
+    {
+    }
+    
+    void AfterTransformedFromPrefix(ComponentContext componentContext)
+    {
+    }
+    
+    void AfterTransformedFromPostfix(ComponentContext componentContext)
+    {
+    }
+    
+    void AfterTransformedToPrefix(ComponentContext componentContext)
+    {
+    }
+    
+    void AfterTransformedToPostfix(ComponentContext componentContext)
+    {
+    }
+    
 }

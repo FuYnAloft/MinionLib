@@ -63,6 +63,7 @@ public static class SingleTargetTypesUnionManager
     public static TargetType Get(IEnumerable<TargetType> targetTypes)
     {
         var (set, customTargetTypes) = FilterSingleAndSelect(targetTypes);
+        if (set.IsEmpty) return MinionTargetTypes.Void;
         if (set.Count == 1)
             return set.Single();
         if (Registry.TryGetValue(set, out var registeredType))

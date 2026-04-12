@@ -2995,4 +2995,76 @@ public abstract partial class TimingCardComponent
         }
 
     }
+    public override void AfterDowngradedPrefix(ComponentContext componentContext)
+    {
+        if (Timings.Contains(Timing.AfterDowngraded))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterDowngraded
+            );
+
+            OnTimingPrefix(ctx);
+        }
+
+    }
+    public override void AfterDowngradedPostfix(ComponentContext componentContext)
+    {
+        if (Timings.Contains(Timing.AfterDowngraded))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterDowngraded
+            );
+
+            OnTimingPostfix(ctx);
+        }
+
+    }
+    public override void AfterTransformedFromPrefix(ComponentContext componentContext)
+    {
+        if (Timings.Contains(Timing.AfterTransformedFrom))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterTransformedFrom
+            );
+
+            OnTimingPrefix(ctx);
+        }
+
+    }
+    public override void AfterTransformedFromPostfix(ComponentContext componentContext)
+    {
+        if (Timings.Contains(Timing.AfterTransformedFrom))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterTransformedFrom
+            );
+
+            OnTimingPostfix(ctx);
+        }
+
+    }
+    public override void AfterTransformedToPrefix(ComponentContext componentContext)
+    {
+        if (Timings.Contains(Timing.AfterTransformedTo))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterTransformedTo
+            );
+
+            OnTimingPrefix(ctx);
+        }
+
+    }
+    public override void AfterTransformedToPostfix(ComponentContext componentContext)
+    {
+        if (Timings.Contains(Timing.AfterTransformedTo))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterTransformedTo
+            );
+
+            OnTimingPostfix(ctx);
+        }
+
+    }
 }

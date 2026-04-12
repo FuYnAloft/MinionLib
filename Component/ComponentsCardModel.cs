@@ -12,6 +12,7 @@ using MinionLib.Component.Core;
 using MinionLib.Component.Interfaces;
 using MinionLib.RightClick;
 using MinionLib.RightClick.Easy;
+using MinionLib.Targeting.Utilities;
 
 namespace MinionLib.Component;
 
@@ -59,44 +60,42 @@ public abstract partial class ComponentsCardModel(
 
     protected virtual IEnumerable<ICardComponent> CanonicalComponents => [];
 
-    public T? AddComponent<T>(T incoming, bool matchExactType = true, bool allowMerge = true,
+    public ICardComponent? AddComponent<T>(T incoming, bool allowMerge = true,
         bool useSubtractiveMerge = false) where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
-        var existingIndex = allowMerge
-            ? _components!.FindIndex(c => matchExactType ? c.GetType() == incoming.GetType() : c is T)
-            : -1;
-        if (existingIndex < 0)
+        if (allowMerge)
         {
-            incoming.Attach(this);
-            _components!.Add(incoming);
-            return incoming;
+            for (var i = 0; i < _components!.Count; i++)
+            {
+                var existing = _components[i];
+                var didMerge = useSubtractiveMerge
+                    ? existing.TrySubtractiveMergeWith(incoming, out var merged)
+                    : existing.TryMergeWith(incoming, out merged);
+
+                if (!didMerge)
+                    continue;
+
+                if (ReferenceEquals(merged, existing))
+                    return existing;
+
+                existing.Detach();
+
+                if (merged == null)
+                {
+                    _components.RemoveAt(i);
+                    return null;
+                }
+
+                merged.Attach(this);
+                _components[i] = merged;
+                return merged;
+            }
         }
 
-        var existing = _components![existingIndex];
-        var merged = useSubtractiveMerge ? existing.SubtractiveMergeWith(incoming) : existing.MergeWith(incoming);
-
-        if (ReferenceEquals(merged, KeepBoth.Instance))
-        {
-            incoming.Attach(this);
-            _components.Add(incoming);
-            return incoming;
-        }
-
-        if (ReferenceEquals(merged, existing)) return (T)merged;
-
-        existing.Detach();
-
-        if (merged == null)
-        {
-            _components.RemoveAt(existingIndex);
-            return null;
-        }
-
-        merged.Attach(this);
-        _components[existingIndex] = merged;
-        return merged as T ?? throw new InvalidCastException(
-            $"AddComponent<{typeof(T).FullName}> tried to merge incoming component of type {incoming.GetType().FullName} with existing component of type {existing.GetType().FullName}, and the resulting merged component is of type {merged.GetType().FullName}, which cannot be cast back to {typeof(T).FullName}.");
+        incoming.Attach(this);
+        _components!.Add(incoming);
+        return incoming;
     }
 
     public bool RemoveComponent<T>() where T : class, ICardComponent
@@ -176,9 +175,9 @@ public abstract partial class ComponentsCardModel(
 
         EnsureComponentsInitialized();
         var prefixText = string.Join("\u200b",
-            Components.Select(c => c.GetFormattedPrefix()).Where(s => !string.IsNullOrWhiteSpace(s)));
+            _components!.Select(c => c.GetFormattedPrefix()).Where(s => !string.IsNullOrWhiteSpace(s)));
         var postfixText = string.Join("\u200b",
-            Components.Select(c => c.GetFormattedPostfix()).Where(s => !string.IsNullOrWhiteSpace(s)));
+            _components!.Select(c => c.GetFormattedPostfix()).Where(s => !string.IsNullOrWhiteSpace(s)));
         description.Add("CompPre", prefixText);
         description.Add("CompPost", postfixText);
     }
@@ -256,10 +255,34 @@ public abstract partial class ComponentsCardModel(
 
     protected virtual bool ShouldGlowRedInternalC => false;
 
-    public Color? GlowColor => Components.Select(static c => c.GlowColor).FirstOrDefault(static c => c.HasValue) ?? GlowColorC;
-
+    public Color? GlowColor =>
+        _components?.Select(c => c.GlowColor).FirstOrDefault(c => c.HasValue) ?? GlowColorC;
 
     protected virtual Color? GlowColorC => null;
+
+    public override CardType Type =>
+        _components?.Select(c => c.CardType).FirstOrDefault(t => t.HasValue) ?? base.Type;
+
+    public override CardRarity Rarity =>
+        _components?.Select(c => c.CardRarity).FirstOrDefault(r => r.HasValue) ?? base.Rarity;
+
+    public override TargetType TargetType =>
+        SingleTargetTypesUnionManager.GetWithBase(_components?.Select(c => c.TargetType).OfType<TargetType>() ?? [],
+            base.TargetType);
+
+    protected sealed override bool IsPlayable =>
+        (_components?.All(c => c.IsPlayable) ?? true) && IsPlayableC;
+
+    protected virtual bool IsPlayableC => true;
+
+    protected override PileType GetResultPileType()
+    {
+        EnsureComponentsInitialized();
+        foreach (var component in _components!)
+            if (component.GetResultPileType() is { } t)
+                return t;
+        return base.GetResultPileType();
+    }
 
     public sealed override bool HasTurnEndInHandEffect =>
         (_components?.Any(c => c.HasTurnEndInHandEffect) ?? false) || HasTurnEndInHandEffectC;

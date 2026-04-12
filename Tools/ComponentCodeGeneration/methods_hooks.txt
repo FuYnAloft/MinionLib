@@ -98,3 +98,6 @@ public virtual Task BeforeTurnEndVeryEarly(PlayerChoiceContext choiceContext, Co
 public virtual Task BeforeTurnEndEarly(PlayerChoiceContext choiceContext, CombatSide side)
 public virtual Task AfterTurnEndLate(PlayerChoiceContext choiceContext, CombatSide side)
 protected virtual void OnUpgrade()
+protected virtual void AfterDowngraded()
+public virtual void AfterTransformedFrom()
+public virtual void AfterTransformedTo()

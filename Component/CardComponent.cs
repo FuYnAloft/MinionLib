@@ -1,5 +1,6 @@
 using System.Buffers;
 using Godot;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
@@ -47,14 +48,16 @@ public abstract partial class CardComponent : ICardComponent
         return CardComponentStateSerializer.DeepClone(this);
     }
 
-    public virtual ICardComponent? MergeWith(ICardComponent incoming)
+    public virtual bool TryMergeWith(ICardComponent incoming, out ICardComponent? merged)
     {
-        return incoming;
+        merged = null;
+        return false;
     }
 
-    public virtual ICardComponent? SubtractiveMergeWith(ICardComponent incoming)
+    public virtual bool TrySubtractiveMergeWith(ICardComponent incoming, out ICardComponent? merged)
     {
-        return null;
+        merged = null;
+        return false;
     }
 
     public virtual void Serialize(ArrayBufferWriter<byte> writer)
@@ -86,6 +89,19 @@ public abstract partial class CardComponent : ICardComponent
     public virtual bool ShouldGlowRedInternal => false;
 
     public virtual Color? GlowColor => null;
+
+    public virtual TargetType? TargetType => null;
+
+    public virtual CardType? CardType => null;
+
+    public virtual CardRarity? CardRarity => null;
+
+    public virtual bool IsPlayable => true;
+
+    public virtual PileType? GetResultPileType()
+    {
+        return null;
+    }
 
     public virtual bool HasTurnEndInHandEffect => false;
 
@@ -136,7 +152,7 @@ public abstract partial class CardComponent : ICardComponent
         var postfix = SmartPostfix();
         return postfix.Exists() ? FormatPostfix(postfix) : "";
     }
-    
+
     public virtual bool CanHandleRightClickLocal(RightClickContext context)
     {
         return false;
