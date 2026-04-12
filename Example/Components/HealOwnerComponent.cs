@@ -17,19 +17,29 @@ public sealed partial class HealOwnerComponent : AmountCardComponent
         await CreatureCmd.Heal(Card.Owner.Creature, Amount);
     }
 
-    public override ICardComponent? MergeWith(ICardComponent incoming)
+    public override bool TryMergeWith(ICardComponent incoming, out ICardComponent? merged)
     {
-        if (incoming is not HealOwnerComponent heal) return this;
+        if (incoming is not HealOwnerComponent heal)
+        {
+            merged = null;
+            return false;
+        }
 
         Amount += heal.Amount;
-        return Amount <= 0 ? null : this;
+        merged = Amount <= 0 ? null : this;
+        return true;
     }
 
-    public override ICardComponent? SubtractiveMergeWith(ICardComponent incoming)
+    public override bool TrySubtractiveMergeWith(ICardComponent incoming, out ICardComponent? merged)
     {
-        if (incoming is not HealOwnerComponent heal) return this;
+        if (incoming is not HealOwnerComponent heal)
+        {
+            merged = null;
+            return false;
+        }
 
         Amount -= heal.Amount;
-        return Amount <= 0 ? null : this;
+        merged = Amount <= 0 ? null : this;
+        return true;
     }
 }

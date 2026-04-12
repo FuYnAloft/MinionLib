@@ -6,7 +6,6 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MinionLib.Example.Powers;
 using MinionLib.Minion;
-using MinionLib.Models;
 using MinionLib.Powers;
 
 namespace MinionLib.Example.Minions;

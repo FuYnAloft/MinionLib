@@ -6,7 +6,6 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MinionLib.Example.Powers;
 using MinionLib.Minion;
-using MinionLib.Models;
 
 namespace MinionLib.Example.Minions;
 
@@ -17,30 +16,6 @@ public sealed class AttackakaMinion : MinionModel
     public override int MaxInitialHp => 6;
 
     protected override string VisualsPath => "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn";
-
-    public override CreatureAnimator GenerateAnimator(MegaSprite controller)
-    {
-        AnimState idle = new("idle_loop", true);
-        AnimState cast = new("cast") { NextState = idle };
-        AnimState attack = new("attack") { NextState = idle };
-        AnimState hurt = new("hurt") { NextState = idle };
-        AnimState die = new("die");
-        AnimState deadLoop = new("dead_loop", true);
-        AnimState revive = new("revive") { NextState = idle };
-
-        idle.AddBranch("Hit", hurt);
-        cast.AddBranch("Hit", hurt);
-        attack.AddBranch("Hit", hurt);
-        hurt.AddBranch("Hit", hurt);
-        die.NextState = deadLoop;
-
-        CreatureAnimator animator = new(idle, controller);
-        animator.AddAnyState("Attack", attack);
-        animator.AddAnyState("Cast", cast);
-        animator.AddAnyState("Dead", die);
-        animator.AddAnyState("Revive", revive);
-        return animator;
-    }
 
     public override async Task OnSummon(Player owner, Creature self, MinionSummonOptions options)
     {

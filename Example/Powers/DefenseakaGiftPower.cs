@@ -1,11 +1,7 @@
 using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Combat;
-using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MinionLib.Example.Cards;
-using MinionLib.Models;
 
 namespace MinionLib.Example.Powers;
 
@@ -28,10 +24,11 @@ public sealed class DefenseakaGiftPower : CustomPowerModel
 
         for (var i = 0; i < Amount; i++)
         {
-            var owner = Owner.PetOwner;
-            var card = combatState.CreateCard<DefenseakaGuardCard>(owner);
-            card.BindMinion(Owner);
-            await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, false);
+            // var owner = Owner.PetOwner;
+            // var card = combatState.CreateCard<DefenseakaGuardCard>(owner);
+            // card.BindMinion(Owner);
+            // await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, false);
+            Debug("DefenseakaGuardCard was removed");
         }
     }
 }
