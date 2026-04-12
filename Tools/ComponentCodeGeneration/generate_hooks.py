@@ -344,7 +344,7 @@ def parse_csharp_signature(line: str) -> Signature:
 
 
 def main():
-    with open(SCRIPT_DIR / 'methods.txt') as f:
+    with open(SCRIPT_DIR / 'methods_hooks.txt') as f:
         lines = f.readlines()
     signatures = [parse_csharp_signature(line) for line in lines]
     # s = set()
