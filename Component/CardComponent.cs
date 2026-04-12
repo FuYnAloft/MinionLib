@@ -96,6 +96,13 @@ public abstract partial class CardComponent : ICardComponent
 
     public virtual CardRarity? CardRarity => null;
 
+    public virtual bool IsPlayable => true;
+
+    public virtual PileType? GetResultPileType()
+    {
+        return null;
+    }
+
     public virtual bool HasTurnEndInHandEffect => false;
 
     public virtual IEnumerable<IHoverTip> HoverTips => [];

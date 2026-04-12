@@ -40,6 +40,10 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
 
     CardRarity? CardRarity => null;
 
+    bool IsPlayable => true;
+
+    PileType? GetResultPileType() => null;
+
     bool HasTurnEndInHandEffect => false;
 
     IEnumerable<IHoverTip> HoverTips => [];

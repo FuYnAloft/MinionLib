@@ -270,6 +270,20 @@ public abstract partial class ComponentsCardModel(
         SingleTargetTypesUnionManager.GetWithBase(_components?.Select(c => c.TargetType).OfType<TargetType>() ?? [],
             base.TargetType);
 
+    protected sealed override bool IsPlayable =>
+        (_components?.All(c => c.IsPlayable) ?? true) && IsPlayableC;
+
+    protected virtual bool IsPlayableC => true;
+
+    protected override PileType GetResultPileType()
+    {
+        EnsureComponentsInitialized();
+        foreach (var component in _components!)
+            if (component.GetResultPileType() is { } t)
+                return t;
+        return base.GetResultPileType();
+    }
+
     public sealed override bool HasTurnEndInHandEffect =>
         (_components?.Any(c => c.HasTurnEndInHandEffect) ?? false) || HasTurnEndInHandEffectC;
 
