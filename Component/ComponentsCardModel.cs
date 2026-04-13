@@ -261,13 +261,14 @@ public abstract partial class ComponentsCardModel(
     protected virtual Color? GlowColorC => null;
 
     public override CardType Type =>
-        _components?.Select(c => c.CardType).FirstOrDefault(t => t.HasValue) ?? base.Type;
+        _components?.Select(c => c.CardTypeOverride).FirstOrDefault(t => t.HasValue) ?? base.Type;
 
     public override CardRarity Rarity =>
-        _components?.Select(c => c.CardRarity).FirstOrDefault(r => r.HasValue) ?? base.Rarity;
+        _components?.Select(c => c.CardRarityOverride).FirstOrDefault(r => r.HasValue) ?? base.Rarity;
 
     public override TargetType TargetType =>
-        SingleTargetTypesUnionManager.GetWithBase(_components?.Select(c => c.TargetType).OfType<TargetType>() ?? [],
+        SingleTargetTypesUnionManager.GetWithBase(
+            _components?.Select(c => c.TargetTypeOverride).OfType<TargetType>() ?? [],
             base.TargetType);
 
     protected sealed override bool IsPlayable =>

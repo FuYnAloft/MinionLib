@@ -90,11 +90,11 @@ public abstract partial class CardComponent : ICardComponent
 
     public virtual Color? GlowColor => null;
 
-    public virtual TargetType? TargetType => null;
+    public virtual TargetType? TargetTypeOverride => null;
 
-    public virtual CardType? CardType => null;
+    public virtual CardType? CardTypeOverride => null;
 
-    public virtual CardRarity? CardRarity => null;
+    public virtual CardRarity? CardRarityOverride => null;
 
     public virtual bool IsPlayable => true;
 

@@ -34,11 +34,11 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
 
     Color? GlowColor => null;
 
-    TargetType? TargetType => null;
+    TargetType? TargetTypeOverride => null;
 
-    CardType? CardType => null;
+    CardType? CardTypeOverride => null;
 
-    CardRarity? CardRarity => null;
+    CardRarity? CardRarityOverride => null;
 
     bool IsPlayable => true;
 
