@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Diagnostics.CodeAnalysis;
 using BaseLib.Patches.Content;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -7,17 +8,38 @@ namespace MinionLib.Targeting;
 
 public static class CustomTargetTypeManager
 {
+    private static int _nextRuntimeTargetType = int.MinValue;
     private static readonly HashSet<TargetType> RegisteredCustomTypes = [];
 
     private static readonly Dictionary<TargetType, ICustomTargetType> CustomTypeDefinitions = new(BuiltInTargetType.All);
 
 
+    public static TargetType Register(ICustomTargetType customTargetType, FieldInfo field)
+    {
+        ArgumentNullException.ThrowIfNull(customTargetType);
+        ArgumentNullException.ThrowIfNull(field);
+
+        var targetType = (TargetType)CustomEnums.GenerateKey(field);
+        RegisterInternal(targetType, customTargetType);
+        return targetType;
+    }
+
     public static TargetType Register(ICustomTargetType customTargetType)
     {
-        var targetType = (TargetType)CustomEnums.GenerateKey(typeof(TargetType));
+        ArgumentNullException.ThrowIfNull(customTargetType);
+
+        while (CustomTypeDefinitions.ContainsKey((TargetType)_nextRuntimeTargetType))
+            _nextRuntimeTargetType++;
+
+        var targetType = (TargetType)_nextRuntimeTargetType++;
+        RegisterInternal(targetType, customTargetType);
+        return targetType;
+    }
+
+    private static void RegisterInternal(TargetType targetType, ICustomTargetType customTargetType)
+    {
         RegisteredCustomTypes.Add(targetType);
         CustomTypeDefinitions.Add(targetType, customTargetType);
-        return targetType;
     }
 
     public static bool IsCustomTargetType(TargetType targetType)
