@@ -1,0 +1,28 @@
+---
+const baseUrl = import.meta.env.BASE_URL;
+const safeBase = baseUrl.startsWith('/') ? baseUrl : '/' + baseUrl;
+const finalBase = safeBase.endsWith('/') ? safeBase : safeBase + '/';
+---
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <meta http-equiv="refresh" content={`2;url=${finalBase}zh-cn/`}/>
+
+    <script define:vars={{finalBase}}>
+        function getTargetLanguage() {
+            const lang = (navigator.language || navigator.userLanguage).toLowerCase();
+            if (lang.startsWith('zh')) return 'zh-cn/';
+            return 'en/';
+        }
+
+        const targetPath = getTargetLanguage();
+        window.location.replace(finalBase + targetPath);
+    </script>
+</head>
+<body style="background-color: #17181c; color: #eee; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: system-ui, sans-serif;">
+<p>Redirecting...</p>
+</body>
+</html>
