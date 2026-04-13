@@ -21,7 +21,7 @@ public abstract class ActionModel : PowerModel
 
     public virtual bool AutoRemoveAtTurnEnd => false;
 
-    public virtual bool DecrementAfterAct => true;
+    public virtual bool DecrementAfterAct => false;
 
     public virtual bool OnlyRespondIconClick => false;
 
