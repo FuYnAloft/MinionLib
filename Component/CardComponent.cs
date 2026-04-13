@@ -155,6 +155,11 @@ public abstract partial class CardComponent : ICardComponent
 
     public virtual bool CanHandleRightClickLocal(RightClickContext context)
     {
+        return CanHandleRightClick(context);
+    }
+
+    public virtual bool CanHandleRightClick(RightClickContext context)
+    {
         return false;
     }
 

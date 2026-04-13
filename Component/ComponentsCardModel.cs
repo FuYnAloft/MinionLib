@@ -317,12 +317,20 @@ public abstract partial class ComponentsCardModel(
     public async Task OnRightClick(PlayerChoiceContext choiceContext, RightClickContext clickContext)
     {
         EnsureComponentsInitialized();
+
+        var flag = false;
         foreach (var component in _components!)
         {
-            await component.OnRightClick(choiceContext, clickContext);
+            if (component.CanHandleRightClick(clickContext))
+            {
+                flag = true;
+                await component.OnRightClick(choiceContext, clickContext);
+                break;
+            }
         }
 
-        await OnRightClickC(choiceContext, clickContext);
+        if (!flag)
+            await OnRightClickC(choiceContext, clickContext);
     }
 
     protected virtual Task OnRightClickC(PlayerChoiceContext choiceContext, RightClickContext clickContext)

@@ -52,7 +52,9 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
 
     string GetFormattedPostfix();
 
-    bool CanHandleRightClickLocal(RightClickContext context) => false;
+    bool CanHandleRightClickLocal(RightClickContext context) => CanHandleRightClick(context);
+
+    bool CanHandleRightClick(RightClickContext context) => false;
 
     Task OnRightClick(PlayerChoiceContext choiceContext, RightClickContext clickContext) => Task.CompletedTask;
 }
