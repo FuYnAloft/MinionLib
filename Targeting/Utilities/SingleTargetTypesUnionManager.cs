@@ -62,7 +62,8 @@ public static class SingleTargetTypesUnionManager
 
     public static TargetType Get(IEnumerable<TargetType> targetTypes)
     {
-        var (set, customTargetTypes) = FilterSingleAndSelect(targetTypes);
+        var types = targetTypes as TargetType[] ?? targetTypes.ToArray();
+        var (set, customTargetTypes) = FilterSingleAndSelect(types);
         if (set.IsEmpty) return MinionTargetTypes.Void;
         if (set.Count == 1)
             return set.Single();
@@ -70,7 +71,8 @@ public static class SingleTargetTypesUnionManager
             return registeredType;
 
         var union = new UnionTargetType(customTargetTypes.ToArray());
-        var unionEnum = CustomTargetTypeManager.Register(union);
+        var unionName = string.Join("|", types.Select(t => t.ToString("X")));
+        var unionEnum = CustomTargetTypeManager.Register(union, "MinionLib-UnionTargetType", unionName);
         Registry[set] = unionEnum;
         Components[unionEnum] = set;
         return unionEnum;
