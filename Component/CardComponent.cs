@@ -113,24 +113,10 @@ public abstract partial class CardComponent : ICardComponent
 
     protected virtual LocString PostfixLocString => new LocString("cards", ComponentId + ".postfix");
 
-    private LocString SmartPrefix()
-    {
-        var loc = PrefixLocString;
-        DynamicVars.AddTo(loc);
-        SmartAddArgs(loc);
-        return loc;
-    }
-
-    private LocString SmartPostfix()
-    {
-        var loc = PostfixLocString;
-        DynamicVars.AddTo(loc);
-        SmartAddArgs(loc);
-        return loc;
-    }
-
     protected virtual void SmartAddArgs(LocString loc)
     {
+        DynamicVars.AddTo(loc);
+        AddLocArgsFromCard(loc);
     }
 
     protected virtual string FormatPrefix(LocString loc)
@@ -162,16 +148,16 @@ public abstract partial class CardComponent : ICardComponent
 
     public string GetFormattedPrefix()
     {
-        var prefix = SmartPrefix();
-        AddLocArgsFromCard(prefix);
-        return prefix.Exists() ? FormatPrefix(prefix) : "";
+        var loc = PrefixLocString;
+        SmartAddArgs(loc);
+        return loc.Exists() ? FormatPrefix(loc) : "";
     }
 
     public string GetFormattedPostfix()
     {
-        var postfix = SmartPostfix();
-        AddLocArgsFromCard(postfix);
-        return postfix.Exists() ? FormatPostfix(postfix) : "";
+        var loc = PostfixLocString;
+        SmartAddArgs(loc);
+        return loc.Exists() ? FormatPostfix(loc) : "";
     }
 
     public virtual bool CanHandleRightClickLocal(RightClickContext context)
