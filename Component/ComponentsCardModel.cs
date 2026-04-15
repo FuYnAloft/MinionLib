@@ -93,6 +93,7 @@ public abstract partial class ComponentsCardModel(
             }
         }
 
+        if (useSubtractiveMerge) return null;
         incoming.Attach(this);
         _components!.Add(incoming);
         return incoming;
