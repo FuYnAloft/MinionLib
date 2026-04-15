@@ -6,6 +6,11 @@
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <LangVersion>latest</LangVersion>
         <IsPackable>false</IsPackable>
+        <Configurations>Debug;Release;ExportDebug;ExportRelease</Configurations>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'ExportRelease'">
+        <Optimize>true</Optimize>
     </PropertyGroup>
 
     <ItemGroup>

@@ -77,13 +77,8 @@
         </Reference>
     </ItemGroup>
 
-    <PropertyGroup>
-        <!-- 如果命令行没传 BaseLibVersion，默认设为 * -->
-        <BaseLibVersion Condition="'$(BaseLibVersion)' == ''">*</BaseLibVersion>
-    </PropertyGroup>
-
     <ItemGroup>
-        <PackageReference Include="Alchyr.Sts2.BaseLib" Version="$(BaseLibVersion)"/>
+        <PackageReference Include="Alchyr.Sts2.BaseLib" Version="3.0.3"/>
         <!--<PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="*"/>-->
         <AdditionalFiles Include="MinionLib/localization/**/*.json"/>
     </ItemGroup>
@@ -212,13 +207,11 @@
         <PackPckPath>$(BaseIntermediateOutputPath)pack/$(MSBuildProjectName).pck</PackPckPath>
         <GeneratorDllPath>$(MSBuildProjectDirectory)\MinionLib.Generators\bin\$(Configuration)\netstandard2.0\MinionLib.Generators.dll</GeneratorDllPath>
     </PropertyGroup>
-    
+
     <!-- 打包时检查配置 -->
     <Target Name="EnforceVersionOnPack" BeforeTargets="AddFilesToNuGetPackage">
         <Error Condition="'$(Version)' == '0.0.0.0-dev'"
-               Text="[打包失败] 发布 NuGet 包时需要指定版本号！示例: -p:Version=0.1.0" />
-        <Error Condition="'$(BaseLibVersion)' == '*'"
-               Text="[打包失败] 发布 NuGet 包时需要指定具体依赖版本。示例: -p:BaseLibVersion=0.2.5" />
+               Text="[打包失败] 发布 NuGet 包时需要指定版本号！示例: -p:Version=0.1.0"/>
     </Target>
 
     <!-- 打包前准备 Godot pck（如果本机可用 Godot） -->
@@ -239,21 +232,21 @@
     </Target>
 
     <!-- 显式声明 NuGet 内容，避免 Godot SDK 的默认打包行为漏掉文件 -->
-    <Target Name="AddFilesToNuGetPackage">
+    <Target Name="AddFilesToNuGetPackage" DependsOnTargets="ResolveProjectReferences;Build">
         <ItemGroup>
             <TfmSpecificPackageFile Include="MinionLib.json">
                 <PackagePath>Content/MinionLib.json</PackagePath>
             </TfmSpecificPackageFile>
 
-            <TfmSpecificPackageFile Include="$(GeneratorDllPath)" Condition="Exists('$(GeneratorDllPath)')">
+            <TfmSpecificPackageFile Include="$(GeneratorDllPath)">
                 <PackagePath>analyzers/dotnet/cs/MinionLib.Generators.dll</PackagePath>
             </TfmSpecificPackageFile>
 
-            <TfmSpecificPackageFile Include="$(PackPckPath)" Condition="Exists('$(PackPckPath)')">
+            <TfmSpecificPackageFile Include="$(PackPckPath)">
                 <PackagePath>Content/$(MSBuildProjectName).pck</PackagePath>
             </TfmSpecificPackageFile>
 
-            <TfmSpecificPackageFile Include="README.md" Condition="Exists('README.md')">
+            <TfmSpecificPackageFile Include="README.md">
                 <PackagePath>README.md</PackagePath>
             </TfmSpecificPackageFile>
         </ItemGroup>
