@@ -24,7 +24,7 @@ public static class ComponentDescriptionRawCachePatch
         if (string.IsNullOrWhiteSpace(locEntryKey) || ComponentDescriptionRawCache.Contains(locEntryKey))
             return;
 
-        var rawText = __result.GetRawText();
+        var rawText = __result.Exists() ? __result.GetRawText() : "";
         ComponentDescriptionRawCache.Set(locEntryKey, InjectCompTokens(rawText));
     }
 

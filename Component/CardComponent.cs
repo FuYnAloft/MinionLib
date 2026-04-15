@@ -1,7 +1,9 @@
 using System.Buffers;
 using Godot;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -141,15 +143,34 @@ public abstract partial class CardComponent : ICardComponent
         return loc.GetFormattedText();
     }
 
+    private void AddLocArgsFromCard(LocString loc)
+    {
+        if (Card == null) return;
+        var upgradeDisplay = Card.IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal;
+        loc.Add(new IfUpgradedVar(upgradeDisplay));
+        var inCombat = CombatManager.Instance.IsInProgress && (Card.Pile?.IsCombatPile ?? false);
+        loc.Add("InCombat", inCombat);
+        loc.Add("TargetType", Card.TargetType.ToString());
+        var energyPrefix = EnergyIconHelper.GetPrefix(Card);
+        loc.Add("energyPrefix", energyPrefix);
+        loc.Add("singleStarIcon", "[img]res://images/packed/sprite_fonts/star_icon.png[/img]");
+        foreach (var keyValuePair in loc.Variables)
+            if (keyValuePair.Value is EnergyVar energyVar)
+                energyVar.ColorPrefix = energyPrefix;
+        // 已知问题：IsTargeting 和 OnTable 未实现；IfUpgradedVar 和 InCombat 的实现不准确。
+    }
+
     public string GetFormattedPrefix()
     {
         var prefix = SmartPrefix();
+        AddLocArgsFromCard(prefix);
         return prefix.Exists() ? FormatPrefix(prefix) : "";
     }
 
     public string GetFormattedPostfix()
     {
         var postfix = SmartPostfix();
+        AddLocArgsFromCard(postfix);
         return postfix.Exists() ? FormatPostfix(postfix) : "";
     }
 

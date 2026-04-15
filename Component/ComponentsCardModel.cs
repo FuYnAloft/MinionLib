@@ -171,8 +171,6 @@ public abstract partial class ComponentsCardModel(
 
     protected override void AddExtraArgsToDescription(LocString description)
     {
-        base.AddExtraArgsToDescription(description);
-
         EnsureComponentsInitialized();
         var prefixText = string.Join("\u200b",
             _components!.Select(c => c.GetFormattedPrefix()).Where(s => !string.IsNullOrWhiteSpace(s)));
