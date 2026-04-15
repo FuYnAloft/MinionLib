@@ -8,3 +8,6 @@ public class LocArgAttribute(string? name = null) : Attribute
 
 [AttributeUsage(AttributeTargets.Property)]
 public class NotLocArgAttribute : Attribute;
+
+[AttributeUsage(AttributeTargets.Property)]
+public class NestedLocStringAttribute : Attribute;
