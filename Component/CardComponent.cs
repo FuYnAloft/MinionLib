@@ -146,14 +146,14 @@ public abstract partial class CardComponent : ICardComponent
         // 已知问题：IsTargeting 和 OnTable 未实现；IfUpgradedVar 和 InCombat 的实现不准确。
     }
 
-    public string GetFormattedPrefix()
+    public string GetFormattedPrefix(Dictionary<string, object> argsFromCard)
     {
         var loc = PrefixLocString;
         SmartAddArgs(loc);
         return loc.Exists() ? FormatPrefix(loc) : "";
     }
 
-    public string GetFormattedPostfix()
+    public string GetFormattedPostfix(Dictionary<string, object> argsFromCard)
     {
         var loc = PostfixLocString;
         SmartAddArgs(loc);
