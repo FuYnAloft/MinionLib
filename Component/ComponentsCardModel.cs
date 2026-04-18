@@ -186,22 +186,25 @@ public abstract partial class ComponentsCardModel(
         var common = GenerateCommonExtraArgsForComponents(pileType, previewType, target);
         var prefixSb = new StringBuilder();
         var postfixSb = new StringBuilder();
-        foreach (var (index, component) in _components!.Index())
+        var count = _components!.Count;
+        for (var displayIndex = 0; displayIndex < count; displayIndex++)
         {
+            var component = _components[displayIndex];
             var args = common.ToDictionary();
-            args["ComponentPosition"] = index;
-            args["ComponentPositionFromEnd"] = _components!.Count - 1 - index;
-            args["IsFirstComponent"] = index == 0;
-            args["IsLastComponent"] = index == _components.Count - 1;
+            args["ComponentPosition"] = displayIndex;
+            args["ComponentPositionFromEnd"] = count - 1 - displayIndex;
+            args["IsFirstComponent"] = displayIndex == 0;
+            args["IsLastComponent"] = displayIndex == count - 1;
             prefixSb.Append(component.GetFormattedPrefix(args)).Append('\u200b');
         }
-        foreach (var (index, component) in _components!.Index())
+        for (var displayIndex = 0; displayIndex < count; displayIndex++)
         {
+            var component = _components[count - 1 - displayIndex];
             var args = common.ToDictionary();
-            args["ComponentPosition"] = index;
-            args["ComponentPositionFromEnd"] = _components!.Count - 1 - index;
-            args["IsFirstComponent"] = index == 0;
-            args["IsLastComponent"] = index == _components.Count - 1;
+            args["ComponentPosition"] = displayIndex;
+            args["ComponentPositionFromEnd"] = count - 1 - displayIndex;
+            args["IsFirstComponent"] = displayIndex == 0;
+            args["IsLastComponent"] = displayIndex == count - 1;
             postfixSb.Append(component.GetFormattedPostfix(args)).Append('\u200b');
         }
         
