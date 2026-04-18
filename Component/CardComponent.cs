@@ -116,7 +116,13 @@ public abstract partial class CardComponent : ICardComponent
     protected virtual void SmartAddArgs(LocString loc)
     {
         DynamicVars.AddTo(loc);
-        AddLocArgsFromCard(loc);
+
+        var energyPrefix = (string)loc.Variables["energyPrefix"];
+        foreach (var(name, variable) in loc.Variables)
+        {
+            if (variable is EnergyVar energyVar)
+                energyVar.ColorPrefix = energyPrefix;
+        }
     }
 
     protected virtual string FormatPrefix(LocString loc)
@@ -129,33 +135,26 @@ public abstract partial class CardComponent : ICardComponent
         return loc.GetFormattedText();
     }
 
-    private void AddLocArgsFromCard(LocString loc)
-    {
-        if (Card == null) return;
-        var upgradeDisplay = Card.IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal;
-        loc.Add(new IfUpgradedVar(upgradeDisplay));
-        var inCombat = CombatManager.Instance.IsInProgress && (Card.Pile?.IsCombatPile ?? false);
-        loc.Add("InCombat", inCombat);
-        loc.Add("TargetType", Card.TargetType.ToString());
-        var energyPrefix = EnergyIconHelper.GetPrefix(Card);
-        loc.Add("energyPrefix", energyPrefix);
-        loc.Add("singleStarIcon", "[img]res://images/packed/sprite_fonts/star_icon.png[/img]");
-        foreach (var keyValuePair in loc.Variables)
-            if (keyValuePair.Value is EnergyVar energyVar)
-                energyVar.ColorPrefix = energyPrefix;
-        // 已知问题：IsTargeting 和 OnTable 未实现；IfUpgradedVar 和 InCombat 的实现不准确。
-    }
-
-    public string GetFormattedPrefix()
+    public string GetFormattedPrefix(Dictionary<string, object> argsFromCard)
     {
         var loc = PrefixLocString;
+        foreach (var (name, variable) in argsFromCard)
+        {
+            loc.AddObj(name, variable);
+        }
+
         SmartAddArgs(loc);
         return loc.Exists() ? FormatPrefix(loc) : "";
     }
 
-    public string GetFormattedPostfix()
+    public string GetFormattedPostfix(Dictionary<string, object> argsFromCard)
     {
         var loc = PostfixLocString;
+        foreach (var (name, variable) in argsFromCard)
+        {
+            loc.AddObj(name, variable);
+        }
+
         SmartAddArgs(loc);
         return loc.Exists() ? FormatPostfix(loc) : "";
     }

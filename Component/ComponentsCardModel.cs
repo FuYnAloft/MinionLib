@@ -1,10 +1,15 @@
+using System.Text;
 using BaseLib.Abstracts;
 using BaseLib.Patches.Content;
 using Godot;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Saves.Runs;
@@ -13,6 +18,7 @@ using MinionLib.Component.Interfaces;
 using MinionLib.RightClick;
 using MinionLib.RightClick.Easy;
 using MinionLib.Targeting.Utilities;
+using MinionLib.Utilities.BetterExtraArgs;
 
 namespace MinionLib.Component;
 
@@ -23,7 +29,7 @@ public abstract partial class ComponentsCardModel(
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
     : CardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary),
-        IComponentsCardModel, IEasyRightClickableCard
+        IComponentsCardModel, IEasyRightClickableCard, IBetterAddExtraArgsCard
 {
     // ReSharper disable once ConvertToConstant.Local
     private static readonly int MaxPhaseTransitions = 64;
@@ -170,15 +176,66 @@ public abstract partial class ComponentsCardModel(
         _componentStateBlob = CardComponentStateSerializer.Serialize(_components);
     }
 
-    protected override void AddExtraArgsToDescription(LocString description)
+    public virtual void BetterAddExtraArgsToDescription(
+        LocString description,
+        PileType pileType,
+        DescriptionPreviewType previewType,
+        Creature? target = null)
     {
         EnsureComponentsInitialized();
-        var prefixText = string.Join("\u200b",
-            _components!.Select(c => c.GetFormattedPrefix()).Where(s => !string.IsNullOrWhiteSpace(s)));
-        var postfixText = string.Join("\u200b",
-            _components!.Select(c => c.GetFormattedPostfix()).Where(s => !string.IsNullOrWhiteSpace(s)));
-        description.Add("CompPre", prefixText);
-        description.Add("CompPost", postfixText);
+        var common = GenerateCommonExtraArgsForComponents(pileType, previewType, target);
+        var prefixSb = new StringBuilder();
+        var postfixSb = new StringBuilder();
+        var count = _components!.Count;
+        for (var displayIndex = 0; displayIndex < count; displayIndex++)
+        {
+            var component = _components[displayIndex];
+            var args = common.ToDictionary();
+            args["ComponentPosition"] = displayIndex;
+            args["ComponentPositionFromEnd"] = count - 1 - displayIndex;
+            args["IsFirstComponent"] = displayIndex == 0;
+            args["IsLastComponent"] = displayIndex == count - 1;
+            prefixSb.Append(component.GetFormattedPrefix(args)).Append('\u200b');
+        }
+        for (var displayIndex = 0; displayIndex < count; displayIndex++)
+        {
+            var component = _components[count - 1 - displayIndex];
+            var args = common.ToDictionary();
+            args["ComponentPosition"] = displayIndex;
+            args["ComponentPositionFromEnd"] = count - 1 - displayIndex;
+            args["IsFirstComponent"] = displayIndex == 0;
+            args["IsLastComponent"] = displayIndex == count - 1;
+            postfixSb.Append(component.GetFormattedPostfix(args)).Append('\u200b');
+        }
+        
+        description.Add("CompPre", prefixSb.ToString());
+        description.Add("CompPost", postfixSb.ToString());
+    }
+
+    protected virtual Dictionary<string, object> GenerateCommonExtraArgsForComponents(
+        PileType pileType,
+        DescriptionPreviewType previewType,
+        Creature? target = null)
+    {
+        var args = new Dictionary<string, object>();
+        var upgradeDisplay = previewType == DescriptionPreviewType.Upgrade
+            ? UpgradeDisplay.UpgradePreview
+            : IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal;
+        args[IfUpgradedVar.defaultName] = new IfUpgradedVar(upgradeDisplay);
+        
+        var isOnTable = pileType is PileType.Hand or PileType.Play;
+        args["OnTable"] = isOnTable;
+        
+        var inCombat = CombatManager.Instance.IsInProgress && 
+                        (Pile?.IsCombatPile ?? pileType.IsCombatPile());
+        args["InCombat"] = inCombat;
+        
+        args["IsTargeting"] = target != null;
+        args["TargetType"] = TargetType.ToString();
+        var prefix = EnergyIconHelper.GetPrefix(this);
+        args["energyPrefix"] = prefix;
+        args["singleStarIcon"] = "[img]res://images/packed/sprite_fonts/star_icon.png[/img]";
+        return args;
     }
 
     protected override void DeepCloneFields()

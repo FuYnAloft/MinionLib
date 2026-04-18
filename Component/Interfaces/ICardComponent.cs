@@ -48,9 +48,9 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
 
     IEnumerable<IHoverTip> HoverTips => [];
 
-    string GetFormattedPrefix();
+    string GetFormattedPrefix(Dictionary<string, object> argsFromCard);
 
-    string GetFormattedPostfix();
+    string GetFormattedPostfix(Dictionary<string, object> argsFromCard);
 
     bool CanHandleRightClickLocal(RightClickContext context) => CanHandleRightClick(context);
 
