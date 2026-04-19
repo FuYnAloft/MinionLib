@@ -1,4 +1,7 @@
+using System.Reflection;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MinionLib.Component.Core;
@@ -12,6 +15,8 @@ public static class ComponentDescriptionRawCachePatch
     private const string CardsTable = "cards";
     private const string PrefixToken = "{CompPre}";
     private const string PostfixToken = "{CompPost}";
+    private const char NoDescriptionMarker = '\uef01';
+    private const string NoDescriptionMarkerString = "\uef01";
 
     [HarmonyPatch(typeof(CardModel), nameof(CardModel.Description), MethodType.Getter)]
     [HarmonyPostfix]
@@ -24,7 +29,7 @@ public static class ComponentDescriptionRawCachePatch
         if (string.IsNullOrWhiteSpace(locEntryKey) || ComponentDescriptionRawCache.Contains(locEntryKey))
             return;
 
-        var rawText = __result.Exists() ? __result.GetRawText() : "";
+        var rawText = __result.Exists() ? __result.GetRawText() : NoDescriptionMarkerString;
         ComponentDescriptionRawCache.Set(locEntryKey, InjectCompTokens(rawText));
     }
 
@@ -60,5 +65,42 @@ public static class ComponentDescriptionRawCachePatch
             text = string.IsNullOrWhiteSpace(text) ? PostfixToken : text + PostfixToken;
 
         return text;
+    }
+
+
+    [HarmonyTargetMethod]
+    private static MethodBase Target_GetDescriptionForPile()
+    {
+        var previewEnumType = AccessTools.Inner(typeof(CardModel), "DescriptionPreviewType");
+
+        return AccessTools.Method(typeof(CardModel), "GetDescriptionForPile", [
+            typeof(PileType),
+            previewEnumType,
+            typeof(Creature)
+        ]);
+    }
+
+    [HarmonyPostfix]
+    private static void GetDescriptionForPile_Postfix(ref string __result)
+    {
+        if (string.IsNullOrEmpty(__result)) return;
+        var index = __result.IndexOf(NoDescriptionMarker);
+        if (index < 0) return;
+
+        var hasAfter = index < __result.Length - 1 && __result[index + 1] == '\n';
+        var hasBefore = index > 0 && __result[index - 1] == '\n';
+
+        if (hasAfter)
+        {
+            __result = __result.Remove(index, 2);
+        }
+        else if (hasBefore)
+        {
+            __result = __result.Remove(index - 1, 2);
+        }
+        else
+        {
+            __result = "";
+        }
     }
 }
