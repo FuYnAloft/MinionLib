@@ -66,18 +66,28 @@ public abstract partial class ComponentsCardModel(
 
     protected virtual IEnumerable<ICardComponent> CanonicalComponents => [];
 
-    public ICardComponent? AddComponent<T>(T incoming, bool allowMerge = true,
-        bool useSubtractiveMerge = false, bool isUpgrade = false)
+    public ICardComponent? AddComponent<T>(T incoming, bool allowMerge = true, bool isUpgrade = false)
         where T : class, ICardComponent
     {
-        return AddComponent(incoming, new AddComponentOptions(
+        return ApplyComponent(incoming, new ApplyComponentOptions(
             AllowMerge: allowMerge,
-            UseSubtractiveMerge: useSubtractiveMerge,
+            UseSubtractiveMerge: false,
+            IsUpgrade: isUpgrade
+        ));
+    }
+    
+    public ICardComponent? SubtractComponent<T>(T incoming, bool isUpgrade = false)
+        where T : class, ICardComponent
+    {
+        return ApplyComponent(incoming, new ApplyComponentOptions(
+            AllowMerge: true,
+            UseSubtractiveMerge: true,
             IsUpgrade: isUpgrade
         ));
     }
 
-    public ICardComponent? AddComponent<T>(T incoming, AddComponentOptions options) where T : class, ICardComponent
+    public ICardComponent? ApplyComponent<T>(T incoming, ApplyComponentOptions options = new())
+        where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
         if (options.AllowMerge)

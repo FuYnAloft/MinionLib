@@ -52,7 +52,7 @@ public abstract partial class CardComponent : ICardComponent
 
     public virtual bool TryMergeWith(
         ICardComponent incoming,
-        AddComponentOptions options,
+        ApplyComponentOptions options,
         out ICardComponent? merged
     )
     {
@@ -62,7 +62,7 @@ public abstract partial class CardComponent : ICardComponent
 
     public virtual bool TrySubtractiveMergeWith(
         ICardComponent incoming,
-        AddComponentOptions options,
+        ApplyComponentOptions options,
         out ICardComponent? merged
     )
     {

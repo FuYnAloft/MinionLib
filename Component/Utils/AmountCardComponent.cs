@@ -8,7 +8,7 @@ public abstract partial class AmountCardComponent : CardComponent
 {
     [ComponentState<DynamicVar>] public partial decimal Amount { get; set; }
 
-    public override bool TryMergeWith(ICardComponent incoming, AddComponentOptions options, out ICardComponent? merged)
+    public override bool TryMergeWith(ICardComponent incoming, ApplyComponentOptions options, out ICardComponent? merged)
     {
         if (incoming is not AmountCardComponent component)
         {
@@ -24,7 +24,7 @@ public abstract partial class AmountCardComponent : CardComponent
         return true;
     }
 
-    public override bool TrySubtractiveMergeWith(ICardComponent incoming, AddComponentOptions options,
+    public override bool TrySubtractiveMergeWith(ICardComponent incoming, ApplyComponentOptions options,
         out ICardComponent? merged)
     {
         if (incoming is not AmountCardComponent component)

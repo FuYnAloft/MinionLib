@@ -23,9 +23,9 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
 
     ICardComponent DeepClone();
 
-    bool TryMergeWith(ICardComponent incoming, AddComponentOptions options, out ICardComponent? merged);
+    bool TryMergeWith(ICardComponent incoming, ApplyComponentOptions options, out ICardComponent? merged);
 
-    bool TrySubtractiveMergeWith(ICardComponent incoming, AddComponentOptions options, out ICardComponent? merged);
+    bool TrySubtractiveMergeWith(ICardComponent incoming, ApplyComponentOptions options, out ICardComponent? merged);
 
     DynamicVarSet DynamicVars { get; }
 
