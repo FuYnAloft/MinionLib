@@ -8,7 +8,7 @@ public abstract partial class AmountCardComponent : CardComponent
 {
     [ComponentState<DynamicVar>] public partial decimal Amount { get; set; }
 
-    public override bool TryMergeWith(ICardComponent incoming, out ICardComponent? merged)
+    public override bool TryMergeWith(ICardComponent incoming, AddComponentOptions options, out ICardComponent? merged)
     {
         if (incoming is not AmountCardComponent component)
         {
@@ -17,11 +17,15 @@ public abstract partial class AmountCardComponent : CardComponent
         }
 
         Amount += component.Amount;
+        if (options.IsUpgrade)
+            foreach (var keyValuePair in DynamicVars)
+                keyValuePair.Value.SetWasJustUpgraded();
         merged = Amount == 0 ? null : this;
         return true;
     }
 
-    public override bool TrySubtractiveMergeWith(ICardComponent incoming, out ICardComponent? merged)
+    public override bool TrySubtractiveMergeWith(ICardComponent incoming, AddComponentOptions options,
+        out ICardComponent? merged)
     {
         if (incoming is not AmountCardComponent component)
         {
@@ -30,6 +34,9 @@ public abstract partial class AmountCardComponent : CardComponent
         }
 
         Amount -= component.Amount;
+        if (options.IsUpgrade)
+            foreach (var keyValuePair in DynamicVars)
+                keyValuePair.Value.SetWasJustUpgraded();
         merged = Amount == 0 ? null : this;
         return true;
     }

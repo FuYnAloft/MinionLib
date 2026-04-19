@@ -17,7 +17,7 @@ public sealed partial class HealOwnerComponent : AmountCardComponent
         await CreatureCmd.Heal(Card.Owner.Creature, Amount);
     }
 
-    public override bool TryMergeWith(ICardComponent incoming, out ICardComponent? merged)
+    public override bool TryMergeWith(ICardComponent incoming, AddComponentOptions options, out ICardComponent? merged)
     {
         if (incoming is not HealOwnerComponent heal)
         {
@@ -26,11 +26,14 @@ public sealed partial class HealOwnerComponent : AmountCardComponent
         }
 
         Amount += heal.Amount;
+        if (heal.Amount != 0 && options.IsUpgrade)
+            DynamicVars["Heal"].SetWasJustUpgraded();
         merged = Amount <= 0 ? null : this;
         return true;
     }
 
-    public override bool TrySubtractiveMergeWith(ICardComponent incoming, out ICardComponent? merged)
+    public override bool TrySubtractiveMergeWith(ICardComponent incoming, AddComponentOptions options,
+        out ICardComponent? merged)
     {
         if (incoming is not HealOwnerComponent heal)
         {

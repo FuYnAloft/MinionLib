@@ -50,13 +50,21 @@ public abstract partial class CardComponent : ICardComponent
         return CardComponentStateSerializer.DeepClone(this);
     }
 
-    public virtual bool TryMergeWith(ICardComponent incoming, out ICardComponent? merged)
+    public virtual bool TryMergeWith(
+        ICardComponent incoming,
+        AddComponentOptions options,
+        out ICardComponent? merged
+    )
     {
         merged = null;
         return false;
     }
 
-    public virtual bool TrySubtractiveMergeWith(ICardComponent incoming, out ICardComponent? merged)
+    public virtual bool TrySubtractiveMergeWith(
+        ICardComponent incoming,
+        AddComponentOptions options,
+        out ICardComponent? merged
+    )
     {
         merged = null;
         return false;
@@ -118,7 +126,7 @@ public abstract partial class CardComponent : ICardComponent
         DynamicVars.AddTo(loc);
 
         var energyPrefix = (string)loc.Variables["energyPrefix"];
-        foreach (var(name, variable) in loc.Variables)
+        foreach (var (name, variable) in loc.Variables)
         {
             if (variable is EnergyVar energyVar)
                 energyVar.ColorPrefix = energyPrefix;

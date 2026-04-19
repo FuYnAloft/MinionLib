@@ -1,5 +1,6 @@
 using Godot;
 using MegaCrit.Sts2.Core.Models;
+using MinionLib.Component.Core;
 
 namespace MinionLib.Component.Interfaces;
 
@@ -10,7 +11,17 @@ public interface IComponentsCardModel
     IReadOnlyList<ICardComponent> Components { get; }
 
     ICardComponent? AddComponent<T>(T incoming, bool allowMerge = true,
-        bool useSubtractiveMerge = false)
+        bool useSubtractiveMerge = false, bool isUpgrade = false)
+        where T : class, ICardComponent
+    {
+        return AddComponent(incoming, new AddComponentOptions(
+            AllowMerge: allowMerge,
+            UseSubtractiveMerge: useSubtractiveMerge,
+            IsUpgrade: isUpgrade
+        ));
+    }
+
+    ICardComponent? AddComponent<T>(T incoming, AddComponentOptions options)
         where T : class, ICardComponent;
 
     bool RemoveComponent<T>() where T : class, ICardComponent;
