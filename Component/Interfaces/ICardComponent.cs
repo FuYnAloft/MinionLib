@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MinionLib.Component.Core;
 using MinionLib.RightClick;
 
 namespace MinionLib.Component.Interfaces;
@@ -22,9 +23,9 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
 
     ICardComponent DeepClone();
 
-    bool TryMergeWith(ICardComponent incoming, out ICardComponent? merged);
+    bool TryMergeWith(ICardComponent incoming, ApplyComponentOptions options, out ICardComponent? merged);
 
-    bool TrySubtractiveMergeWith(ICardComponent incoming, out ICardComponent? merged);
+    bool TrySubtractiveMergeWith(ICardComponent incoming, ApplyComponentOptions options, out ICardComponent? merged);
 
     DynamicVarSet DynamicVars { get; }
 

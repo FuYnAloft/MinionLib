@@ -66,18 +66,38 @@ public abstract partial class ComponentsCardModel(
 
     protected virtual IEnumerable<ICardComponent> CanonicalComponents => [];
 
-    public ICardComponent? AddComponent<T>(T incoming, bool allowMerge = true,
-        bool useSubtractiveMerge = false) where T : class, ICardComponent
+    public ICardComponent? AddComponent<T>(T incoming, bool allowMerge = true, bool isUpgrade = false)
+        where T : class, ICardComponent
+    {
+        return ApplyComponent(incoming, new ApplyComponentOptions(
+            AllowMerge: allowMerge,
+            UseSubtractiveMerge: false,
+            IsUpgrade: isUpgrade
+        ));
+    }
+    
+    public ICardComponent? SubtractComponent<T>(T incoming, bool isUpgrade = false)
+        where T : class, ICardComponent
+    {
+        return ApplyComponent(incoming, new ApplyComponentOptions(
+            AllowMerge: true,
+            UseSubtractiveMerge: true,
+            IsUpgrade: isUpgrade
+        ));
+    }
+
+    public ICardComponent? ApplyComponent<T>(T incoming, ApplyComponentOptions options = new())
+        where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
-        if (allowMerge)
+        if (options.AllowMerge)
         {
             for (var i = 0; i < _components!.Count; i++)
             {
                 var existing = _components[i];
-                var didMerge = useSubtractiveMerge
-                    ? existing.TrySubtractiveMergeWith(incoming, out var merged)
-                    : existing.TryMergeWith(incoming, out merged);
+                var didMerge = options.UseSubtractiveMerge
+                    ? existing.TrySubtractiveMergeWith(incoming, options, out var merged)
+                    : existing.TryMergeWith(incoming, options, out merged);
 
                 if (!didMerge)
                     continue;
@@ -99,7 +119,7 @@ public abstract partial class ComponentsCardModel(
             }
         }
 
-        if (useSubtractiveMerge) return null;
+        if (options.UseSubtractiveMerge) return null;
         incoming.Attach(this);
         _components!.Add(incoming);
         return incoming;
@@ -197,6 +217,7 @@ public abstract partial class ComponentsCardModel(
             args["IsLastComponent"] = displayIndex == count - 1;
             prefixSb.Append(component.GetFormattedPrefix(args)).Append('\n');
         }
+
         for (var displayIndex = 0; displayIndex < count; displayIndex++)
         {
             var component = _components[count - 1 - displayIndex];
@@ -207,7 +228,7 @@ public abstract partial class ComponentsCardModel(
             args["IsLastComponent"] = displayIndex == count - 1;
             postfixSb.Append('\n').Append(component.GetFormattedPostfix(args));
         }
-        
+
         description.Add("CompPre", prefixSb.ToString());
         description.Add("CompPost", postfixSb.ToString());
     }
@@ -220,16 +241,18 @@ public abstract partial class ComponentsCardModel(
         var args = new Dictionary<string, object>();
         var upgradeDisplay = previewType == DescriptionPreviewType.Upgrade
             ? UpgradeDisplay.UpgradePreview
-            : IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal;
+            : IsUpgraded
+                ? UpgradeDisplay.Upgraded
+                : UpgradeDisplay.Normal;
         args[IfUpgradedVar.defaultName] = new IfUpgradedVar(upgradeDisplay);
-        
+
         var isOnTable = pileType is PileType.Hand or PileType.Play;
         args["OnTable"] = isOnTable;
-        
-        var inCombat = CombatManager.Instance.IsInProgress && 
-                        (Pile?.IsCombatPile ?? pileType.IsCombatPile());
+
+        var inCombat = CombatManager.Instance.IsInProgress &&
+                       (Pile?.IsCombatPile ?? pileType.IsCombatPile());
         args["InCombat"] = inCombat;
-        
+
         args["IsTargeting"] = target != null;
         args["TargetType"] = TargetType.ToString();
         var prefix = EnergyIconHelper.GetPrefix(this);
