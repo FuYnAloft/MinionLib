@@ -155,7 +155,7 @@ public abstract partial class CardComponent : ICardComponent
 
         SmartAddArgs(loc);
         var formatted = FormatPrefix(loc);
-        return formatted.EndsWith('\n') ? formatted : formatted + '\n';
+        return formatted;
     }
 
     public virtual string GetFormattedPostfix(Dictionary<string, object> argsFromCard)
@@ -169,8 +169,8 @@ public abstract partial class CardComponent : ICardComponent
         }
 
         SmartAddArgs(loc);
-        var  formatted = FormatPostfix(loc);
-        return formatted.StartsWith('\n') ? formatted : '\n' + formatted;
+        var formatted = FormatPostfix(loc);
+        return formatted.EndsWith('\n') ? "\n" + formatted[..^1] : formatted;
     }
 
     public virtual bool CanHandleRightClickLocal(RightClickContext context)
