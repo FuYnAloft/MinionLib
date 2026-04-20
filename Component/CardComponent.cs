@@ -143,28 +143,34 @@ public abstract partial class CardComponent : ICardComponent
         return loc.GetFormattedText();
     }
 
-    public string GetFormattedPrefix(Dictionary<string, object> argsFromCard)
+    public virtual string GetFormattedPrefix(Dictionary<string, object> argsFromCard)
     {
         var loc = PrefixLocString;
+        if (!loc.Exists())
+            return "";
         foreach (var (name, variable) in argsFromCard)
         {
             loc.AddObj(name, variable);
         }
 
         SmartAddArgs(loc);
-        return loc.Exists() ? FormatPrefix(loc) : "";
+        var formatted = FormatPrefix(loc);
+        return formatted.EndsWith('\n') ? formatted : formatted + '\n';
     }
 
-    public string GetFormattedPostfix(Dictionary<string, object> argsFromCard)
+    public virtual string GetFormattedPostfix(Dictionary<string, object> argsFromCard)
     {
         var loc = PostfixLocString;
+        if (!loc.Exists())
+            return "";
         foreach (var (name, variable) in argsFromCard)
         {
             loc.AddObj(name, variable);
         }
 
         SmartAddArgs(loc);
-        return loc.Exists() ? FormatPostfix(loc) : "";
+        var  formatted = FormatPostfix(loc);
+        return formatted.StartsWith('\n') ? formatted : '\n' + formatted;
     }
 
     public virtual bool CanHandleRightClickLocal(RightClickContext context)

@@ -103,7 +103,7 @@ public static class NoDescriptionMarkerCleanPatch
         }
         else
         {
-            __result = "";
+            __result = __result.Remove(index, 1);
         }
     }
 }

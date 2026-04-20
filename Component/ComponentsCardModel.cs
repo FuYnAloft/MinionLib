@@ -215,7 +215,7 @@ public abstract partial class ComponentsCardModel(
             args["ComponentPositionFromEnd"] = count - 1 - displayIndex;
             args["IsFirstComponent"] = displayIndex == 0;
             args["IsLastComponent"] = displayIndex == count - 1;
-            prefixSb.Append(component.GetFormattedPrefix(args)).Append('\n');
+            prefixSb.Append(component.GetFormattedPrefix(args));
         }
 
         for (var displayIndex = 0; displayIndex < count; displayIndex++)
@@ -226,7 +226,7 @@ public abstract partial class ComponentsCardModel(
             args["ComponentPositionFromEnd"] = count - 1 - displayIndex;
             args["IsFirstComponent"] = displayIndex == 0;
             args["IsLastComponent"] = displayIndex == count - 1;
-            postfixSb.Append('\n').Append(component.GetFormattedPostfix(args));
+            postfixSb.Append(component.GetFormattedPostfix(args));
         }
 
         description.Add("CompPre", prefixSb.ToString());
