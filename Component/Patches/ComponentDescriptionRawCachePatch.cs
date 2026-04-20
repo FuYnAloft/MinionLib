@@ -12,11 +12,11 @@ namespace MinionLib.Component.Patches;
 [HarmonyPatch]
 public static class ComponentDescriptionRawCachePatch
 {
-    private const string CardsTable = "cards";
-    private const string PrefixToken = "{CompPre}";
-    private const string PostfixToken = "{CompPost}";
-    private const char NoDescriptionMarker = '\uef01';
-    private const string NoDescriptionMarkerString = "\uef01";
+    public const string CardsTable = "cards";
+    public const string PrefixToken = "{CompPre}";
+    public const string PostfixToken = "{CompPost}";
+    public const char NoDescriptionMarker = '\uef01';
+    public const string NoDescriptionMarkerString = "\uef01";
 
     [HarmonyPatch(typeof(CardModel), nameof(CardModel.Description), MethodType.Getter)]
     [HarmonyPostfix]
@@ -66,10 +66,13 @@ public static class ComponentDescriptionRawCachePatch
 
         return text;
     }
+}
 
-
+[HarmonyPatch]
+public static class NoDescriptionMarkerCleanPatch
+{
     [HarmonyTargetMethod]
-    private static MethodBase Target_GetDescriptionForPile()
+    private static MethodBase TargetMethod()
     {
         var previewEnumType = AccessTools.Inner(typeof(CardModel), "DescriptionPreviewType");
 
@@ -81,10 +84,10 @@ public static class ComponentDescriptionRawCachePatch
     }
 
     [HarmonyPostfix]
-    private static void GetDescriptionForPile_Postfix(ref string __result)
+    private static void Postfix(ref string __result)
     {
         if (string.IsNullOrEmpty(__result)) return;
-        var index = __result.IndexOf(NoDescriptionMarker);
+        var index = __result.IndexOf(ComponentDescriptionRawCachePatch.NoDescriptionMarker);
         if (index < 0) return;
 
         var hasAfter = index < __result.Length - 1 && __result[index + 1] == '\n';
