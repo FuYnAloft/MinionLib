@@ -113,15 +113,15 @@ public abstract partial class ComponentsCardModel(
                     return null;
                 }
 
-                merged.Attach(this);
                 _components[i] = merged;
+                merged.Attach(this);
                 return merged;
             }
         }
 
         if (options.UseSubtractiveMerge) return null;
-        incoming.Attach(this);
         _components!.Add(incoming);
+        incoming.Attach(this);
         return incoming;
     }
 
@@ -189,12 +189,20 @@ public abstract partial class ComponentsCardModel(
         if (_components != null)
             return;
 
-        _components = _componentStateBlob.Length == 0
-            ? BuildComponentsFromCanonical()
-            : CardComponentStateSerializer.Deserialize(_componentStateBlob, this);
-
-        foreach (var component in _components)
-            component.Attach(this);
+        if (_componentStateBlob.Length == 0)
+        {
+            _components = [];
+            foreach (var canonicalComponent in CanonicalComponents)
+            {
+                var component = canonicalComponent.DeepClone();
+                _components.Add(component);
+                component.Attach(this);
+            }
+        }
+        else
+        {
+            _components = CardComponentStateSerializer.Deserialize(_componentStateBlob, this);
+        }
 
         _componentStateBlob = CardComponentStateSerializer.Serialize(_components);
     }
@@ -284,11 +292,6 @@ public abstract partial class ComponentsCardModel(
 
         _components = null;
         EnsureComponentsInitialized();
-    }
-
-    private List<ICardComponent> BuildComponentsFromCanonical()
-    {
-        return CanonicalComponents.Select(c => c.DeepClone()).ToList();
     }
 
     # region Deprecated
