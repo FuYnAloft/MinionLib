@@ -125,24 +125,25 @@ public abstract partial class ComponentsCardModel(
         return incoming;
     }
 
-    public bool RemoveComponent<T>() where T : class, ICardComponent
+    public ICardComponent? RemoveComponent<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
 
         var index = _components!.FindIndex(c => c is T);
         if (index < 0)
-            return false;
+            return null;
 
+        var removed = _components[index];
         _components[index].Detach();
         _components.RemoveAt(index);
-        return true;
+        return removed;
     }
 
-    public int RemoveComponents<T>() where T : class, ICardComponent
+    public IReadOnlyList<ICardComponent> RemoveComponents<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
 
-        var removed = 0;
+        List<ICardComponent> removed = [];
         for (var i = _components!.Count - 1; i >= 0; i--)
         {
             if (_components[i] is not T component)
@@ -150,8 +151,10 @@ public abstract partial class ComponentsCardModel(
 
             component.Detach();
             _components.RemoveAt(i);
-            removed++;
+            removed.Add(component);
         }
+
+        removed.Reverse();
 
         return removed;
     }
@@ -175,7 +178,7 @@ public abstract partial class ComponentsCardModel(
         return _components!.OfType<T>().FirstOrDefault();
     }
 
-    public IEnumerable<T> GetComponents<T>() where T : class, ICardComponent
+    public IReadOnlyList<T> GetComponents<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
         return _components!.OfType<T>().ToArray();
