@@ -113,36 +113,37 @@ public abstract partial class ComponentsCardModel(
                     return null;
                 }
 
-                merged.Attach(this);
                 _components[i] = merged;
+                merged.Attach(this);
                 return merged;
             }
         }
 
         if (options.UseSubtractiveMerge) return null;
-        incoming.Attach(this);
         _components!.Add(incoming);
+        incoming.Attach(this);
         return incoming;
     }
 
-    public bool RemoveComponent<T>() where T : class, ICardComponent
+    public ICardComponent? RemoveComponent<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
 
         var index = _components!.FindIndex(c => c is T);
         if (index < 0)
-            return false;
+            return null;
 
+        var removed = _components[index];
         _components[index].Detach();
         _components.RemoveAt(index);
-        return true;
+        return removed;
     }
 
-    public int RemoveComponents<T>() where T : class, ICardComponent
+    public IReadOnlyList<ICardComponent> RemoveComponents<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
 
-        var removed = 0;
+        List<ICardComponent> removed = [];
         for (var i = _components!.Count - 1; i >= 0; i--)
         {
             if (_components[i] is not T component)
@@ -150,8 +151,10 @@ public abstract partial class ComponentsCardModel(
 
             component.Detach();
             _components.RemoveAt(i);
-            removed++;
+            removed.Add(component);
         }
+
+        removed.Reverse();
 
         return removed;
     }
@@ -175,7 +178,7 @@ public abstract partial class ComponentsCardModel(
         return _components!.OfType<T>().FirstOrDefault();
     }
 
-    public IEnumerable<T> GetComponents<T>() where T : class, ICardComponent
+    public IReadOnlyList<T> GetComponents<T>() where T : class, ICardComponent
     {
         EnsureComponentsInitialized();
         return _components!.OfType<T>().ToArray();
@@ -186,12 +189,20 @@ public abstract partial class ComponentsCardModel(
         if (_components != null)
             return;
 
-        _components = _componentStateBlob.Length == 0
-            ? BuildComponentsFromCanonical()
-            : CardComponentStateSerializer.Deserialize(_componentStateBlob, this);
-
-        foreach (var component in _components)
-            component.Attach(this);
+        if (_componentStateBlob.Length == 0)
+        {
+            _components = [];
+            foreach (var canonicalComponent in CanonicalComponents)
+            {
+                var component = canonicalComponent.DeepClone();
+                _components.Add(component);
+                component.Attach(this);
+            }
+        }
+        else
+        {
+            _components = CardComponentStateSerializer.Deserialize(_componentStateBlob, this);
+        }
 
         _componentStateBlob = CardComponentStateSerializer.Serialize(_components);
     }
@@ -281,11 +292,6 @@ public abstract partial class ComponentsCardModel(
 
         _components = null;
         EnsureComponentsInitialized();
-    }
-
-    private List<ICardComponent> BuildComponentsFromCanonical()
-    {
-        return CanonicalComponents.Select(c => c.DeepClone()).ToList();
     }
 
     # region Deprecated

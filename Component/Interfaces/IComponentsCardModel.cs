@@ -33,15 +33,15 @@ public interface IComponentsCardModel
     ICardComponent? ApplyComponent<T>(T incoming, ApplyComponentOptions options)
         where T : class, ICardComponent;
 
-    bool RemoveComponent<T>() where T : class, ICardComponent;
+    ICardComponent? RemoveComponent<T>() where T : class, ICardComponent;
 
-    int RemoveComponents<T>() where T : class, ICardComponent;
+    IReadOnlyList<ICardComponent> RemoveComponents<T>() where T : class, ICardComponent;
 
     bool RefRemoveComponent(ICardComponent component);
 
     T? GetComponent<T>() where T : class, ICardComponent;
 
-    IEnumerable<T> GetComponents<T>() where T : class, ICardComponent;
+    IReadOnlyList<T> GetComponents<T>() where T : class, ICardComponent;
 
     void EnsureComponentsInitialized();
 
