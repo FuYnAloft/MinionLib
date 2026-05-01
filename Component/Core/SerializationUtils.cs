@@ -12,7 +12,8 @@ public static class SerializationUtils
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.General);
 
-    public static void WriteObjectBlock(ArrayBufferWriter<byte> writer, Action<ArrayBufferWriter<byte>> serializePayload)
+    public static void WriteObjectBlock(ArrayBufferWriter<byte> writer,
+        Action<ArrayBufferWriter<byte>> serializePayload)
     {
         var payloadWriter = new ArrayBufferWriter<byte>();
         serializePayload(payloadWriter);
@@ -42,7 +43,8 @@ public static class SerializationUtils
         WriteObjectBlock(writer, serializable.Serialize);
     }
 
-    public static bool TryReadSerializableBlock(ref ReadOnlySpan<byte> reader, IGeneratedBinarySerializable serializable)
+    public static bool TryReadSerializableBlock(ref ReadOnlySpan<byte> reader,
+        IGeneratedBinarySerializable serializable)
     {
         if (!TryReadObjectBlock(ref reader, out var payload))
             return false;
@@ -358,6 +360,7 @@ public static class SerializationUtils
             WriteByte(writer, (byte)(value | 0x80));
             value >>= 7;
         }
+
         WriteByte(writer, (byte)value);
     }
 
@@ -390,6 +393,7 @@ public static class SerializationUtils
             WriteByte(writer, (byte)(value | 0x80));
             value >>= 7;
         }
+
         WriteByte(writer, (byte)value);
     }
 
@@ -467,20 +471,33 @@ public static class SerializationUtils
         return true;
     }
 
+    private const byte TagRawString = 0x01;
+    private const byte TagEmpty = 0x03;
+    private const byte TagNull = 0xFF;
+
     public static void WriteString(ArrayBufferWriter<byte> writer, string? value)
     {
         if (value == null)
         {
-            // sentinel -1 written as fixed 4 bytes for compatibility
-            WriteInt32(writer, -1, constantLength: true);
+            WriteByte(writer, TagNull);
             return;
         }
 
-        var byteCount = Encoding.UTF8.GetByteCount(value);
-        // keep string lengths fixed for compatibility
-        WriteInt32(writer, byteCount, constantLength: true);
-        if (byteCount == 0)
+        if (value == "")
+        {
+            WriteByte(writer, TagEmpty);
             return;
+        }
+
+        if (StringIdPool.TryGetId(value, out var id))
+        {
+            WriteUInt64(writer, id, constantLength: true);
+            return;
+        }
+
+        WriteByte(writer, TagRawString);
+        var byteCount = Encoding.UTF8.GetByteCount(value);
+        WriteCount(writer, byteCount);
 
         var span = writer.GetSpan(byteCount);
         var written = Encoding.UTF8.GetBytes(value, span);
@@ -490,18 +507,37 @@ public static class SerializationUtils
     public static bool TryReadString(ref ReadOnlySpan<byte> reader, out string? value)
     {
         value = null;
-        if (!TryReadInt32(ref reader, out var length, constantLength: true))
-            return false;
+        if (reader.IsEmpty) return false;
+        var lead = reader[0];
+        if ((lead & 0x01) == 0)
+        {
+            if (reader.Length < 8) return false;
+            var id = BinaryPrimitives.ReadUInt64LittleEndian(reader);
+            reader = reader[8..];
+            return StringIdPool.TryGetString(id, out value);
+        }
 
-        if (length < -1 || reader.Length < length)
-            return false;
+        switch (lead)
+        {
+            case TagEmpty:
+                value = "";
+                reader = reader[1..];
+                return true;
+            case TagNull:
+                value = null;
+                reader = reader[1..];
+                return true;
+            case TagRawString:
+                reader = reader[1..];
+                if (!TryReadCount(ref reader, out var length)) return false;
+                if (reader.Length < length) return false;
 
-        if (length == -1)
-            return true;
-
-        value = length == 0 ? string.Empty : Encoding.UTF8.GetString(reader[..length]);
-        reader = reader[length..];
-        return true;
+                value = length == 0 ? "" : Encoding.UTF8.GetString(reader[..length]);
+                reader = reader[length..];
+                return true;
+            default:
+                return false;
+        }
     }
 
     public static void WriteJson<T>(ArrayBufferWriter<byte> writer, T value)
