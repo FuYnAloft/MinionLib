@@ -281,12 +281,13 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 var notNullExpr = EnsureNullForgiven(expr);
                 sb.Append(p).Append("if (").Append(expr).AppendLine(" == null)");
                 sb.Append(p).AppendLine("{");
-                sb.Append(p).AppendLine("    global::MinionLib.Component.Core.SerializationUtils.WriteInt32(writer, -1);");
+                sb.Append(p).AppendLine("    global::MinionLib.Component.Core.SerializationUtils.WriteBoolean(writer, false);");
                 sb.Append(p).AppendLine("}");
                 sb.Append(p).AppendLine("else");
                 sb.Append(p).AppendLine("{");
+                sb.Append(p).AppendLine("    global::MinionLib.Component.Core.SerializationUtils.WriteBoolean(writer, true);");
                 sb.Append(p).Append("    var ").Append(len).Append(" = ").Append(notNullExpr).AppendLine(".Length;");
-                sb.Append(p).Append("    global::MinionLib.Component.Core.SerializationUtils.WriteInt32(writer, ").Append(len).AppendLine(");");
+                sb.Append(p).Append("    global::MinionLib.Component.Core.SerializationUtils.WriteCount(writer, ").Append(len).AppendLine(");");
                 sb.Append(p).Append("    for (var ").Append(i).Append(" = 0; ").Append(i).Append(" < ").Append(len).Append("; ").Append(i)
                     .AppendLine("++)");
                 sb.Append(p).AppendLine("    {");
@@ -302,12 +303,13 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 var notNullExpr = EnsureNullForgiven(expr);
                 sb.Append(p).Append("if (").Append(expr).AppendLine(" == null)");
                 sb.Append(p).AppendLine("{");
-                sb.Append(p).AppendLine("    global::MinionLib.Component.Core.SerializationUtils.WriteInt32(writer, -1);");
+                sb.Append(p).AppendLine("    global::MinionLib.Component.Core.SerializationUtils.WriteBoolean(writer, false);");
                 sb.Append(p).AppendLine("}");
                 sb.Append(p).AppendLine("else");
                 sb.Append(p).AppendLine("{");
+                sb.Append(p).AppendLine("    global::MinionLib.Component.Core.SerializationUtils.WriteBoolean(writer, true);");
                 sb.Append(p).Append("    var ").Append(len).Append(" = ").Append(notNullExpr).AppendLine(".Count;");
-                sb.Append(p).Append("    global::MinionLib.Component.Core.SerializationUtils.WriteInt32(writer, ").Append(len).AppendLine(");");
+                sb.Append(p).Append("    global::MinionLib.Component.Core.SerializationUtils.WriteCount(writer, ").Append(len).AppendLine(");");
                 sb.Append(p).Append("    for (var ").Append(i).Append(" = 0; ").Append(i).Append(" < ").Append(len).Append("; ").Append(i)
                     .AppendLine("++)");
                 sb.Append(p).AppendLine("    {");
@@ -386,12 +388,10 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 var i = "__i_" + id++;
                 var item = "__item_" + id++;
 
-                sb.Append(p).Append("if (!global::MinionLib.Component.Core.SerializationUtils.TryReadInt32(ref reader, out var ")
-                    .Append(len).AppendLine("))");
+                var has = "__has_" + id++;
+                sb.Append(p).Append("if (!global::MinionLib.Component.Core.SerializationUtils.TryReadBoolean(ref reader, out var ").Append(has).AppendLine("))");
                 sb.Append(p).AppendLine("    return false;");
-                sb.Append(p).Append("if (").Append(len).AppendLine(" < -1)");
-                sb.Append(p).AppendLine("    return false;");
-                sb.Append(p).Append("if (").Append(len).AppendLine(" == -1)");
+                sb.Append(p).Append("if (!").Append(has).AppendLine(")");
                 sb.Append(p).AppendLine("{");
                 if (type.CanAssignNullOnDeserialize)
                     sb.Append(p).Append("    ").Append(targetExpr).AppendLine(" = null;");
@@ -400,6 +400,8 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 sb.Append(p).AppendLine("}");
                 sb.Append(p).AppendLine("else");
                 sb.Append(p).AppendLine("{");
+                sb.Append(p).Append("    if (!global::MinionLib.Component.Core.SerializationUtils.TryReadCount(ref reader, out var ").Append(len).AppendLine("))");
+                sb.Append(p).AppendLine("        return false;");
                 sb.Append(p).Append("    var ").Append(arr).Append(" = ").Append(BuildJaggedArrayCreationExpression(type, len)).AppendLine(";");
                 sb.Append(p).Append("    for (var ").Append(i).Append(" = 0; ").Append(i).Append(" < ").Append(len).Append("; ").Append(i)
                     .AppendLine("++)");
@@ -420,12 +422,10 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 var i = "__i_" + id++;
                 var item = "__item_" + id++;
 
-                sb.Append(p).Append("if (!global::MinionLib.Component.Core.SerializationUtils.TryReadInt32(ref reader, out var ")
-                    .Append(len).AppendLine("))");
+                var hasList = "__has_" + id++;
+                sb.Append(p).Append("if (!global::MinionLib.Component.Core.SerializationUtils.TryReadBoolean(ref reader, out var ").Append(hasList).AppendLine("))");
                 sb.Append(p).AppendLine("    return false;");
-                sb.Append(p).Append("if (").Append(len).AppendLine(" < -1)");
-                sb.Append(p).AppendLine("    return false;");
-                sb.Append(p).Append("if (").Append(len).AppendLine(" == -1)");
+                sb.Append(p).Append("if (!").Append(hasList).AppendLine(")");
                 sb.Append(p).AppendLine("{");
                 if (type.CanAssignNullOnDeserialize)
                     sb.Append(p).Append("    ").Append(targetExpr).AppendLine(" = null;");
@@ -434,6 +434,8 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
                 sb.Append(p).AppendLine("}");
                 sb.Append(p).AppendLine("else");
                 sb.Append(p).AppendLine("{");
+                sb.Append(p).Append("    if (!global::MinionLib.Component.Core.SerializationUtils.TryReadCount(ref reader, out var ").Append(len).AppendLine("))");
+                sb.Append(p).AppendLine("        return false;");
                 sb.Append(p).Append("    var ").Append(list).Append(" = new ").Append(type.ListTypeName).Append("(").Append(len).AppendLine(");");
                 sb.Append(p).Append("    for (var ").Append(i).Append(" = 0; ").Append(i).Append(" < ").Append(len).Append("; ").Append(i)
                     .AppendLine("++)");
