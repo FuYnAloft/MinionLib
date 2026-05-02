@@ -347,28 +347,39 @@ public abstract partial class ComponentsCardModel(
 
     protected virtual Color? GlowColorC => null;
 
-    public override CardType Type =>
-        _components?.Select(c => c.CardTypeOverride).FirstOrDefault(t => t.HasValue) ?? base.Type;
+    public sealed override CardType Type =>
+        _components?.Select(c => c.CardTypeOverride).FirstOrDefault(t => t.HasValue) ?? TypeC;
 
-    public override CardRarity Rarity =>
-        _components?.Select(c => c.CardRarityOverride).FirstOrDefault(r => r.HasValue) ?? base.Rarity;
+    protected virtual CardType TypeC => base.Type;
 
-    public override TargetType TargetType =>
+    public sealed override CardRarity Rarity =>
+        _components?.Select(c => c.CardRarityOverride).FirstOrDefault(r => r.HasValue) ?? RarityC;
+
+    protected virtual CardRarity RarityC => base.Rarity;
+
+    public sealed override TargetType TargetType =>
         SingleTargetTypesUnionManager.GetWithBase(
-            _components?.Select(c => c.ExtraTargetType).OfType<TargetType>().Append(base.TargetType) ?? [],
-            base.TargetType);
+            _components?.Select(c => c.ExtraTargetType).OfType<TargetType>().Append(TargetTypeC) ?? [],
+            TargetTypeC);
+
+    protected virtual TargetType TargetTypeC => base.TargetType;
 
     protected sealed override bool IsPlayable =>
         (_components?.All(c => c.IsPlayable) ?? true) && IsPlayableC;
 
     protected virtual bool IsPlayableC => true;
 
-    protected override PileType GetResultPileType()
+    protected sealed override PileType GetResultPileType()
     {
         EnsureComponentsInitialized();
         foreach (var component in _components!)
             if (component.GetResultPileType() is { } t)
                 return t;
+        return GetResultPileTypeC();
+    }
+
+    protected virtual PileType GetResultPileTypeC()
+    {
         return base.GetResultPileType();
     }
 
