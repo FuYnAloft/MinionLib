@@ -100,7 +100,7 @@ public abstract partial class CardComponent : ICardComponent
 
     public virtual Color? GlowColor => null;
 
-    public virtual TargetType? TargetTypeOverride => null;
+    public virtual TargetType? ExtraTargetType => null;
 
     public virtual CardType? CardTypeOverride => null;
 

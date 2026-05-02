@@ -355,7 +355,7 @@ public abstract partial class ComponentsCardModel(
 
     public override TargetType TargetType =>
         SingleTargetTypesUnionManager.GetWithBase(
-            _components?.Select(c => c.TargetTypeOverride).OfType<TargetType>() ?? [],
+            _components?.Select(c => c.ExtraTargetType).OfType<TargetType>().Append(base.TargetType) ?? [],
             base.TargetType);
 
     protected sealed override bool IsPlayable =>
