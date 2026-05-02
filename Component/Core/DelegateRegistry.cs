@@ -6,6 +6,7 @@ public static class DelegateRegistry
     
     public static void Register<T>(string name, T del) where T : Delegate
     {
+        StringIdPool.Register(name);
         Delegates[(name, typeof(T))] = del;
     }
 

@@ -17,7 +17,7 @@ public static class CardComponentRegistry
         if (IdToType.TryGetValue(componentId, out var existing))
             throw new InvalidOperationException(
                 $"Duplicate component id '{componentId}' for {componentType.FullName} and {existing.FullName}");
-
+        StringIdPool.Register(componentId);
         IdToType[componentId] = componentType;
         IdToFactory[componentId] = factory;
     }

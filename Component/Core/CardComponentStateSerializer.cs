@@ -8,7 +8,7 @@ public static class CardComponentStateSerializer
     public static int[] Serialize(IReadOnlyList<ICardComponent> components)
     {
         var writer = new ArrayBufferWriter<byte>();
-        SerializationUtils.WriteInt32(writer, components.Count);
+        SerializationUtils.WriteCount(writer, components.Count);
 
         foreach (var component in components)
         {
@@ -25,7 +25,7 @@ public static class CardComponentStateSerializer
             return [];
 
         var reader = new ReadOnlySpan<byte>(bytes);
-        if (!SerializationUtils.TryReadInt32(ref reader, out var count) || count < 0)
+        if (!SerializationUtils.TryReadCount(ref reader, out var count))
             return [];
 
         var result = new List<ICardComponent>(count);
