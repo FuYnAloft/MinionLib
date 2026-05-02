@@ -1014,22 +1014,6 @@ public abstract partial class CardComponent
         return Task.CompletedTask;
     }
     
-    public virtual void OnUpgradePrefix(ComponentContext componentContext)
-    {
-    }
-    
-    public virtual void OnUpgradePostfix(ComponentContext componentContext)
-    {
-    }
-    
-    public virtual void AfterDowngradedPrefix(ComponentContext componentContext)
-    {
-    }
-    
-    public virtual void AfterDowngradedPostfix(ComponentContext componentContext)
-    {
-    }
-    
     public virtual void AfterTransformedFromPrefix(ComponentContext componentContext)
     {
     }

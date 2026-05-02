@@ -58,4 +58,8 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
     bool CanHandleRightClick(RightClickContext context) => false;
 
     Task OnRightClick(PlayerChoiceContext choiceContext, RightClickContext clickContext) => Task.CompletedTask;
+
+    void OnUpgrade(ComponentContext componentContext) { }
+
+    void AfterDowngraded(ComponentContext componentContext) { }
 }

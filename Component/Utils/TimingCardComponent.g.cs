@@ -2971,54 +2971,6 @@ public abstract partial class TimingCardComponent
         return Task.CompletedTask;
 
     }
-    public override void OnUpgradePrefix(ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.OnUpgrade))
-        {
-            var ctx = new OnTimingContext(
-                Timing.OnUpgrade
-            );
-
-            OnTimingPrefix(ctx);
-        }
-
-    }
-    public override void OnUpgradePostfix(ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.OnUpgrade))
-        {
-            var ctx = new OnTimingContext(
-                Timing.OnUpgrade
-            );
-
-            OnTimingPostfix(ctx);
-        }
-
-    }
-    public override void AfterDowngradedPrefix(ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.AfterDowngraded))
-        {
-            var ctx = new OnTimingContext(
-                Timing.AfterDowngraded
-            );
-
-            OnTimingPrefix(ctx);
-        }
-
-    }
-    public override void AfterDowngradedPostfix(ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.AfterDowngraded))
-        {
-            var ctx = new OnTimingContext(
-                Timing.AfterDowngraded
-            );
-
-            OnTimingPostfix(ctx);
-        }
-
-    }
     public override void AfterTransformedFromPrefix(ComponentContext componentContext)
     {
         if (Timings.Contains(Timing.AfterTransformedFrom))
