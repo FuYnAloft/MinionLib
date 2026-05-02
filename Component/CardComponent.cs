@@ -1,9 +1,7 @@
 using System.Buffers;
 using Godot;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -105,6 +103,8 @@ public abstract partial class CardComponent : ICardComponent
     public virtual CardType? CardTypeOverride => null;
 
     public virtual CardRarity? CardRarityOverride => null;
+
+    public IEnumerable<CardTag> ExtraTags => [];
 
     public virtual bool IsPlayable => true;
 

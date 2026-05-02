@@ -364,6 +364,11 @@ public abstract partial class ComponentsCardModel(
 
     protected virtual TargetType TargetTypeC => base.TargetType;
 
+    public sealed override IEnumerable<CardTag> Tags =>
+        TagsC.Concat(_components?.SelectMany(c => c.ExtraTags) ?? []).Distinct();
+
+    protected virtual IEnumerable<CardTag> TagsC => base.Tags;
+
     protected sealed override bool IsPlayable =>
         (_components?.All(c => c.IsPlayable) ?? true) && IsPlayableC;
 

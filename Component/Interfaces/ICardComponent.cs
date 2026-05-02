@@ -41,6 +41,8 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
 
     CardRarity? CardRarityOverride => null;
 
+    IEnumerable<CardTag> ExtraTags => [];
+
     bool IsPlayable => true;
 
     PileType? GetResultPileType() => null;
