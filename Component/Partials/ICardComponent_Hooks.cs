@@ -1012,22 +1012,6 @@ public partial interface ICardComponent
         return Task.CompletedTask;
     }
     
-    void OnUpgradePrefix(ComponentContext componentContext)
-    {
-    }
-    
-    void OnUpgradePostfix(ComponentContext componentContext)
-    {
-    }
-    
-    void AfterDowngradedPrefix(ComponentContext componentContext)
-    {
-    }
-    
-    void AfterDowngradedPostfix(ComponentContext componentContext)
-    {
-    }
-    
     void AfterTransformedFromPrefix(ComponentContext componentContext)
     {
     }

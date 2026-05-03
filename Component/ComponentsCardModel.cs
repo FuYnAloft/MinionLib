@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Text;
 using BaseLib.Abstracts;
 using BaseLib.Patches.Content;
@@ -22,6 +23,7 @@ using MinionLib.Utilities.BetterExtraArgs;
 
 namespace MinionLib.Component;
 
+#pragma warning disable CS0809
 public abstract partial class ComponentsCardModel(
     int canonicalEnergyCost,
     CardType type,
@@ -75,7 +77,7 @@ public abstract partial class ComponentsCardModel(
             IsUpgrade: isUpgrade
         ));
     }
-    
+
     public ICardComponent? SubtractComponent<T>(T incoming, bool isUpgrade = false)
         where T : class, ICardComponent
     {
@@ -404,7 +406,7 @@ public abstract partial class ComponentsCardModel(
         EnsureComponentsInitialized();
 
         var flag = false;
-        foreach (var component in _components!)
+        foreach (var component in _components!.ToArray())
         {
             if (component.CanHandleRightClick(clickContext))
             {
@@ -422,6 +424,32 @@ public abstract partial class ComponentsCardModel(
     {
         return Task.CompletedTask;
     }
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
+    protected sealed override void OnUpgrade()
+    {
+        EnsureComponentsInitialized();
+        var context = new ComponentContext(ComponentPhase.Core);
+        foreach (var component in _components!.ToArray())
+            component.OnUpgrade(context);
+        OnUpgrade(context);
+    }
+
+    protected virtual void OnUpgrade(ComponentContext componentContext) { }
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
+    protected sealed override void AfterDowngraded()
+    {
+        EnsureComponentsInitialized();
+        var context = new ComponentContext(ComponentPhase.Core);
+        foreach (var component in _components!.ToArray())
+            component.AfterDowngraded(context);
+        AfterDowngraded(context);
+    }
+
+    protected virtual void AfterDowngraded(ComponentContext componentContext) { }
 }
 
 public abstract class CustomComponentsCardModel : ComponentsCardModel, ICustomModel, ILocalizationProvider

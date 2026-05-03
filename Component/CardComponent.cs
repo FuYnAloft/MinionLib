@@ -187,4 +187,8 @@ public abstract partial class CardComponent : ICardComponent
     {
         return Task.CompletedTask;
     }
+
+    public virtual void OnUpgrade(ComponentContext componentContext) { }
+
+    public virtual void AfterDowngraded(ComponentContext componentContext) { }
 }

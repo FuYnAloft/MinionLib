@@ -107,8 +107,6 @@ public enum Timing
     BeforeTurnEndVeryEarly,
     BeforeTurnEndEarly,
     AfterTurnEndLate,
-    OnUpgrade,
-    AfterDowngraded,
     AfterTransformedFrom,
     AfterTransformedTo,
 }
