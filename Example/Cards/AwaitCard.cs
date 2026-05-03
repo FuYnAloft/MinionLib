@@ -7,8 +7,8 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 
 namespace MinionLib.Example.Cards;
 
-[Pool(typeof(ColorlessCardPool))]
-public sealed class AwaitCard() : CustomCardModel(0, CardType.Skill, CardRarity.Common, TargetType.Self)
+[Pool(typeof(TokenCardPool))]
+public sealed class AwaitCard() : CustomCardModel(0, CardType.Skill, CardRarity.Token, TargetType.Self)
 {
     public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
 

@@ -6,7 +6,7 @@ using MinionLib.Component.Core;
 namespace MinionLib.Example.Cards;
 
 public partial class TestComponentsCard()
-    : ComponentsCardModel(0, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+    : ComponentsCardModel(0, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy)
 {
     [ComponentDelegate]
     private static bool MyPredicate(CardModel card)
