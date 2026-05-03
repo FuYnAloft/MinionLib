@@ -11,7 +11,7 @@ using MinionLib.Utilities;
 
 namespace MinionLib.Example.Cards;
 
-[Pool(typeof(ColorlessCardPool))]
+[Pool(typeof(TokenCardPool))]
 public sealed class MinionAdvanceCard()
     : CustomCardModel(0, CardType.Skill, CardRarity.Token, MinionTargetTypes.AnyMinion)
 {

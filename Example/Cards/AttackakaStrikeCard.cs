@@ -11,7 +11,7 @@
 //
 // namespace MinionLib.Example.Cards;
 //
-// [Pool(typeof(ColorlessCardPool))]
+// [Pool(typeof(TokenCardPool))]
 // public sealed class AttackakaStrikeCard()
 //     : CustomMinionBoundCardModel(0, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy)
 // {
@@ -40,4 +40,3 @@
 //     {
 //     }
 // }
-

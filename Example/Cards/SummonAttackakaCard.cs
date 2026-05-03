@@ -12,7 +12,7 @@ using MinionLib.Minion;
 
 namespace MinionLib.Example.Cards;
 
-[Pool(typeof(ColorlessCardPool))]
+[Pool(typeof(TokenCardPool))]
 public sealed class SummonAttackakaCard() : CustomCardModel(0, CardType.Power, CardRarity.Rare, TargetType.Self, false)
 {
     public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";

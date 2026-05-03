@@ -11,7 +11,7 @@ using MinionLib.Targeting;
 
 namespace MinionLib.Example.Cards;
 
-[Pool(typeof(ColorlessCardPool))]
+[Pool(typeof(TokenCardPool))]
 public sealed class PetEmpowerCard()
     : CustomCardModel(0, CardType.Skill, CardRarity.Rare, MinionTargetTypes.AnyMinion, false)
 {

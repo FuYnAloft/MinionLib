@@ -11,9 +11,9 @@ using MinionLib.Example.Components;
 
 namespace MinionLib.Example.Cards;
 
-[Pool(typeof(ColorlessCardPool))]
+[Pool(typeof(TokenCardPool))]
 public sealed class GrantHealComponentCard()
-    : CustomComponentsCardModel(0, CardType.Skill, CardRarity.Common, TargetType.Self)
+    : CustomComponentsCardModel(0, CardType.Skill, CardRarity.Token, TargetType.Self)
 {
     public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
 

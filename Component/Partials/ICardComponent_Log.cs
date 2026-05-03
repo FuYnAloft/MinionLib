@@ -1,17 +1,14 @@
-using System.Buffers;
 using System.Collections;
 using System.Reflection;
 using System.Text;
+using MinionLib.Component.Core;
 
+// ReSharper disable once CheckNamespace
 namespace MinionLib.Component.Interfaces;
 
-public interface IGeneratedBinarySerializable
+public partial interface ICardComponent
 {
-    void Serialize(ArrayBufferWriter<byte> writer);
-
-    bool Deserialize(ref ReadOnlySpan<byte> reader);
-
-    string ToLogString(int depth = 0, string indentChars = "    ")
+    string IGeneratedBinarySerializable.ToLogString(int depth, string indentChars)
     {
         var sb = new StringBuilder();
         var currentIndent = string.Concat(Enumerable.Repeat(indentChars, depth));
@@ -22,6 +19,7 @@ public interface IGeneratedBinarySerializable
         foreach (var prop in properties)
         {
             if (!prop.CanRead || prop.GetIndexParameters().Length > 0) continue;
+            if (!prop.IsDefined(typeof(ComponentStateAttribute), true)) continue;
 
             var value = prop.GetValue(this);
             var propName = prop.Name;

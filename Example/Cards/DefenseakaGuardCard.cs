@@ -11,7 +11,7 @@
 //
 // namespace MinionLib.Example.Cards;
 //
-// [Pool(typeof(ColorlessCardPool))]
+// [Pool(typeof(TokenCardPool))]
 // public sealed class DefenseakaGuardCard()
 //     : CustomMinionBoundCardModel(0, CardType.Skill, CardRarity.Token, TargetType.Self)
 // {
@@ -30,4 +30,3 @@
 //     {
 //         var minion = this.ResolveBoundMinion();
 //         if (minion is not { IsAlive: true }) return;
-
