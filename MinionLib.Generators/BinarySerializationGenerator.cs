@@ -220,6 +220,7 @@ public sealed class BinarySerializationGenerator : IIncrementalGenerator
         if (generateCtor)
         {
             sb.AppendLine();
+            sb.AppendLine("    [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]");
             sb.AppendLine("    [global::System.Obsolete(\"For deserialization only\", false)]");
             sb.Append("    public ").Append(GetInnermostTypeName(type.ContainingTypes)).AppendLine("() { }");
             sb.AppendLine();
