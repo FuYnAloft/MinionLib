@@ -525,22 +525,37 @@ public static class SerializationUtils
         return true;
     }
 
-    private const byte TagRawString = 0x01;
-    private const byte TagEmpty = 0x03;
-    private const byte TagNull = 0xFF;
+    private const byte EmptyStringTag = 0b0000_0001;
+    private const byte ShortRawStringTagMin = 0b0000_0011;
+    private const byte ShortRawStringTagMax = 0b0000_1111;
+    private const byte LongRawStringTag = 0b0001_0001;
+    private const byte NullStringTag = 0b1111_1111;
 
     public static void WriteString(ArrayBufferWriter<byte> writer, string? value)
     {
         if (value == null)
         {
-            WriteByte(writer, TagNull);
+            WriteByte(writer, NullStringTag);
             return;
         }
 
         if (value == "")
         {
-            WriteByte(writer, TagEmpty);
+            WriteByte(writer, EmptyStringTag);
             return;
+        }
+
+        if (value.Length < 8)
+        {
+            var byteCountShort = Encoding.UTF8.GetByteCount(value);
+            if (byteCountShort < 8)
+            {
+                WriteByte(writer, (byte)((byteCountShort << 1) | 0x01));
+                var spanShort = writer.GetSpan(byteCountShort);
+                var writtenShort = Encoding.UTF8.GetBytes(value, spanShort);
+                writer.Advance(writtenShort);
+                return;
+            }
         }
 
         if (StringIdPool.TryGetId(value, out var id))
@@ -549,7 +564,7 @@ public static class SerializationUtils
             return;
         }
 
-        WriteByte(writer, TagRawString);
+        WriteByte(writer, LongRawStringTag);
         var byteCount = Encoding.UTF8.GetByteCount(value);
         WriteCount(writer, byteCount);
 
@@ -573,15 +588,22 @@ public static class SerializationUtils
 
         switch (lead)
         {
-            case TagEmpty:
+            case EmptyStringTag:
                 value = "";
                 reader = reader[1..];
                 return true;
-            case TagNull:
+            case NullStringTag:
                 value = null;
                 reader = reader[1..];
                 return true;
-            case TagRawString:
+            case >= ShortRawStringTagMin and <= ShortRawStringTagMax:
+                reader = reader[1..];
+                var byteCount = lead >> 1;
+                if (reader.Length < byteCount) return false;
+                value = Encoding.UTF8.GetString(reader[..byteCount]);
+                reader = reader[byteCount..];
+                return true;
+            case LongRawStringTag:
                 reader = reader[1..];
                 if (!TryReadCount(ref reader, out var length)) return false;
                 if (reader.Length < length) return false;
