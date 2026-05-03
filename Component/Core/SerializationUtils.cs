@@ -448,26 +448,80 @@ public static class SerializationUtils
         return true;
     }
 
+    private const byte DecimalIsNegativeFlag = 0x01;
+    private const byte DecimalHasScaleFlag = 0x02;
+    private const byte DecimalHasMidFlag = 0x04;
+    private const byte DecimalHasHighFlag = 0x08;
+
     public static void WriteDecimal(ArrayBufferWriter<byte> writer, decimal value)
     {
-        var bits = decimal.GetBits(value);
-        // decimals use 4 fixed 32-bit parts
-        WriteInt32(writer, bits[0], constantLength: true);
-        WriteInt32(writer, bits[1], constantLength: true);
-        WriteInt32(writer, bits[2], constantLength: true);
-        WriteInt32(writer, bits[3], constantLength: true);
+        Span<int> bits = stackalloc int[4];
+        decimal.GetBits(value, bits);
+
+        var b0 = (uint)bits[0]; // Low
+        var b1 = (uint)bits[1]; // Mid
+        var b2 = (uint)bits[2]; // High
+        var b3 = (uint)bits[3]; // Flags (Sign and Scale)
+
+        var isNegative = (b3 & 0x80000000) != 0;
+        var scale = (byte)((b3 >> 16) & 0x7F);
+
+        byte flags = 0;
+        if (isNegative) flags |= DecimalIsNegativeFlag;
+        if (scale > 0) flags |= DecimalHasScaleFlag;
+        if (b1 != 0) flags |= DecimalHasMidFlag;
+        if (b2 != 0) flags |= DecimalHasHighFlag;
+
+        WriteByte(writer, flags);
+
+        if (scale > 0)
+            WriteByte(writer, scale);
+
+        WriteUInt32(writer, b0, constantLength: false);
+
+        if (b1 != 0)
+            WriteUInt32(writer, b1, constantLength: false);
+
+        if (b2 != 0)
+            WriteUInt32(writer, b2, constantLength: false);
     }
 
     public static bool TryReadDecimal(ref ReadOnlySpan<byte> reader, out decimal value)
     {
         value = 0;
-        if (!TryReadInt32(ref reader, out var b0, constantLength: true)
-            || !TryReadInt32(ref reader, out var b1, constantLength: true)
-            || !TryReadInt32(ref reader, out var b2, constantLength: true)
-            || !TryReadInt32(ref reader, out var b3, constantLength: true))
+        if (!TryReadByte(ref reader, out var flags))
             return false;
 
-        value = new decimal([b0, b1, b2, b3]);
+        var isNegative = (flags & DecimalIsNegativeFlag) != 0;
+        var hasScale = (flags & DecimalHasScaleFlag) != 0;
+        var hasMid = (flags & DecimalHasMidFlag) != 0;
+        var hasHigh = (flags & DecimalHasHighFlag) != 0;
+
+        byte scale = 0;
+        if (hasScale)
+        {
+            if (!TryReadByte(ref reader, out scale))
+                return false;
+        }
+
+        if (!TryReadUInt32(ref reader, out var b0, constantLength: false))
+            return false;
+
+        uint b1 = 0;
+        if (hasMid)
+        {
+            if (!TryReadUInt32(ref reader, out b1, constantLength: false))
+                return false;
+        }
+
+        uint b2 = 0;
+        if (hasHigh)
+        {
+            if (!TryReadUInt32(ref reader, out b2, constantLength: false))
+                return false;
+        }
+
+        value = new decimal((int)b0, (int)b1, (int)b2, isNegative, scale);
         return true;
     }
 
