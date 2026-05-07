@@ -11,3 +11,5 @@ riderModule.iml
 docs/images/
 *.cs.uid
 MinionLib.json
+local.props
+MinionLib.sln.DotSettings.user
