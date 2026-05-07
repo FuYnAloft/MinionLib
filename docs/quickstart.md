@@ -22,15 +22,17 @@ public class MyMinion : MinionModel
 	protected override string VisualsPath => "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn"; // 随从的视觉资源路径，tscn 格式，建议参考原版游戏的怪物
     
     // 召唤时执行的代码，通常用来设置血量、应用初始能力等，options 是在召唤随从时传入的参数
-	public override async Task OnSummon(Player owner, Creature self, MinionSummonOptions options) // 注意使用 self 而非 this
+	public override async Task OnSummon(PlayerChoiceContext? choiceContext, Player owner, Creature self, MinionSummonOptions options) // 注意使用 self 而非 this
 	{
 		if (options.MaxHp is decimal maxHp)
 			await CreatureCmd.SetMaxAndCurrentHp(self, maxHp); // 设置血量
 
-		if (options.PrimaryStatAmount is decimal strength && strength > 0m)
-			await PowerCmd.Apply<StrengthPower>(self, strength, owner.Creature, options.Source); // 根据传入的参数设置力量
+		if (choiceContext == null) return;
 
-		await PowerCmd.Apply<PetAttackerPower>(self, 1m, owner.Creature, options.Source); // 获得 “攻击者” 能力
+		if (options.PrimaryStatAmount is decimal strength && strength > 0m)
+			await PowerCmd.Apply<StrengthPower>(choiceContext, [self], strength, owner.Creature, options.Source); // 根据传入的参数设置力量
+
+		await PowerCmd.Apply<PetAttackerPower>(choiceContext, [self], 1m, owner.Creature, options.Source); // 获得 “攻击者” 能力
 	}
 }
 ```
@@ -43,13 +45,12 @@ public class MyMinion : MinionModel
 随从需要通过卡牌等方式召唤，建议使用`MinionCmd.AddMinion`来处理召唤逻辑，以下是一个简单的示例，召唤一个 `MyMinion`：
 
 ```csharp
-public sealed class SummonMyMinionCard : CustomCardModel
+public sealed class SummonMyMinionCard()
+	: ModCardTemplate(0, CardType.Power, CardRarity.Rare, TargetType.Self)
 {
-	public SummonMyMinionCard() : base(0, CardType.Power, CardRarity.Rare, TargetType.Self) { } // 卡牌基础信息
-
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		_ = await MinionCmd.AddMinion<MyMinion>(Owner, new MinionSummonOptions(
+		_ = await MinionCmd.AddMinion<MyMinion>(choiceContext, Owner, new MinionSummonOptions(
 			MaxHp: 8m,                              // 血量
 			PrimaryStatAmount: 2m,                  // 主要参数（具体内容在随从的 OnSummon 里定义），还有次要参数等可以按需传入
 			Source: this,                           // 召唤来源（通常是这张牌）
@@ -80,10 +81,11 @@ public sealed class MyAttackAction : CustomActionModel
     
     // 核心重载，定义 Action 被触发时的行为，类似于卡牌的 OnPlay
     // 和卡牌一样，如果目标无需选定（如所有敌人），target 将会是 null
-	protected override async Task OnAct(PlayerChoiceContext choiceContext, Creature actor, Creature? target)
+	protected override async Task OnAct(PlayerChoiceContext choiceContext, Creature? target)
 	{
 		if (target == null) return;
 
+		var actor = Owner;
 		await MinionAnimCmd.PlayBumpAttackAsync(actor, target);                             // 播放撞击动画（在 MinionAnimCmd 中定义）
 		await CreatureCmd.Damage(choiceContext, target, 4m, ValueProp.Move, actor, null);   // 造成伤害
 	}
@@ -91,8 +93,8 @@ public sealed class MyAttackAction : CustomActionModel
 ```
 
 > [!NOTE]
-> CustomActionModel 继承自 CustomPowerModel，所以它也可以像 Power 一样被应用到随从身上，显示在状态栏里。
-> 因为使用的是 CustomPowerModel，指定图像资源的方式也相同
+> CustomActionModel 继承自 PowerModel，并通过 RitsuLib 自动注册为 Power，所以它也可以像 Power 一样被应用到随从身上，显示在状态栏里。
+> 图像资源通过 CustomIconPath / CustomBigIconPath 指定。
 
 
 ## Part 4: 创建一张强化随从的牌
@@ -104,18 +106,15 @@ MinionLib 实现了一个可以简单使用的自定义目标类型系统，可�
 MinionLib 还提供了许多预定义的目标类型，位于 `MinionLib.Targeting.MinionTargetTypes`中。
 
 ```csharp
-public sealed class EmpowerMinionCard : CustomCardModel
+public sealed class EmpowerMinionCard()
+	: ModCardTemplate(1, CardType.Skill, CardRarity.Uncommon, MinionTargetTypes.AnyMinion)
 {
-	public EmpowerMinionCard() : base(1, CardType.Skill, CardRarity.Uncommon, 
-        MinionTargetTypes.AnyMinion // 使用了 MinionTargetTypes.AnyMinion 这个预定义的目标类型，表示可以选择任何一个（你的）随从作为目标
-        ) { }
-
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		if (cardPlay.Target is not { Monster: MinionModel } target) return;
 
-		await PowerCmd.Apply<StrengthPower>(target, 2m, Owner.Creature, this);
-		await PowerCmd.Apply<DexterityPower>(target, 2m, Owner.Creature, this);
+		await PowerCmd.Apply<StrengthPower>(choiceContext, [target], 2m, Owner.Creature, this);
+		await PowerCmd.Apply<DexterityPower>(choiceContext, [target], 2m, Owner.Creature, this);
 	}
 }
 ```

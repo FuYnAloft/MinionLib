@@ -1,42 +1,13 @@
 using Godot;
-using HarmonyLib;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
 using MinionLib.Component.Interfaces;
+using STS2RitsuLib.Patching.Models;
 using DrawingColor = System.Drawing.Color;
 
 namespace MinionLib.Component.Patches;
 
-[HarmonyPatch(typeof(NHandCardHolder))]
 public static class CardGlowColorPatch
 {
-    [HarmonyPatch(nameof(NHandCardHolder.UpdateCard))]
-    [HarmonyPostfix]
-    private static void UpdateCardPostfix(NHandCardHolder __instance)
-    {
-        if (!TryGetGlowColor(__instance, out var glowColor))
-            return;
-
-        var highlight = __instance.CardNode?.CardHighlight;
-        if (highlight == null)
-            return;
-
-        ApplyGlowColor(highlight, glowColor);
-    }
-
-    [HarmonyPatch(nameof(NHandCardHolder.Flash))]
-    [HarmonyPostfix]
-    private static void FlashPostfix(NHandCardHolder __instance)
-    {
-        if (!TryGetGlowColor(__instance, out var glowColor))
-            return;
-
-        var flash = __instance.GetNodeOrNull<Control>("Flash");
-        if (flash == null)
-            return;
-
-        ApplyGlowColor(flash, glowColor);
-    }
-
     private static bool TryGetGlowColor(NHandCardHolder holder, out Color glowColor)
     {
         glowColor = default;
@@ -57,4 +28,55 @@ public static class CardGlowColorPatch
         canvasItem.Modulate = glowColor;
     }
 
+    public sealed class UpdateCard : IPatchMethod
+    {
+        public static string PatchId => "card_glow_color_update";
+
+        public static bool IsCritical => false;
+
+        public static string Description => "Apply component card glow color when card visuals update.";
+
+        public static ModPatchTarget[] GetTargets()
+        {
+            return [new(typeof(NHandCardHolder), nameof(NHandCardHolder.UpdateCard))];
+        }
+
+        private static void Postfix(NHandCardHolder __instance)
+        {
+            if (!TryGetGlowColor(__instance, out var glowColor))
+                return;
+
+            var highlight = __instance.CardNode?.CardHighlight;
+            if (highlight == null)
+                return;
+
+            ApplyGlowColor(highlight, glowColor);
+        }
+    }
+
+    public sealed class Flash : IPatchMethod
+    {
+        public static string PatchId => "card_glow_color_flash";
+
+        public static bool IsCritical => false;
+
+        public static string Description => "Apply component card glow color to flash visuals.";
+
+        public static ModPatchTarget[] GetTargets()
+        {
+            return [new(typeof(NHandCardHolder), nameof(NHandCardHolder.Flash))];
+        }
+
+        private static void Postfix(NHandCardHolder __instance)
+        {
+            if (!TryGetGlowColor(__instance, out var glowColor))
+                return;
+
+            var flash = __instance.GetNodeOrNull<Control>("Flash");
+            if (flash == null)
+                return;
+
+            ApplyGlowColor(flash, glowColor);
+        }
+    }
 }

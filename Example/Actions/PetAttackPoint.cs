@@ -23,8 +23,6 @@ public sealed class PetAttackPoint : CustomActionModel
 
     public override string CustomBigIconPath => "res://Example/MinionTest/orb.png";
 
-    public override string CustomBigBetaIconPath => "res://Example/MinionTest/orb.png";
-
     protected override async Task OnAct(PlayerChoiceContext choiceContext, Creature? target)
     {
         if (target == null) return;

@@ -1,7 +1,5 @@
 using System.ComponentModel;
 using System.Text;
-using BaseLib.Abstracts;
-using BaseLib.Patches.Content;
 using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -20,6 +18,8 @@ using MinionLib.RightClick;
 using MinionLib.RightClick.Easy;
 using MinionLib.Targeting.Utilities;
 using MinionLib.Utilities.BetterExtraArgs;
+using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 
 namespace MinionLib.Component;
 
@@ -468,20 +468,16 @@ public abstract partial class ComponentsCardModel(
     protected virtual void AfterDowngraded(ComponentContext componentContext) { }
 }
 
-public abstract class CustomComponentsCardModel : ComponentsCardModel, ICustomModel, ILocalizationProvider
+public abstract class CustomComponentsCardModel : ComponentsCardModel, IModCardAssetOverrides, IModCardFrameMaterialOverride
 {
     protected CustomComponentsCardModel(
         int canonicalEnergyCost,
         CardType type,
         CardRarity rarity,
         TargetType targetType,
-        bool shouldShowInCardLibrary = true,
-        bool autoAdd = true)
+        bool shouldShowInCardLibrary = true)
         : base(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
     {
-        if (!autoAdd)
-            return;
-        CustomContentDictionary.AddModel(this.GetType());
     }
 
     public virtual Texture2D? CustomFrame => null;
@@ -490,5 +486,26 @@ public abstract class CustomComponentsCardModel : ComponentsCardModel, ICustomMo
 
     public virtual Texture2D? CustomPortrait => null;
 
-    public virtual List<(string, string)>? Localization => null;
+    public CardAssetProfile AssetProfile => new(
+        PortraitPath: CustomPortraitPath,
+        FramePath: null,
+        FrameMaterial: null);
+
+    public virtual string? CustomBetaPortraitPath => null;
+
+    public virtual string? CustomFramePath => null;
+
+    public virtual string? CustomPortraitBorderPath => null;
+
+    public virtual string? CustomEnergyIconPath => null;
+
+    public virtual string? CustomFrameMaterialPath => null;
+
+    public virtual string? CustomOverlayScenePath => null;
+
+    public virtual string? CustomBannerTexturePath => null;
+
+    public virtual string? CustomBannerMaterialPath => null;
+
+    public virtual Material? CustomFrameMaterial => null;
 }

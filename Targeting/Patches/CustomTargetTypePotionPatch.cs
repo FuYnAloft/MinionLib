@@ -14,12 +14,12 @@ using MegaCrit.Sts2.Core.Nodes.Multiplayer;
 using MegaCrit.Sts2.Core.Nodes.Potions;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Runs;
+using STS2RitsuLib.Patching.Models;
 
 namespace MinionLib.Targeting.Patches;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
-[HarmonyPatch]
 public static class CustomTargetTypePotionPatch
 {
     private const string Module = "Targeting";
@@ -33,8 +33,59 @@ public static class CustomTargetTypePotionPatch
     private static readonly AccessTools.FieldRef<NPotionPopup, NPotionPopupButton> UseButtonRef =
         AccessTools.FieldRefAccess<NPotionPopup, NPotionPopupButton>("_useButton");
 
-    [HarmonyPatch(typeof(NPotionHolder), nameof(NPotionHolder.UsePotion))]
-    [HarmonyPrefix]
+    public sealed class UsePotion : IPatchMethod
+    {
+        public static string PatchId => "custom_potion_target_use";
+
+        public static string Description => "Route MinionLib custom-target potion use.";
+
+        public static ModPatchTarget[] GetTargets()
+        {
+            return [new(typeof(NPotionHolder), nameof(NPotionHolder.UsePotion))];
+        }
+
+        private static bool Prefix(NPotionHolder __instance, ref Task __result)
+        {
+            return UsePotionPrefix(__instance, ref __result);
+        }
+    }
+
+    public sealed class TargetNode : IPatchMethod
+    {
+        public static string PatchId => "custom_potion_target_node";
+
+        public static string Description => "Run MinionLib custom target filtering for potion target nodes.";
+
+        public static ModPatchTarget[] GetTargets()
+        {
+            return [new(typeof(NPotionHolder), "TargetNode")];
+        }
+
+        private static bool Prefix(NPotionHolder __instance, TargetType targetType, ref Task __result)
+        {
+            return TargetNodePrefix(__instance, targetType, ref __result);
+        }
+    }
+
+    public sealed class PopupReady : IPatchMethod
+    {
+        public static string PatchId => "custom_potion_target_popup";
+
+        public static bool IsCritical => false;
+
+        public static string Description => "Update potion popup button text for MinionLib custom target types.";
+
+        public static ModPatchTarget[] GetTargets()
+        {
+            return [new(typeof(NPotionPopup), "_Ready")];
+        }
+
+        private static void Postfix(NPotionPopup __instance)
+        {
+            PopupReadyPostfix(__instance);
+        }
+    }
+
     private static bool UsePotionPrefix(NPotionHolder __instance, ref Task __result)
     {
         var potion = __instance.Potion?.Model;
@@ -54,8 +105,6 @@ public static class CustomTargetTypePotionPatch
         return false;
     }
 
-    [HarmonyPatch(typeof(NPotionHolder), "TargetNode")]
-    [HarmonyPrefix]
     private static bool TargetNodePrefix(NPotionHolder __instance, TargetType targetType, ref Task __result)
     {
         var potion = __instance.Potion?.Model;
@@ -66,8 +115,6 @@ public static class CustomTargetTypePotionPatch
         return false;
     }
 
-    [HarmonyPatch(typeof(NPotionPopup), "_Ready")]
-    [HarmonyPostfix]
     private static void PopupReadyPostfix(NPotionPopup __instance)
     {
         var potion = AccessTools.Property(typeof(NPotionPopup), "Potion")?.GetValue(__instance) as PotionModel;

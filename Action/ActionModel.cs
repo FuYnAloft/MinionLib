@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -8,6 +7,9 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MinionLib.Targeting;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 
 namespace MinionLib.Action;
 
@@ -33,13 +35,13 @@ public abstract class ActionModel : PowerModel
         base.Flash();
     }
 
-    public virtual bool CanAct(CombatState combatState)
+    public virtual bool CanAct(ICombatState combatState)
     {
         var actor = Owner;
         return Amount > 0m && actor.IsAlive && actor.CombatState == combatState;
     }
 
-    public bool IsValidTarget(CombatState combatState, Creature? target)
+    public bool IsValidTarget(ICombatState combatState, Creature? target)
     {
         if (target is not { IsAlive: true }) return false;
 
@@ -49,7 +51,7 @@ public abstract class ActionModel : PowerModel
         return false;
     }
 
-    public IReadOnlyList<Creature> GetValidTargets(CombatState combatState)
+    public IReadOnlyList<Creature> GetValidTargets(ICombatState combatState)
     {
         return combatState.Creatures
             .Where(target => IsValidTarget(combatState, target))
@@ -101,11 +103,19 @@ public abstract class ActionModel : PowerModel
     protected abstract Task OnAct(PlayerChoiceContext choiceContext, Creature? target);
 }
 
-public abstract class CustomActionModel : ActionModel, ICustomPower
+[RegisterPower(Inherit = true)]
+public abstract class CustomActionModel : ActionModel, IModPowerAssetOverrides
 {
     public virtual string? CustomPackedIconPath => null;
 
+    public virtual string? CustomIconPath => CustomPackedIconPath;
+
     public virtual string? CustomBigIconPath => null;
 
+    [Obsolete("Use CustomBigIconPath instead.")]
     public virtual string? CustomBigBetaIconPath => null;
+
+#pragma warning disable CS0618
+    public PowerAssetProfile AssetProfile => new(CustomIconPath, CustomBigIconPath ?? CustomBigBetaIconPath);
+#pragma warning restore CS0618
 }

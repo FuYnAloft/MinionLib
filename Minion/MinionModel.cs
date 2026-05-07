@@ -1,11 +1,15 @@
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
 
 namespace MinionLib.Minion;
 
-public abstract class MinionModel : MonsterModel
+[RegisterMonster(Inherit = true)]
+public abstract class MinionModel : ModMonsterTemplate
 {
     public override string DeathSfx => "event:/sfx/characters/osty/osty_die";
 
@@ -26,6 +30,12 @@ public abstract class MinionModel : MonsterModel
     public virtual Task OnSummon(Player owner, Creature self, MinionSummonOptions options)
     {
         return Task.CompletedTask;
+    }
+
+    public virtual Task OnSummon(PlayerChoiceContext? choiceContext, Player owner, Creature self,
+        MinionSummonOptions options)
+    {
+        return OnSummon(owner, self, options);
     }
 }
 

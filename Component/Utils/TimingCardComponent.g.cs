@@ -367,34 +367,6 @@ public abstract partial class TimingCardComponent
         return Task.CompletedTask;
 
     }
-    public override Task AfterAttackPrefix(AttackCommand command, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.AfterAttack))
-        {
-            var ctx = new OnTimingContext(
-                Timing.AfterAttack,
-                Command: command
-            );
-
-            return OnTimingPrefix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
-    public override Task AfterAttackPostfix(AttackCommand command, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.AfterAttack))
-        {
-            var ctx = new OnTimingContext(
-                Timing.AfterAttack,
-                Command: command
-            );
-
-            return OnTimingPostfix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
     public override Task AfterBlockClearedPrefix(Creature creature, ComponentContext componentContext)
     {
         if (Timings.Contains(Timing.AfterBlockCleared))
@@ -698,36 +670,6 @@ public abstract partial class TimingCardComponent
             var ctx = new OnTimingContext(
                 Timing.AfterCardEnteredCombat,
                 Card: card
-            );
-
-            return OnTimingPostfix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
-    public override Task AfterCardGeneratedForCombatPrefix(CardModel card, bool addedByPlayer, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.AfterCardGeneratedForCombat))
-        {
-            var ctx = new OnTimingContext(
-                Timing.AfterCardGeneratedForCombat,
-                Card: card,
-                AddedByPlayer: addedByPlayer
-            );
-
-            return OnTimingPrefix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
-    public override Task AfterCardGeneratedForCombatPostfix(CardModel card, bool addedByPlayer, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.AfterCardGeneratedForCombat))
-        {
-            var ctx = new OnTimingContext(
-                Timing.AfterCardGeneratedForCombat,
-                Card: card,
-                AddedByPlayer: addedByPlayer
             );
 
             return OnTimingPostfix(ctx);
@@ -1460,70 +1402,6 @@ public abstract partial class TimingCardComponent
             var ctx = new OnTimingContext(
                 Timing.AfterGoldGained,
                 Player: player
-            );
-
-            return OnTimingPostfix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
-    public override Task BeforeHandDrawPrefix(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.BeforeHandDraw))
-        {
-            var ctx = new OnTimingContext(
-                Timing.BeforeHandDraw,
-                Player: player,
-                ChoiceContext: choiceContext,
-                CombatState: combatState
-            );
-
-            return OnTimingPrefix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
-    public override Task BeforeHandDrawPostfix(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.BeforeHandDraw))
-        {
-            var ctx = new OnTimingContext(
-                Timing.BeforeHandDraw,
-                Player: player,
-                ChoiceContext: choiceContext,
-                CombatState: combatState
-            );
-
-            return OnTimingPostfix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
-    public override Task BeforeHandDrawLatePrefix(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.BeforeHandDrawLate))
-        {
-            var ctx = new OnTimingContext(
-                Timing.BeforeHandDrawLate,
-                Player: player,
-                ChoiceContext: choiceContext,
-                CombatState: combatState
-            );
-
-            return OnTimingPrefix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
-    public override Task BeforeHandDrawLatePostfix(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.BeforeHandDrawLate))
-        {
-            var ctx = new OnTimingContext(
-                Timing.BeforeHandDrawLate,
-                Player: player,
-                ChoiceContext: choiceContext,
-                CombatState: combatState
             );
 
             return OnTimingPostfix(ctx);
@@ -2283,40 +2161,6 @@ public abstract partial class TimingCardComponent
         return Task.CompletedTask;
 
     }
-    public override Task AfterPowerAmountChangedPrefix(PowerModel power, decimal amount, Creature? applier, CardModel? cardSource, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.AfterPowerAmountChanged))
-        {
-            var ctx = new OnTimingContext(
-                Timing.AfterPowerAmountChanged,
-                Power: power,
-                Amount: amount,
-                Applier: applier,
-                CardSource: cardSource
-            );
-
-            return OnTimingPrefix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
-    public override Task AfterPowerAmountChangedPostfix(PowerModel power, decimal amount, Creature? applier, CardModel? cardSource, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.AfterPowerAmountChanged))
-        {
-            var ctx = new OnTimingContext(
-                Timing.AfterPowerAmountChanged,
-                Power: power,
-                Amount: amount,
-                Applier: applier,
-                CardSource: cardSource
-            );
-
-            return OnTimingPostfix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
     public override Task AfterPreventingBlockClearPrefix(AbstractModel preventer, Creature creature, ComponentContext componentContext)
     {
         if (Timings.Contains(Timing.AfterPreventingBlockClear))
@@ -2729,68 +2573,6 @@ public abstract partial class TimingCardComponent
         return Task.CompletedTask;
 
     }
-    public override Task BeforeSideTurnStartPrefix(PlayerChoiceContext choiceContext, CombatSide side, CombatState combatState, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.BeforeSideTurnStart))
-        {
-            var ctx = new OnTimingContext(
-                Timing.BeforeSideTurnStart,
-                ChoiceContext: choiceContext,
-                Side: side,
-                CombatState: combatState
-            );
-
-            return OnTimingPrefix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
-    public override Task BeforeSideTurnStartPostfix(PlayerChoiceContext choiceContext, CombatSide side, CombatState combatState, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.BeforeSideTurnStart))
-        {
-            var ctx = new OnTimingContext(
-                Timing.BeforeSideTurnStart,
-                ChoiceContext: choiceContext,
-                Side: side,
-                CombatState: combatState
-            );
-
-            return OnTimingPostfix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
-    public override Task AfterSideTurnStartPrefix(CombatSide side, CombatState combatState, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.AfterSideTurnStart))
-        {
-            var ctx = new OnTimingContext(
-                Timing.AfterSideTurnStart,
-                Side: side,
-                CombatState: combatState
-            );
-
-            return OnTimingPrefix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
-    public override Task AfterSideTurnStartPostfix(CombatSide side, CombatState combatState, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.AfterSideTurnStart))
-        {
-            var ctx = new OnTimingContext(
-                Timing.AfterSideTurnStart,
-                Side: side,
-                CombatState: combatState
-            );
-
-            return OnTimingPostfix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
     public override Task AfterPlayerTurnStartEarlyPrefix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
         if (Timings.Contains(Timing.AfterPlayerTurnStartEarly))
@@ -2842,36 +2624,6 @@ public abstract partial class TimingCardComponent
         {
             var ctx = new OnTimingContext(
                 Timing.AfterPlayerTurnStartLate,
-                ChoiceContext: choiceContext,
-                Player: player
-            );
-
-            return OnTimingPostfix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
-    public override Task BeforePlayPhaseStartPrefix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.BeforePlayPhaseStart))
-        {
-            var ctx = new OnTimingContext(
-                Timing.BeforePlayPhaseStart,
-                ChoiceContext: choiceContext,
-                Player: player
-            );
-
-            return OnTimingPrefix(ctx);
-        }
-        return Task.CompletedTask;
-
-    }
-    public override Task BeforePlayPhaseStartPostfix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
-    {
-        if (Timings.Contains(Timing.BeforePlayPhaseStart))
-        {
-            var ctx = new OnTimingContext(
-                Timing.BeforePlayPhaseStart,
                 ChoiceContext: choiceContext,
                 Player: player
             );

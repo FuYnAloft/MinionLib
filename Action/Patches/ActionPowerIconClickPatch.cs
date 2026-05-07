@@ -1,17 +1,26 @@
 using Godot;
-using HarmonyLib;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
+using STS2RitsuLib.Patching.Models;
 
 namespace MinionLib.Action.Patches;
 
-[HarmonyPatch(typeof(NPower), nameof(NPower._Ready))]
-public static class ActionPowerIconClickPatch
+public sealed class ActionPowerIconClickPatch : IPatchMethod
 {
     private const string Module = "MinionAction";
 
-    [HarmonyPostfix]
+    public static string PatchId => "action_power_icon_click";
+
+    public static bool IsCritical => false;
+
+    public static string Description => "Connect power icon input for MinionLib action powers.";
+
+    public static ModPatchTarget[] GetTargets()
+    {
+        return [new(typeof(NPower), nameof(NPower._Ready))];
+    }
+
     private static void Postfix(NPower __instance)
     {
         __instance.Connect(Control.SignalName.GuiInput,

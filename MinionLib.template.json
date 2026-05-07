@@ -7,7 +7,7 @@
   "has_pck": true,
   "has_dll": true,
   "dependencies": [
-    "BaseLib"
+    "STS2-RitsuLib"
   ],
   "affects_gameplay": true
 }

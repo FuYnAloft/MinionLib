@@ -1,5 +1,6 @@
 {
   "action.title": "Action",
-  "action.description": "Click this creature to perform a specific action."
+  "action.description": "Click this creature to perform a specific action.",
+  "summon_dynamic.title": "Summon",
+  "summon_dynamic.description": "Create a minion with the shown health."
 }
-

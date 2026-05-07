@@ -1,5 +1,4 @@
 using Godot;
-using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.ControllerInput;
@@ -9,17 +8,25 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Runs;
 using MinionLib.Targeting;
+using STS2RitsuLib.Patching.Models;
 
 namespace MinionLib.Action.Patches;
 
-[HarmonyPatch(typeof(NCreature), nameof(NCreature._Ready))]
-public static class ActionClickPatch
+public sealed class ActionClickPatch : IPatchMethod
 {
     private const string Module = "MinionAction";
 
     private static readonly HashSet<uint> TargetingActors = [];
 
-    [HarmonyPostfix]
+    public static string PatchId => "action_click";
+
+    public static string Description => "Connect creature input for MinionLib action powers.";
+
+    public static ModPatchTarget[] GetTargets()
+    {
+        return [new(typeof(NCreature), nameof(NCreature._Ready))];
+    }
+
     private static void Postfix(NCreature __instance)
     {
         __instance.Hitbox.Connect(Control.SignalName.GuiInput,

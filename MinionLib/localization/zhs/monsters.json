@@ -1,4 +1,4 @@
-﻿{
-  "ATTACKAKA_MINION.name": "Attackaka",
-  "DEFENSEAKA_MINION.name": "Defenseaka"
+{
+  "MINION_LIB_MONSTER_ATTACKAKA_MINION.name": "Attackaka",
+  "MINION_LIB_MONSTER_DEFENSEAKA_MINION.name": "Defenseaka"
 }

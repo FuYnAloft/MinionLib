@@ -1,18 +1,34 @@
-using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.ValueProps;
+using STS2RitsuLib.Patching.Models;
 
 namespace MinionLib.Powers.Patches;
 
-[HarmonyPatch(typeof(CreatureCmd), nameof(CreatureCmd.GainBlock), typeof(Creature), typeof(decimal), typeof(ValueProp),
-    typeof(CardPlay), typeof(bool))]
-public static class MinionGuardianBlockToHpPatch
+public sealed class MinionGuardianBlockToHpPatch : IPatchMethod
 {
-    [HarmonyPrefix]
+    public static string PatchId => "minion_guardian_block_to_hp";
+
+    public static string Description => "Convert guardian minion block gain into max HP and healing.";
+
+    public static ModPatchTarget[] GetTargets()
+    {
+        return
+        [
+            new(typeof(CreatureCmd), nameof(CreatureCmd.GainBlock),
+            [
+                typeof(Creature),
+                typeof(decimal),
+                typeof(ValueProp),
+                typeof(CardPlay),
+                typeof(bool)
+            ])
+        ];
+    }
+
     private static bool Prefix(Creature creature, decimal amount, ValueProp props, CardPlay? cardPlay, bool fast,
         ref Task<decimal> __result)
     {

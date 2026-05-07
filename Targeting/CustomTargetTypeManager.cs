@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using BaseLib.Patches.Content;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MinionLib.Targeting.Utilities;
+using STS2RitsuLib.Utils;
 
 namespace MinionLib.Targeting;
 
@@ -14,10 +14,11 @@ public static class CustomTargetTypeManager
     private static readonly Dictionary<TargetType, ICustomTargetType>
         CustomTypeDefinitions = new(BuiltInTargetType.All);
 
+    private static readonly DynamicEnumValueMinter<TargetType> TargetTypeMinter = new();
 
     public static TargetType Register(ICustomTargetType customTargetType, string @namespace, string name)
     {
-        var targetType = CustomEnums.GenerateKey<TargetType>(@namespace, name);
+        var targetType = TargetTypeMinter.Mint($"{@namespace}.{name}");
         RegisteredCustomTypes.Add(targetType);
         CustomTypeDefinitions.Add(targetType, customTargetType);
         return targetType;

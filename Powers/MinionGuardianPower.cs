@@ -1,23 +1,23 @@
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Minion;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
 
 namespace MinionLib.Powers;
 
-public sealed class MinionGuardianPower : CustomPowerModel
+[RegisterPower]
+public sealed class MinionGuardianPower : ModPowerTemplate
 {
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Single;
 
-    public override string CustomPackedIconPath => "res://images/powers/minion_guardian_power_packed.png";
+    public override string? CustomIconPath => "res://images/powers/minion_guardian_power_packed.png";
 
-    public override string CustomBigIconPath => "res://images/powers/minion_guardian_power.png";
-
-    public override string CustomBigBetaIconPath => "res://images/powers/minion_guardian_power.png";
+    public override string? CustomBigIconPath => "res://images/powers/minion_guardian_power.png";
 
     public override Creature ModifyUnblockedDamageTarget(Creature target, decimal amount, ValueProp props,
         Creature? dealer)

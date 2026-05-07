@@ -142,16 +142,6 @@ public partial interface ICardComponent
         return Task.CompletedTask;
     }
     
-    Task AfterAttackPrefix(AttackCommand command, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
-    Task AfterAttackPostfix(AttackCommand command, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
     Task AfterBlockClearedPrefix(Creature creature, ComponentContext componentContext)
     {
         return Task.CompletedTask;
@@ -248,16 +238,6 @@ public partial interface ICardComponent
     }
     
     Task AfterCardEnteredCombatPostfix(CardModel card, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
-    Task AfterCardGeneratedForCombatPrefix(CardModel card, bool addedByPlayer, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
-    Task AfterCardGeneratedForCombatPostfix(CardModel card, bool addedByPlayer, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
@@ -498,26 +478,6 @@ public partial interface ICardComponent
     }
     
     Task AfterGoldGainedPostfix(Player player, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
-    Task BeforeHandDrawPrefix(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
-    Task BeforeHandDrawPostfix(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
-    Task BeforeHandDrawLatePrefix(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
-    Task BeforeHandDrawLatePostfix(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
@@ -782,16 +742,6 @@ public partial interface ICardComponent
         return Task.CompletedTask;
     }
     
-    Task AfterPowerAmountChangedPrefix(PowerModel power, decimal amount, Creature? applier, CardModel? cardSource, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
-    Task AfterPowerAmountChangedPostfix(PowerModel power, decimal amount, Creature? applier, CardModel? cardSource, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
     Task AfterPreventingBlockClearPrefix(AbstractModel preventer, Creature creature, ComponentContext componentContext)
     {
         return Task.CompletedTask;
@@ -932,26 +882,6 @@ public partial interface ICardComponent
         return Task.CompletedTask;
     }
     
-    Task BeforeSideTurnStartPrefix(PlayerChoiceContext choiceContext, CombatSide side, CombatState combatState, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
-    Task BeforeSideTurnStartPostfix(PlayerChoiceContext choiceContext, CombatSide side, CombatState combatState, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
-    Task AfterSideTurnStartPrefix(CombatSide side, CombatState combatState, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
-    Task AfterSideTurnStartPostfix(CombatSide side, CombatState combatState, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
     Task AfterPlayerTurnStartEarlyPrefix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
         return Task.CompletedTask;
@@ -968,16 +898,6 @@ public partial interface ICardComponent
     }
     
     Task AfterPlayerTurnStartLatePostfix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
-    Task BeforePlayPhaseStartPrefix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
-    Task BeforePlayPhaseStartPostfix(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }

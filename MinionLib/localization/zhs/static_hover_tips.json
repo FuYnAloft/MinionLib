@@ -1,5 +1,6 @@
 {
   "action.title": "行动",
-  "action.description": "点击此实体以进行特定动作。"
+  "action.description": "点击此实体以进行特定动作。",
+  "summon_dynamic.title": "召唤",
+  "summon_dynamic.description": "创造一个具有显示生命值的随从。"
 }
-

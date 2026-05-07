@@ -1,4 +1,3 @@
-using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -6,17 +5,35 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Commands;
 using MinionLib.Minion;
+using STS2RitsuLib.Patching.Models;
 
 namespace MinionLib.Powers.Patches;
 
-[HarmonyPatch(typeof(CreatureCmd), nameof(CreatureCmd.Damage), typeof(PlayerChoiceContext),
-    typeof(IEnumerable<Creature>), typeof(decimal), typeof(ValueProp), typeof(Creature), typeof(CardModel))]
-public static class MinionGuardianOverkillPatch
+public sealed class MinionGuardianOverkillPatch : IPatchMethod
 {
     private static readonly AsyncLocal<bool> IsHandling = new();
     public static readonly AsyncLocal<Creature?> SuppressedOwner = new();
 
-    [HarmonyPrefix]
+    public static string PatchId => "minion_guardian_overkill";
+
+    public static string Description => "Redistribute guardian overkill through front guardians before owner damage.";
+
+    public static ModPatchTarget[] GetTargets()
+    {
+        return
+        [
+            new(typeof(CreatureCmd), nameof(CreatureCmd.Damage),
+            [
+                typeof(PlayerChoiceContext),
+                typeof(IEnumerable<Creature>),
+                typeof(decimal),
+                typeof(ValueProp),
+                typeof(Creature),
+                typeof(CardModel)
+            ])
+        ];
+    }
+
     private static bool Prefix(PlayerChoiceContext choiceContext, IEnumerable<Creature> targets, decimal amount,
         ValueProp props,
         Creature? dealer, CardModel? cardSource, ref Task<IEnumerable<DamageResult>> __result)

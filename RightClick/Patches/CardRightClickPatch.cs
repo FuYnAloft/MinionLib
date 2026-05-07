@@ -1,17 +1,26 @@
 using Godot;
-using HarmonyLib;
 using MegaCrit.Sts2.Core.ControllerInput;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
 using MegaCrit.Sts2.Core.Nodes.Combat;
+using STS2RitsuLib.Patching.Models;
 
 namespace MinionLib.RightClick.Patches;
 
-[HarmonyPatch(typeof(NPlayerHand), "AddCardHolder")]
-public static class CardRightClickPatch
+public sealed class CardRightClickPatch : IPatchMethod
 {
     private const string Module = "CardRightClickPatch";
 
-    [HarmonyPostfix]
+    public static string PatchId => "card_right_click";
+
+    public static bool IsCritical => false;
+
+    public static string Description => "Connect right-click handlers to hand card holders.";
+
+    public static ModPatchTarget[] GetTargets()
+    {
+        return [new(typeof(NPlayerHand), "AddCardHolder")];
+    }
+
     private static void Postfix(NHandCardHolder holder)
     {
         // Controller actions are routed to the focused holder control.

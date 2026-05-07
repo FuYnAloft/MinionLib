@@ -1,4 +1,4 @@
-// using BaseLib.Utils;
+// using STS2RitsuLib.Interop.AutoRegistration;
 // using MegaCrit.Sts2.Core.Commands;
 // using MegaCrit.Sts2.Core.Entities.Cards;
 // using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -11,7 +11,7 @@
 //
 // namespace MinionLib.Example.Cards;
 //
-// [Pool(typeof(TokenCardPool))]
+// [RegisterCard(typeof(TokenCardPool))]
 // public sealed class DefenseakaGuardCard()
 //     : CustomMinionBoundCardModel(0, CardType.Skill, CardRarity.Token, TargetType.Self)
 // {

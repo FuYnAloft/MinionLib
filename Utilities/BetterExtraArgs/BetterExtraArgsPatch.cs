@@ -8,10 +8,9 @@ using MegaCrit.Sts2.Core.Models;
 
 namespace MinionLib.Utilities.BetterExtraArgs;
 
-[HarmonyPatch]
 public static class BetterExtraArgsPatch
 {
-    static MethodBase TargetMethod()
+    public static MethodBase TargetMethod()
     {
         var previewEnumType = AccessTools.Inner(typeof(CardModel), "DescriptionPreviewType");
 
@@ -22,7 +21,7 @@ public static class BetterExtraArgsPatch
         ]);
     }
 
-    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+    public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
         var codes = instructions.ToList();
         var targetMethod = AccessTools.Method(typeof(CardModel), "AddExtraArgsToDescription");

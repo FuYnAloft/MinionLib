@@ -1,30 +1,29 @@
-using BaseLib.Abstracts;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MinionLib.Example.Actions;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
 
 namespace MinionLib.Example.Powers;
 
-public sealed class PetDefenderPower : CustomPowerModel
+[RegisterPower]
+public sealed class PetDefenderPower : ModPowerTemplate
 {
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    public override string CustomPackedIconPath => "res://Example/MinionTest/orb.png";
+    public override string? CustomIconPath => "res://Example/MinionTest/orb.png";
 
-    public override string CustomBigIconPath => "res://Example/MinionTest/orb.png";
+    public override string? CustomBigIconPath => "res://Example/MinionTest/orb.png";
 
-    public override string CustomBigBetaIconPath => "res://Example/MinionTest/orb.png";
-
-    public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
-        CombatState combatState)
+    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
-        if (side != Owner.Side || !Owner.IsAlive) return;
+        if (!Owner.IsAlive || (Owner.PetOwner != player && Owner.Player != player)) return;
 
         var applier = Owner.PetOwner?.Creature ?? Owner;
-        await PowerCmd.Apply<PetDefensePoint>(Owner, Amount, applier, null);
+        await PowerCmd.Apply<PetDefensePoint>(choiceContext, [Owner], Amount, applier, null);
     }
 }

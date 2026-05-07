@@ -1,5 +1,3 @@
-﻿using BaseLib.Abstracts;
-using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -10,11 +8,14 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.PotionPools;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MinionLib.Targeting;
+using MinionLib.Utilities;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
 
 namespace MinionLib.Example.Potions;
 
-[Pool(typeof(SharedPotionPool))]
-public sealed class MinionStrengthPotion : CustomPotionModel
+[RegisterPotion(typeof(SharedPotionPool))]
+public sealed class MinionStrengthPotion : ModPotionTemplate
 {
     public override PotionRarity Rarity => PotionRarity.Common;
 
@@ -22,20 +23,21 @@ public sealed class MinionStrengthPotion : CustomPotionModel
 
     public override TargetType TargetType => MinionTargetTypes.AnyMinion;
 
-    public override string CustomPackedImagePath => "res://Example/MinionTest/minionlib-minion_strength_potion.tres";
+    public override string CustomImagePath => "res://Example/MinionTest/minionlib-minion_strength_potion.tres";
 
-    public override string CustomPackedOutlinePath =>
+    public override string CustomOutlinePath =>
         "res://Example/MinionTest/minionlib-minion_strength_potion_outline.tres";
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new PowerVar<StrengthPower>(2m)];
 
-    public override IEnumerable<IHoverTip> ExtraHoverTips =>
-        [HoverTipFactory.FromPower<StrengthPower>()];
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        [HoverTipHelper.FromPower<StrengthPower>()];
 
     protected override async Task OnUse(PlayerChoiceContext choiceContext, Creature? target)
     {
         AssertValidForTargetedPotion(target);
-        await PowerCmd.Apply<StrengthPower>(target, DynamicVars.Strength.BaseValue, Owner.Creature, null);
+        await PowerCmd.Apply<StrengthPower>(choiceContext, [target], DynamicVars.Strength.BaseValue, Owner.Creature,
+            null);
     }
 }

@@ -1,60 +1,71 @@
-﻿using MegaCrit.Sts2.Core.Combat;
-using MegaCrit.Sts2.Core.Rooms;
+using MegaCrit.Sts2.Core.Combat;
 using MinionLib.Action;
 using MinionLib.Commands;
+using STS2RitsuLib;
 
 namespace MinionLib.Initialization;
 
 /// <summary>
 ///     在玩家回合开始和结束时自动重排随从位置。
-///     通过订阅 CombatManager 的全局事件实现。
+///     通过 RitsuLib lifecycle 事件实现。
 /// </summary>
 public static class MinionHookInitializer
 {
+    private static bool _initialized;
+    private static IDisposable? _combatStartingSubscription;
+    private static IDisposable? _combatEndedSubscription;
+    private static IDisposable? _sideTurnStartedSubscription;
+
     public static void Initialize()
     {
-        CombatManager.Instance.TurnStarted += OnTurnStarted;
-        CombatManager.Instance.TurnEnded += OnTurnEnded;
-        CombatManager.Instance.CombatSetUp += OnCombatSetUp;
-        CombatManager.Instance.CombatEnded += OnCombatEnded;
+        if (_initialized) return;
+
+        _combatStartingSubscription =
+            RitsuLibFramework.SubscribeLifecycle<CombatStartingEvent>(OnCombatStarting, replayCurrentState: false);
+        _combatEndedSubscription =
+            RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(OnCombatEnded, replayCurrentState: false);
+        _sideTurnStartedSubscription =
+            RitsuLibFramework.SubscribeLifecycle<SideTurnStartedEvent>(OnSideTurnStarted, replayCurrentState: false);
+
+        _initialized = true;
     }
 
     public static void Deinitialize()
     {
-        CombatManager.Instance.TurnStarted -= OnTurnStarted;
-        CombatManager.Instance.TurnEnded -= OnTurnEnded;
-        CombatManager.Instance.CombatSetUp -= OnCombatSetUp;
-        CombatManager.Instance.CombatEnded -= OnCombatEnded;
+        _combatStartingSubscription?.Dispose();
+        _combatEndedSubscription?.Dispose();
+        _sideTurnStartedSubscription?.Dispose();
+
+        _combatStartingSubscription = null;
+        _combatEndedSubscription = null;
+        _sideTurnStartedSubscription = null;
+        _initialized = false;
     }
 
-    private static void OnTurnStarted(CombatState combatState)
+    private static void OnSideTurnStarted(SideTurnStartedEvent evt)
     {
-        // 玩家回合开始时重排
-        if (combatState.CurrentSide == CombatSide.Player) _ = MinionAnimCmd.Rearrange();
+        if (evt.Side == CombatSide.Player)
+        {
+            _ = MinionAnimCmd.Rearrange();
+            return;
+        }
+
+        if (evt.Side == CombatSide.Enemy)
+        {
+            CreatureActionQueueThreshold.Clear();
+            _ = MinionAnimCmd.Rearrange();
+        }
     }
 
-    private static void OnTurnEnded(CombatState combatState)
+    private static void OnCombatStarting(CombatStartingEvent evt)
     {
         CreatureActionQueueThreshold.Clear();
-
-        // 玩家回合结束时重排
-        // TurnEnded 触发时 CurrentSide 已经切换，所以检查是否为 Enemy 来判断刚结束的是玩家回合
-        if (combatState.CurrentSide == CombatSide.Enemy) _ = MinionAnimCmd.Rearrange();
-    }
-
-    private static void OnCombatSetUp(CombatState combatState)
-    {
-        CreatureActionQueueThreshold.Clear();
-
-        // 清理宠物顺序快照，预防内存泄露
         PetOrderSnapshotManager.ClearAllSnapshots();
     }
 
-    private static void OnCombatEnded(CombatRoom combatRoom)
+    private static void OnCombatEnded(CombatEndedEvent evt)
     {
         CreatureActionQueueThreshold.Clear();
-
-        // 清理宠物顺序快照，预防内存泄露
         PetOrderSnapshotManager.ClearAllSnapshots();
     }
 }

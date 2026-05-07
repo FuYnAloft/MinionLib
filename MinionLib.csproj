@@ -27,7 +27,7 @@
         <AutoSteamPath>$(registry:HKEY_CURRENT_USER\Software\Valve\Steam@SteamPath)\steamapps</AutoSteamPath>
         <SteamLibraryPath Condition="Exists('$(AutoSteamPath)/common/Slay the Spire 2')">$(AutoSteamPath)</SteamLibraryPath>
 
-        <GodotPath Condition="'$(GodotPath)' == ''">C:/megadot/MegaDot_v4.5.1-stable_mono_win64.exe</GodotPath>
+        <GodotPath Condition="'$(GodotPath)' == ''">C:\megadot-4.5.1-m.9-windows-x86_64-llvm-editor-csharp\MegaDot_v4.5.1-stable_mono_win64.exe</GodotPath>
         <!-- If on Windows and Slay the Spire 2 is not installed in your default steam library, adjust the following.-->
         <SteamLibraryPath Condition="'$(SteamLibraryPath)' == ''">C:/Program Files (x86)/Steam/steamapps</SteamLibraryPath>
 
@@ -78,9 +78,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Alchyr.Sts2.BaseLib" Version="3.0.3"/>
-        <!--<PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="*"/>-->
         <AdditionalFiles Include="MinionLib/localization/**/*.json"/>
+        <PackageReference Include="STS2.RitsuLib" Version="*"/>
+        <PackageReference Include="Nothing.STS2RitsuLib.ModAnalyzers" Version="0.1.0" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
@@ -154,11 +154,6 @@
         <Message Text="Copying .dll and manifest to mods folder." Importance="high"/>
         <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"/>
         <Copy SourceFiles="MinionLib.json" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"/>
-        <Message Text="Copying BaseLib to mods folder." Importance="high"/>
-        <ItemGroup>
-            <BaseLibFiles Include="$(NuGetPackageRoot)/alchyr.sts2.baselib/**/lib/**/BaseLib.dll;$(NuGetPackageRoot)/alchyr.sts2.baselib/**/Content/BaseLib.pck;$(NuGetPackageRoot)/alchyr.sts2.baselib/**/Content/BaseLib.json;"/>
-        </ItemGroup>
-        <Copy SourceFiles="@(BaseLibFiles)" DestinationFolder="$(ModsPath)BaseLib/"/>
     </Target>
 
     <!--执行 Godot 导出命令将 .pck 导出到 mods 目录 -->

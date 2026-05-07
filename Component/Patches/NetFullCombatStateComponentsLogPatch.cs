@@ -3,18 +3,28 @@ using System.Text;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MinionLib.Component.Extensions;
+using STS2RitsuLib.Patching.Models;
 
 namespace MinionLib.Component.Patches;
 
-[HarmonyPatch(typeof(NetFullCombatState), nameof(NetFullCombatState.ToString))]
-public class NetFullCombatStateComponentsLogPatch
+public sealed class NetFullCombatStateComponentsLogPatch : IPatchMethod
 {
+    public static string PatchId => "net_full_combat_state_components_log";
+
+    public static bool IsCritical => false;
+
+    public static string Description => "Append MinionLib component state to combat state debug logs.";
+
+    public static ModPatchTarget[] GetTargets()
+    {
+        return [new(typeof(NetFullCombatState), nameof(NetFullCombatState.ToString))];
+    }
+
     public static void AppendComponentInfo(StringBuilder sb, NetFullCombatState.CardState card)
     {
         sb.Append(card.card.GetComponentsLogString(2, "\t"));
     }
 
-    [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
     {
         var matcher = new CodeMatcher(instructions, il);
