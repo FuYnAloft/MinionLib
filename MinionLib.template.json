@@ -6,7 +6,7 @@
   "version": "VERSION-CODE",
   "has_pck": true,
   "has_dll": true,
-  "affects_gameplay": true,
+  "affects_gameplay": false,
   "min_game_version": "0.105.0",
   "dependencies": []
 }
