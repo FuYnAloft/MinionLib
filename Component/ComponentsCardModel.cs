@@ -481,26 +481,19 @@ public abstract partial class ComponentsCardModel(
 }
 
 public abstract class CustomComponentsCardModel
-    : ComponentsCardModel, ICustomModel, ICustomCardResourceProvider, ILocalizationProvider
+    : ComponentsCardModel, ICustomCardResourceProvider
 {
     protected CustomComponentsCardModel(
         int canonicalEnergyCost,
         CardType type,
         CardRarity rarity,
         TargetType targetType,
-        bool shouldShowInCardLibrary = true,
-        bool autoAdd = true)
+        bool shouldShowInCardLibrary = true)
         : base(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
     {
     }
 
-    public virtual Texture2D? CustomFrame => null;
-
     public virtual string? CustomPortraitPath => null;
-
-    public virtual Texture2D? CustomPortrait => null;
-
-    public virtual List<(string, string)>? Localization => null;
 
     public override string PortraitPath => CustomPortraitPath ?? base.PortraitPath;
 
