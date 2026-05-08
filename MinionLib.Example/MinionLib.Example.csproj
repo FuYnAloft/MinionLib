@@ -19,6 +19,7 @@
 
     <PropertyGroup>
         <Version>0.0.0.0-dev</Version>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup Condition="Exists('$(Sts2DataDir)')">
@@ -40,6 +41,7 @@
                           OutputItemType="Analyzer"
                           ReferenceOutputAssembly="false"
                           Pack="false"/>
+        <None Include="MinionLib.Example.template.json"/>
     </ItemGroup>
 
     <Target Name="CheckDependencyPaths" BeforeTargets="ResolveAssemblyReferences">
@@ -68,24 +70,17 @@
     <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent">
         <Message Text="Copying .dll and manifest to mods folder." Importance="high"/>
         <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"/>
-        <Copy SourceFiles="$(MSBuildProjectDirectory)\..\MinionLib.Example.json" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"
-              Condition="Exists('$(MSBuildProjectDirectory)\..\MinionLib.Example.json')"/>
+        <Copy SourceFiles="$(MSBuildProjectDirectory)\MinionLib.Example.json" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"
+              Condition="Exists('$(MSBuildProjectDirectory)\MinionLib.Example.json')"/>
     </Target>
 
     <!--执行 Godot 导出命令将 .pck 导出到 mods 目录 -->
     <Target Name="GodotPublish" AfterTargets="Publish" Condition="'$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
         <Message Text="Exporting Godot .pck to mods folder" Importance="high"/>
-        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExport&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
+        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;MinionLibExampleExport&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
               WorkingDirectory="$(MSBuildProjectDirectory)\.."
               EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
-              ContinueOnError="WarnAndContinue"
-              Condition="'$(Configuration)' != 'ExportRelease'"/>
-        <!-- 当配置为 ExportRelease 时，使用 BasicExportNoExample 配置 -->
-        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExportNoExample&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
-              WorkingDirectory="$(MSBuildProjectDirectory)\.."
-              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
-              ContinueOnError="WarnAndContinue"
-              Condition="'$(Configuration)' == 'ExportRelease'"/>
+              ContinueOnError="WarnAndContinue"/>
     </Target>
 
     <Target Name="GodotPublishSkipped" AfterTargets="Publish" Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')">
