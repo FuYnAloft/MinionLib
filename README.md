@@ -2,6 +2,30 @@
 
 用于 Slay the Spire 2 的随从（Minion）库模组。
 
+## 包结构
+
+MinionLib 采用“独立核心 + 可选适配包”的结构：
+
+- `MinionLib`：核心库，提供随从、行动、自定义目标、组件卡和 Guardian 机制，不依赖 BaseLib 或 RitsuLib。
+- `MinionLib.BaseLibCompat`：BaseLib 可选适配包，提供 `BaseLibMinionModel` 和 BaseLib 风格内容注册辅助方法。
+- `MinionLib.RitsuCompat`：RitsuLib 可选适配包，提供 `RitsuMinionModel`、Ritsu 内容注册辅助方法，并用 Ritsu lifecycle 驱动 MinionLib。
+- `MinionLib.Example`：独立示例模组，依赖 `MinionLib`，不打进核心包。
+
+下游模组只需要选择一种组合：
+
+- 纯 MinionLib：依赖 `MinionLib`。
+- BaseLib 项目：依赖 `MinionLib`、`BaseLib`、`MinionLib.BaseLibCompat`。
+- RitsuLib 项目：依赖 `MinionLib`、`STS2-RitsuLib`、`MinionLib.RitsuCompat`。
+
+运行时产物建议保持为独立目录：
+
+```text
+mods/MinionLib/
+mods/MinionLib.BaseLibCompat/
+mods/MinionLib.RitsuCompat/
+mods/MinionLib.Example/
+```
+
 ## 支持内容
 
 - 创建并召唤随从

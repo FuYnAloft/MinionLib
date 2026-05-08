@@ -10,6 +10,21 @@
 
 > 示例代码优先参考仓库现成文件：`MinionLib.Example/`。
 
+## 选择依赖
+
+MinionLib 核心不依赖 BaseLib 或 RitsuLib。普通项目只需要依赖 `MinionLib`；如果项目已经使用 BaseLib，可以额外依赖 `MinionLib.BaseLibCompat` 并从 `BaseLibMinionModel` 继承；如果项目已经使用 RitsuLib，可以额外依赖 `MinionLib.RitsuCompat` 并从 `RitsuMinionModel` 继承。
+
+运行时目录建议保持拆分：
+
+```text
+mods/MinionLib/
+mods/MinionLib.BaseLibCompat/
+mods/MinionLib.RitsuCompat/
+mods/MinionLib.Example/
+```
+
+下游模组 manifest 按实际选择填写依赖：纯 MinionLib 项目写 `MinionLib`；BaseLib 项目写 `MinionLib`、`BaseLib`、`MinionLib.BaseLibCompat`；RitsuLib 项目写 `MinionLib`、`STS2-RitsuLib`、`MinionLib.RitsuCompat`。
+
 ## Part 1: 创建一个简单随从
 
 要创建一个随从，只需要继承 `MinionModel`，并实现必要的属性和方法：
@@ -22,15 +37,15 @@ public class MyMinion : MinionModel
 	protected override string VisualsPath => "res://MinionLib.Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn"; // 随从的视觉资源路径，tscn 格式，建议参考原版游戏的怪物
     
     // 召唤时执行的代码，通常用来设置血量、应用初始能力等，options 是在召唤随从时传入的参数
-	public override async Task OnSummon(Player owner, Creature self, MinionSummonOptions options) // 注意使用 self 而非 this
+	public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, Creature self, MinionSummonOptions options) // 注意使用 self 而非 this
 	{
 		if (options.MaxHp is decimal maxHp)
 			await CreatureCmd.SetMaxAndCurrentHp(self, maxHp); // 设置血量
 
 		if (options.PrimaryStatAmount is decimal strength && strength > 0m)
-			await PowerCmd.Apply<StrengthPower>(self, strength, owner.Creature, options.Source); // 根据传入的参数设置力量
+			await PowerCmd.Apply<StrengthPower>(choiceContext, self, strength, owner.Creature, options.Source); // 根据传入的参数设置力量
 
-		await PowerCmd.Apply<PetAttackerPower>(self, 1m, owner.Creature, options.Source); // 获得 “攻击者” 能力
+		await PowerCmd.Apply<PetAttackerPower>(choiceContext, self, 1m, owner.Creature, options.Source); // 获得 “攻击者” 能力
 	}
 }
 ```
@@ -49,7 +64,7 @@ public sealed class SummonMyMinionCard : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		_ = await MinionCmd.AddMinion<MyMinion>(Owner, new MinionSummonOptions(
+		_ = await MinionCmd.AddMinion<MyMinion>(choiceContext, Owner, new MinionSummonOptions(
 			MaxHp: 8m,                              // 血量
 			PrimaryStatAmount: 2m,                  // 主要参数（具体内容在随从的 OnSummon 里定义），还有次要参数等可以按需传入
 			Source: this,                           // 召唤来源（通常是这张牌）
