@@ -1,7 +1,5 @@
 using System.ComponentModel;
 using System.Text;
-using BaseLib.Abstracts;
-using BaseLib.Patches.Content;
 using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -482,7 +480,8 @@ public abstract partial class ComponentsCardModel(
     protected virtual void AfterDowngraded(ComponentContext componentContext) { }
 }
 
-public abstract class CustomComponentsCardModel : ComponentsCardModel, ICustomModel, ILocalizationProvider
+public abstract class CustomComponentsCardModel
+    : ComponentsCardModel, ICustomModel, ICustomCardResourceProvider, ILocalizationProvider
 {
     protected CustomComponentsCardModel(
         int canonicalEnergyCost,
@@ -493,9 +492,6 @@ public abstract class CustomComponentsCardModel : ComponentsCardModel, ICustomMo
         bool autoAdd = true)
         : base(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
     {
-        if (!autoAdd)
-            return;
-        CustomContentDictionary.AddModel(this.GetType());
     }
 
     public virtual Texture2D? CustomFrame => null;
@@ -505,4 +501,11 @@ public abstract class CustomComponentsCardModel : ComponentsCardModel, ICustomMo
     public virtual Texture2D? CustomPortrait => null;
 
     public virtual List<(string, string)>? Localization => null;
+
+    public override string PortraitPath => CustomPortraitPath ?? base.PortraitPath;
+
+    public override string BetaPortraitPath => CustomPortraitPath ?? base.BetaPortraitPath;
+
+    public override IEnumerable<string> AllPortraitPaths =>
+        CustomPortraitPath is { } path ? [path] : base.AllPortraitPaths;
 }

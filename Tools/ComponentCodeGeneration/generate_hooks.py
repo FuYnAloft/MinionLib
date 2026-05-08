@@ -30,7 +30,6 @@ def generate_components_card(signatures: list[Signature]) -> str:
     buffer += AUTO_GENERATED_HEADER
     buffer += """\
 using System.Buffers;
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
