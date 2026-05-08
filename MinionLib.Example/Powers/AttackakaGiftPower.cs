@@ -3,21 +3,16 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models;
 using MinionLib.Example.Cards;
 
 namespace MinionLib.Example.Powers;
 
-public sealed class AttackakaGiftPower : CustomPowerModel
+public sealed class AttackakaGiftPower : PowerModel
 {
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
-
-    public override string CustomPackedIconPath => "res://MinionLib.Example/MinionTest/orb.png";
-
-    public override string CustomBigIconPath => "res://MinionLib.Example/MinionTest/orb.png";
-
-    public override string CustomBigBetaIconPath => "res://MinionLib.Example/MinionTest/orb.png";
 
     public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
         ICombatState combatState)

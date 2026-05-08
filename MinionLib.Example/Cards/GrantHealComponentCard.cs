@@ -2,7 +2,6 @@ using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Models.CardPools;
 using MinionLib.Component;
 using MinionLib.Component.Core;
 using MinionLib.Component.Interfaces;
@@ -10,11 +9,16 @@ using MinionLib.Example.Components;
 
 namespace MinionLib.Example.Cards;
 
-[Pool(typeof(TokenCardPool))]
 public sealed class GrantHealComponentCard()
-    : CustomComponentsCardModel(0, CardType.Skill, CardRarity.Token, TargetType.Self)
+    : ComponentsCardModel(0, CardType.Skill, CardRarity.Token, TargetType.Self)
 {
-    public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
+    private const string PortraitResourcePath = "res://images/packed/card_portraits/beta.png";
+
+    public override string PortraitPath => PortraitResourcePath;
+
+    public override string BetaPortraitPath => PortraitResourcePath;
+
+    public override IEnumerable<string> AllPortraitPaths => [PortraitResourcePath];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay,
         ComponentContext componentContext)

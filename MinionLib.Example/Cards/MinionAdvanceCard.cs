@@ -1,7 +1,7 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Models.CardPools;
+using MegaCrit.Sts2.Core.Models;
 using MinionLib.Commands;
 using MinionLib.Minion;
 using MinionLib.Targeting;
@@ -9,11 +9,16 @@ using MinionLib.Utilities;
 
 namespace MinionLib.Example.Cards;
 
-[Pool(typeof(TokenCardPool))]
 public sealed class MinionAdvanceCard()
-    : CustomCardModel(0, CardType.Skill, CardRarity.Token, MinionTargetTypes.AnyMinion)
+    : CardModel(0, CardType.Skill, CardRarity.Token, MinionTargetTypes.AnyMinion)
 {
-    public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
+    private const string PortraitResourcePath = "res://images/packed/card_portraits/beta.png";
+
+    public override string PortraitPath => PortraitResourcePath;
+
+    public override string BetaPortraitPath => PortraitResourcePath;
+
+    public override IEnumerable<string> AllPortraitPaths => [PortraitResourcePath];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

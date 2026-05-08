@@ -100,11 +100,4 @@ public abstract class ActionModel : PowerModel
     protected abstract Task OnAct(PlayerChoiceContext choiceContext, Creature? target);
 }
 
-public abstract class CustomActionModel : ActionModel, ICustomPowerResourceProvider
-{
-    public virtual string? CustomPackedIconPath => null;
-
-    public virtual string? CustomBigIconPath => null;
-
-    public virtual string? CustomBigBetaIconPath => null;
-}
+public abstract class CustomActionModel : ActionModel;

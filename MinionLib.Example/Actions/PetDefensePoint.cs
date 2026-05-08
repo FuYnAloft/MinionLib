@@ -20,12 +20,6 @@ public sealed class PetDefensePoint : CustomActionModel
 
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    public override string CustomPackedIconPath => "res://MinionLib.Example/MinionTest/orb.png";
-
-    public override string CustomBigIconPath => "res://MinionLib.Example/MinionTest/orb.png";
-
-    public override string CustomBigBetaIconPath => "res://MinionLib.Example/MinionTest/orb.png";
-
     protected override async Task OnAct(PlayerChoiceContext choiceContext, Creature? target)
     {
         if (target == null) return;

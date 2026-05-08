@@ -8,7 +8,7 @@
 4. 一张可以强化随从的牌
 5. 一张绑定了随从的牌
 
-> 示例代码优先参考仓库现成文件：`Example/`。
+> 示例代码优先参考仓库现成文件：`MinionLib.Example/`。
 
 ## Part 1: 创建一个简单随从
 
@@ -19,7 +19,7 @@ public class MyMinion : MinionModel
 {
 	public override int MinInitialHp => 6; // 作为敌方方怪物生成时的血量，通常无需在意
 	public override int MaxInitialHp => 6; // 作为敌方方怪物生成时的血量，通常无需在意
-	protected override string VisualsPath => "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn"; // 随从的视觉资源路径，tscn 格式，建议参考原版游戏的怪物
+	protected override string VisualsPath => "res://MinionLib.Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn"; // 随从的视觉资源路径，tscn 格式，建议参考原版游戏的怪物
     
     // 召唤时执行的代码，通常用来设置血量、应用初始能力等，options 是在召唤随从时传入的参数
 	public override async Task OnSummon(Player owner, Creature self, MinionSummonOptions options) // 注意使用 self 而非 this
@@ -43,7 +43,7 @@ public class MyMinion : MinionModel
 随从需要通过卡牌等方式召唤，建议使用`MinionCmd.AddMinion`来处理召唤逻辑，以下是一个简单的示例，召唤一个 `MyMinion`：
 
 ```csharp
-public sealed class SummonMyMinionCard : CustomCardModel
+public sealed class SummonMyMinionCard : CardModel
 {
 	public SummonMyMinionCard() : base(0, CardType.Power, CardRarity.Rare, TargetType.Self) { } // 卡牌基础信息
 
@@ -91,8 +91,8 @@ public sealed class MyAttackAction : CustomActionModel
 ```
 
 > [!NOTE]
-> CustomActionModel 继承自 CustomPowerModel，所以它也可以像 Power 一样被应用到随从身上，显示在状态栏里。
-> 因为使用的是 CustomPowerModel，指定图像资源的方式也相同
+> CustomActionModel 继承自 PowerModel，所以它也可以像 Power 一样被应用到随从身上，显示在状态栏里。
+> 图像资源使用游戏原生 PowerModel 的默认路径和命名规则。
 
 
 ## Part 4: 创建一张强化随从的牌
@@ -104,7 +104,7 @@ MinionLib 实现了一个可以简单使用的自定义目标类型系统，可�
 MinionLib 还提供了许多预定义的目标类型，位于 `MinionLib.Targeting.MinionTargetTypes`中。
 
 ```csharp
-public sealed class EmpowerMinionCard : CustomCardModel
+public sealed class EmpowerMinionCard : CardModel
 {
 	public EmpowerMinionCard() : base(1, CardType.Skill, CardRarity.Uncommon, 
         MinionTargetTypes.AnyMinion // 使用了 MinionTargetTypes.AnyMinion 这个预定义的目标类型，表示可以选择任何一个（你的）随从作为目标

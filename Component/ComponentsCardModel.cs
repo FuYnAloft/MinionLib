@@ -479,26 +479,3 @@ public abstract partial class ComponentsCardModel(
 
     protected virtual void AfterDowngraded(ComponentContext componentContext) { }
 }
-
-public abstract class CustomComponentsCardModel
-    : ComponentsCardModel, ICustomCardResourceProvider
-{
-    protected CustomComponentsCardModel(
-        int canonicalEnergyCost,
-        CardType type,
-        CardRarity rarity,
-        TargetType targetType,
-        bool shouldShowInCardLibrary = true)
-        : base(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
-    {
-    }
-
-    public virtual string? CustomPortraitPath => null;
-
-    public override string PortraitPath => CustomPortraitPath ?? base.PortraitPath;
-
-    public override string BetaPortraitPath => CustomPortraitPath ?? base.BetaPortraitPath;
-
-    public override IEnumerable<string> AllPortraitPaths =>
-        CustomPortraitPath is { } path ? [path] : base.AllPortraitPaths;
-}

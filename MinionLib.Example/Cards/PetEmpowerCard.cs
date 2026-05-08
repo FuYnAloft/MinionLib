@@ -2,18 +2,23 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models.CardPools;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MinionLib.Minion;
 using MinionLib.Targeting;
 
 namespace MinionLib.Example.Cards;
 
-[Pool(typeof(TokenCardPool))]
 public sealed class PetEmpowerCard()
-    : CustomCardModel(0, CardType.Skill, CardRarity.Rare, MinionTargetTypes.AnyMinion, false)
+    : CardModel(0, CardType.Skill, CardRarity.Rare, MinionTargetTypes.AnyMinion, false)
 {
-    public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
+    private const string PortraitResourcePath = "res://images/packed/card_portraits/beta.png";
+
+    public override string PortraitPath => PortraitResourcePath;
+
+    public override string BetaPortraitPath => PortraitResourcePath;
+
+    public override IEnumerable<string> AllPortraitPaths => [PortraitResourcePath];
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new PowerVar<StrengthPower>(999m), new PowerVar<DexterityPower>(999m)];
