@@ -185,7 +185,7 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task OnTurnEndInHand(PlayerChoiceContext choiceContext)
+    protected sealed override async Task OnTurnEndInHand(PlayerChoiceContext choiceContext)
     {
         EnsureComponentsInitialized();
 
@@ -965,7 +965,7 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task AfterAttack(AttackCommand command)
+    public sealed override async Task AfterAttack(PlayerChoiceContext choiceContext, AttackCommand command)
     {
         EnsureComponentsInitialized();
 
@@ -1823,19 +1823,19 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task AfterCardGeneratedForCombat(CardModel card, bool addedByPlayer)
+    public sealed override async Task AfterCardGeneratedForCombat(CardModel card, Player? creator)
     {
         EnsureComponentsInitialized();
 
         var componentContext = new ComponentContext(ComponentPhase.Init);
-        
+
         var count = Components.Count;
         var snapshot = ArrayPool<ICardComponent>.Shared.Rent(count);
         for (var i = 0; i < count; i++)
         {
             snapshot[i] = Components[i];
         }
-        
+
         try
         {
             for (var transitions = 0;
@@ -1851,7 +1851,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if (component.ComponentsCard != this) continue;
-                            await component.AfterCardGeneratedForCombatPrefix(card, addedByPlayer, componentContext);
+                            await component.AfterCardGeneratedForCombatPrefix(card, creator, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
 
@@ -1861,7 +1861,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if(component.ComponentsCard != this) continue;
-                            await component.AfterCardGeneratedForCombatPostfix(card, addedByPlayer, componentContext);
+                            await component.AfterCardGeneratedForCombatPostfix(card, creator, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
 
@@ -1869,7 +1869,7 @@ public abstract partial class ComponentsCardModel
                     case ComponentPhase.Prime:
                     case ComponentPhase.Core:
                     case ComponentPhase.Final:
-                        await AfterCardGeneratedForCombatPhased(card, addedByPlayer, componentContext);
+                        await AfterCardGeneratedForCombatPhased(card, creator, componentContext);
                         break;
                     case ComponentPhase.Init:
                     default:
@@ -1886,15 +1886,15 @@ public abstract partial class ComponentsCardModel
         }
     }
 
-    protected virtual Task AfterCardGeneratedForCombatPhased(CardModel card, bool addedByPlayer, ComponentContext componentContext)
+    protected virtual Task AfterCardGeneratedForCombatPhased(CardModel card, Player? creator, ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
-            return AfterCardGeneratedForCombat(card, addedByPlayer, componentContext);
+            return AfterCardGeneratedForCombat(card, creator, componentContext);
 
         return Task.CompletedTask;
     }
 
-    protected virtual Task AfterCardGeneratedForCombat(CardModel card, bool addedByPlayer, ComponentContext componentContext)
+    protected virtual Task AfterCardGeneratedForCombat(CardModel card, Player? creator, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
@@ -2054,85 +2054,7 @@ public abstract partial class ComponentsCardModel
     {
         return Task.CompletedTask;
     }
-    
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task AfterCardRetained(CardModel card)
-    {
-        EnsureComponentsInitialized();
 
-        var componentContext = new ComponentContext(ComponentPhase.Init);
-        
-        var count = Components.Count;
-        var snapshot = ArrayPool<ICardComponent>.Shared.Rent(count);
-        for (var i = 0; i < count; i++)
-        {
-            snapshot[i] = Components[i];
-        }
-        
-        try
-        {
-            for (var transitions = 0;
-                 transitions < MaxPhaseTransitions && componentContext.Phase != ComponentPhase.Final;
-                 transitions++)
-            {
-                componentContext.MoveNextPhase();
-
-                switch (componentContext.Phase)
-                {
-                    case ComponentPhase.Prefix:
-                        for(var i = 0; i < count; i++)
-                        {
-                            var component = snapshot[i];
-                            if (component.ComponentsCard != this) continue;
-                            await component.AfterCardRetainedPrefix(card, componentContext);
-                            if (componentContext.Phase != ComponentPhase.Prefix) break;
-                        }
-
-                        break;
-                    case ComponentPhase.Postfix:
-                        for(var i = count - 1; i >= 0; i--)
-                        {
-                            var component = snapshot[i];
-                            if(component.ComponentsCard != this) continue;
-                            await component.AfterCardRetainedPostfix(card, componentContext);
-                            if (componentContext.Phase != ComponentPhase.Postfix) break;
-                        }
-
-                        break;
-                    case ComponentPhase.Prime:
-                    case ComponentPhase.Core:
-                    case ComponentPhase.Final:
-                        await AfterCardRetainedPhased(card, componentContext);
-                        break;
-                    case ComponentPhase.Init:
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            if (componentContext.Phase != ComponentPhase.Final)
-                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
-        }
-        finally
-        {
-            ArrayPool<ICardComponent>.Shared.Return(snapshot, clearArray: true);
-        }
-    }
-
-    protected virtual Task AfterCardRetainedPhased(CardModel card, ComponentContext componentContext)
-    {
-        if (componentContext.Phase == ComponentPhase.Core)
-            return AfterCardRetained(card, componentContext);
-
-        return Task.CompletedTask;
-    }
-
-    protected virtual Task AfterCardRetained(CardModel card, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeCombatStart()
@@ -3773,7 +3695,7 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task BeforeHandDraw(Player player, PlayerChoiceContext choiceContext, CombatState combatState)
+    public sealed override async Task BeforeHandDraw(Player player, PlayerChoiceContext choiceContext, ICombatState combatState)
     {
         EnsureComponentsInitialized();
 
@@ -3836,7 +3758,7 @@ public abstract partial class ComponentsCardModel
         }
     }
 
-    protected virtual Task BeforeHandDrawPhased(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
+    protected virtual Task BeforeHandDrawPhased(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
             return BeforeHandDraw(player, choiceContext, combatState, componentContext);
@@ -3844,14 +3766,14 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
 
-    protected virtual Task BeforeHandDraw(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
+    protected virtual Task BeforeHandDraw(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task BeforeHandDrawLate(Player player, PlayerChoiceContext choiceContext, CombatState combatState)
+    public sealed override async Task BeforeHandDrawLate(Player player, PlayerChoiceContext choiceContext, ICombatState combatState)
     {
         EnsureComponentsInitialized();
 
@@ -3914,7 +3836,7 @@ public abstract partial class ComponentsCardModel
         }
     }
 
-    protected virtual Task BeforeHandDrawLatePhased(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
+    protected virtual Task BeforeHandDrawLatePhased(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
             return BeforeHandDrawLate(player, choiceContext, combatState, componentContext);
@@ -3922,7 +3844,7 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
 
-    protected virtual Task BeforeHandDrawLate(Player player, PlayerChoiceContext choiceContext, CombatState combatState, ComponentContext componentContext)
+    protected virtual Task BeforeHandDrawLate(Player player, PlayerChoiceContext choiceContext, ICombatState combatState, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
@@ -5252,85 +5174,7 @@ public abstract partial class ComponentsCardModel
     {
         return Task.CompletedTask;
     }
-    
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task BeforeRewardsOffered(Player player, IReadOnlyList<Reward> rewards)
-    {
-        EnsureComponentsInitialized();
 
-        var componentContext = new ComponentContext(ComponentPhase.Init);
-        
-        var count = Components.Count;
-        var snapshot = ArrayPool<ICardComponent>.Shared.Rent(count);
-        for (var i = 0; i < count; i++)
-        {
-            snapshot[i] = Components[i];
-        }
-        
-        try
-        {
-            for (var transitions = 0;
-                 transitions < MaxPhaseTransitions && componentContext.Phase != ComponentPhase.Final;
-                 transitions++)
-            {
-                componentContext.MoveNextPhase();
-
-                switch (componentContext.Phase)
-                {
-                    case ComponentPhase.Prefix:
-                        for(var i = 0; i < count; i++)
-                        {
-                            var component = snapshot[i];
-                            if (component.ComponentsCard != this) continue;
-                            await component.BeforeRewardsOfferedPrefix(player, rewards, componentContext);
-                            if (componentContext.Phase != ComponentPhase.Prefix) break;
-                        }
-
-                        break;
-                    case ComponentPhase.Postfix:
-                        for(var i = count - 1; i >= 0; i--)
-                        {
-                            var component = snapshot[i];
-                            if(component.ComponentsCard != this) continue;
-                            await component.BeforeRewardsOfferedPostfix(player, rewards, componentContext);
-                            if (componentContext.Phase != ComponentPhase.Postfix) break;
-                        }
-
-                        break;
-                    case ComponentPhase.Prime:
-                    case ComponentPhase.Core:
-                    case ComponentPhase.Final:
-                        await BeforeRewardsOfferedPhased(player, rewards, componentContext);
-                        break;
-                    case ComponentPhase.Init:
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            if (componentContext.Phase != ComponentPhase.Final)
-                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
-        }
-        finally
-        {
-            ArrayPool<ICardComponent>.Shared.Return(snapshot, clearArray: true);
-        }
-    }
-
-    protected virtual Task BeforeRewardsOfferedPhased(Player player, IReadOnlyList<Reward> rewards, ComponentContext componentContext)
-    {
-        if (componentContext.Phase == ComponentPhase.Core)
-            return BeforeRewardsOffered(player, rewards, componentContext);
-
-        return Task.CompletedTask;
-    }
-
-    protected virtual Task BeforeRewardsOffered(Player player, IReadOnlyList<Reward> rewards, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterOrbChanneled(PlayerChoiceContext choiceContext, Player player, OrbModel orb)
@@ -5957,7 +5801,7 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task AfterPowerAmountChanged(PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
+    public sealed override async Task AfterPowerAmountChanged(PlayerChoiceContext choiceContext, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
     {
         EnsureComponentsInitialized();
 
@@ -6003,7 +5847,7 @@ public abstract partial class ComponentsCardModel
                     case ComponentPhase.Prime:
                     case ComponentPhase.Core:
                     case ComponentPhase.Final:
-                        await AfterPowerAmountChangedPhased(power, amount, applier, cardSource, componentContext);
+                        await AfterPowerAmountChangedPhased(choiceContext, power, amount, applier, cardSource, componentContext);
                         break;
                     case ComponentPhase.Init:
                     default:
@@ -6020,15 +5864,15 @@ public abstract partial class ComponentsCardModel
         }
     }
 
-    protected virtual Task AfterPowerAmountChangedPhased(PowerModel power, decimal amount, Creature? applier, CardModel? cardSource, ComponentContext componentContext)
+    protected virtual Task AfterPowerAmountChangedPhased(PlayerChoiceContext choiceContext, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource, ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
-            return AfterPowerAmountChanged(power, amount, applier, cardSource, componentContext);
+            return AfterPowerAmountChanged(choiceContext, power, amount, applier, cardSource, componentContext);
 
         return Task.CompletedTask;
     }
 
-    protected virtual Task AfterPowerAmountChanged(PowerModel power, decimal amount, Creature? applier, CardModel? cardSource, ComponentContext componentContext)
+    protected virtual Task AfterPowerAmountChanged(PlayerChoiceContext choiceContext, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
@@ -7127,7 +6971,7 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, CombatState combatState)
+    public sealed override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, ICombatState combatState)
     {
         EnsureComponentsInitialized();
 
@@ -7190,7 +7034,7 @@ public abstract partial class ComponentsCardModel
         }
     }
 
-    protected virtual Task BeforeSideTurnStartPhased(PlayerChoiceContext choiceContext, CombatSide side, CombatState combatState, ComponentContext componentContext)
+    protected virtual Task BeforeSideTurnStartPhased(PlayerChoiceContext choiceContext, CombatSide side, ICombatState combatState, ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
             return BeforeSideTurnStart(choiceContext, side, combatState, componentContext);
@@ -7198,14 +7042,14 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
 
-    protected virtual Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, CombatState combatState, ComponentContext componentContext)
+    protected virtual Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, ICombatState combatState, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task AfterSideTurnStart(CombatSide side, CombatState combatState)
+    public sealed override async Task AfterSideTurnStart(CombatSide side, ICombatState combatState)
     {
         EnsureComponentsInitialized();
 
@@ -7268,7 +7112,7 @@ public abstract partial class ComponentsCardModel
         }
     }
 
-    protected virtual Task AfterSideTurnStartPhased(CombatSide side, CombatState combatState, ComponentContext componentContext)
+    protected virtual Task AfterSideTurnStartPhased(CombatSide side, ICombatState combatState, ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
             return AfterSideTurnStart(side, combatState, componentContext);
@@ -7276,7 +7120,7 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
 
-    protected virtual Task AfterSideTurnStart(CombatSide side, CombatState combatState, ComponentContext componentContext)
+    protected virtual Task AfterSideTurnStart(CombatSide side, ICombatState combatState, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
@@ -7436,85 +7280,7 @@ public abstract partial class ComponentsCardModel
     {
         return Task.CompletedTask;
     }
-    
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task BeforePlayPhaseStart(PlayerChoiceContext choiceContext, Player player)
-    {
-        EnsureComponentsInitialized();
 
-        var componentContext = new ComponentContext(ComponentPhase.Init);
-        
-        var count = Components.Count;
-        var snapshot = ArrayPool<ICardComponent>.Shared.Rent(count);
-        for (var i = 0; i < count; i++)
-        {
-            snapshot[i] = Components[i];
-        }
-        
-        try
-        {
-            for (var transitions = 0;
-                 transitions < MaxPhaseTransitions && componentContext.Phase != ComponentPhase.Final;
-                 transitions++)
-            {
-                componentContext.MoveNextPhase();
-
-                switch (componentContext.Phase)
-                {
-                    case ComponentPhase.Prefix:
-                        for(var i = 0; i < count; i++)
-                        {
-                            var component = snapshot[i];
-                            if (component.ComponentsCard != this) continue;
-                            await component.BeforePlayPhaseStartPrefix(choiceContext, player, componentContext);
-                            if (componentContext.Phase != ComponentPhase.Prefix) break;
-                        }
-
-                        break;
-                    case ComponentPhase.Postfix:
-                        for(var i = count - 1; i >= 0; i--)
-                        {
-                            var component = snapshot[i];
-                            if(component.ComponentsCard != this) continue;
-                            await component.BeforePlayPhaseStartPostfix(choiceContext, player, componentContext);
-                            if (componentContext.Phase != ComponentPhase.Postfix) break;
-                        }
-
-                        break;
-                    case ComponentPhase.Prime:
-                    case ComponentPhase.Core:
-                    case ComponentPhase.Final:
-                        await BeforePlayPhaseStartPhased(choiceContext, player, componentContext);
-                        break;
-                    case ComponentPhase.Init:
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            if (componentContext.Phase != ComponentPhase.Final)
-                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
-        }
-        finally
-        {
-            ArrayPool<ICardComponent>.Shared.Return(snapshot, clearArray: true);
-        }
-    }
-
-    protected virtual Task BeforePlayPhaseStartPhased(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
-    {
-        if (componentContext.Phase == ComponentPhase.Core)
-            return BeforePlayPhaseStart(choiceContext, player, componentContext);
-
-        return Task.CompletedTask;
-    }
-
-    protected virtual Task BeforePlayPhaseStart(PlayerChoiceContext choiceContext, Player player, ComponentContext componentContext)
-    {
-        return Task.CompletedTask;
-    }
-    
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task BeforeTurnEndVeryEarly(PlayerChoiceContext choiceContext, CombatSide side)

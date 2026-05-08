@@ -18,7 +18,7 @@ public sealed class DefenseakaGiftPower : CustomPowerModel
     public override string CustomBigBetaIconPath => "res://Example/MinionTest/orb.png";
 
     public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
-        CombatState combatState)
+        ICombatState combatState)
     {
         if (side != Owner.Side || !Owner.IsAlive || Owner.PetOwner == null) return;
 

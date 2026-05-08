@@ -20,11 +20,11 @@ public sealed class PetDefenderPower : CustomPowerModel
     public override string CustomBigBetaIconPath => "res://Example/MinionTest/orb.png";
 
     public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
-        CombatState combatState)
+        ICombatState combatState)
     {
         if (side != Owner.Side || !Owner.IsAlive) return;
 
         var applier = Owner.PetOwner?.Creature ?? Owner;
-        await PowerCmd.Apply<PetDefensePoint>(Owner, Amount, applier, null);
+        await PowerCmd.Apply<PetDefensePoint>(choiceContext, Owner, Amount, applier, null);
     }
 }

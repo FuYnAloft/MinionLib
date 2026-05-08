@@ -185,7 +185,7 @@ public partial interface ICardComponent
     return cost;
   }
 
-  Decimal ModifyOrbValue(Player player, Decimal value) => value;
+  Decimal ModifyOrbValue(OrbModel orb, Decimal value) => value;
 
   Decimal ModifyPowerAmountGiven(
     PowerModel power,

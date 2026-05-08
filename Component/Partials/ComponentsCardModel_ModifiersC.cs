@@ -190,7 +190,7 @@ public abstract partial class ComponentsCardModel
     return cost;
   }
 
-  protected virtual Decimal ModifyOrbValueC(Player player, Decimal value) => value;
+  protected virtual Decimal ModifyOrbValueC(OrbModel orb, Decimal value) => value;
 
   protected virtual Decimal ModifyPowerAmountGivenC(
     PowerModel power,

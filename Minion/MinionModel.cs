@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 
@@ -23,7 +24,7 @@ public abstract class MinionModel : MonsterModel
         return new MonsterMoveStateMachine([idle], idle);
     }
 
-    public virtual Task OnSummon(Player owner, Creature self, MinionSummonOptions options)
+    public virtual Task OnSummon(PlayerChoiceContext choiceContext, Player owner, Creature self, MinionSummonOptions options)
     {
         return Task.CompletedTask;
     }

@@ -181,7 +181,7 @@ public abstract partial class CardComponent
     return cost;
   }
 
-  public virtual Decimal ModifyOrbValue(Player player, Decimal value) => value;
+  public virtual Decimal ModifyOrbValue(OrbModel orb, Decimal value) => value;
 
   public virtual Decimal ModifyPowerAmountGiven(
     PowerModel power,

@@ -318,13 +318,13 @@ public abstract partial class ComponentsCardModel
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try using the C-ending one instead, or disable this warning if intended.", false)]
-    public sealed override Decimal ModifyOrbValue(Player player, Decimal value)
+    public sealed override Decimal ModifyOrbValue(OrbModel orb, Decimal value)
     {
         EnsureComponentsInitialized();
         var result = value;
         foreach (var component in _components!)
-            result = component.ModifyOrbValue(player, result);
-        return ModifyOrbValueC(player, result);
+            result = component.ModifyOrbValue(orb, result);
+        return ModifyOrbValueC(orb, result);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]

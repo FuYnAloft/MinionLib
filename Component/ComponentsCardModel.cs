@@ -374,18 +374,32 @@ public abstract partial class ComponentsCardModel(
 
     protected virtual bool IsPlayableC => true;
 
-    protected sealed override PileType GetResultPileType()
+    protected sealed override PileType GetResultPileTypeForOnTurnEndInHandEffect()
     {
         EnsureComponentsInitialized();
         foreach (var component in _components!)
             if (component.GetResultPileType() is { } t)
                 return t;
-        return GetResultPileTypeC();
+        return GetResultPileTypeForOnTurnEndInHandEffectC();
     }
 
-    protected virtual PileType GetResultPileTypeC()
+    protected virtual PileType GetResultPileTypeForOnTurnEndInHandEffectC()
     {
-        return base.GetResultPileType();
+        return base.GetResultPileTypeForOnTurnEndInHandEffect();
+    }
+
+    protected sealed override PileType GetResultPileTypeForCardPlay()
+    {
+        EnsureComponentsInitialized();
+        foreach (var component in _components!)
+            if (component.GetResultPileType() is { } t)
+                return t;
+        return GetResultPileTypeForCardPlayC();
+    }
+
+    protected virtual PileType GetResultPileTypeForCardPlayC()
+    {
+        return base.GetResultPileTypeForCardPlay();
     }
 
     public sealed override bool HasTurnEndInHandEffect =>

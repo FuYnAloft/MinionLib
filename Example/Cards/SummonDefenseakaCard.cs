@@ -26,7 +26,7 @@ public sealed class SummonDefenseakaCard() : CustomCardModel(0, CardType.Power, 
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var pet = await MinionCmd.AddMinion<DefenseakaMinion>(Owner, new MinionSummonOptions(
+        var pet = await MinionCmd.AddMinion<DefenseakaMinion>(choiceContext, Owner, new MinionSummonOptions(
             DynamicVars.Summon.BaseValue,
             DynamicVars["DexterityPower"].BaseValue,
             Source: this));

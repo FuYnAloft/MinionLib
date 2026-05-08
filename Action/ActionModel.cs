@@ -33,13 +33,13 @@ public abstract class ActionModel : PowerModel
         base.Flash();
     }
 
-    public virtual bool CanAct(CombatState combatState)
+    public virtual bool CanAct(ICombatState combatState)
     {
         var actor = Owner;
         return Amount > 0m && actor.IsAlive && actor.CombatState == combatState;
     }
 
-    public bool IsValidTarget(CombatState combatState, Creature? target)
+    public bool IsValidTarget(ICombatState combatState, Creature? target)
     {
         if (target is not { IsAlive: true }) return false;
 
@@ -49,7 +49,7 @@ public abstract class ActionModel : PowerModel
         return false;
     }
 
-    public IReadOnlyList<Creature> GetValidTargets(CombatState combatState)
+    public IReadOnlyList<Creature> GetValidTargets(ICombatState combatState)
     {
         return combatState.Creatures
             .Where(target => IsValidTarget(combatState, target))

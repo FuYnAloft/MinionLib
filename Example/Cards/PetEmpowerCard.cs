@@ -24,9 +24,9 @@ public sealed class PetEmpowerCard()
     {
         if (cardPlay.Target is not { Monster: MinionModel }) return;
 
-        await PowerCmd.Apply<StrengthPower>(cardPlay.Target, DynamicVars["StrengthPower"].BaseValue, Owner.Creature,
+        await PowerCmd.Apply<StrengthPower>(choiceContext, cardPlay.Target, DynamicVars["StrengthPower"].BaseValue, Owner.Creature,
             this);
-        await PowerCmd.Apply<DexterityPower>(cardPlay.Target, DynamicVars["DexterityPower"].BaseValue, Owner.Creature,
+        await PowerCmd.Apply<DexterityPower>(choiceContext, cardPlay.Target, DynamicVars["DexterityPower"].BaseValue, Owner.Creature,
             this);
     }
 
