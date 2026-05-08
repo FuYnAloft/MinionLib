@@ -1,4 +1,4 @@
-﻿using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Potions;
@@ -20,10 +20,10 @@ public sealed class MinionStrengthPotion : CustomPotionModel
 
     public override TargetType TargetType => MinionTargetTypes.AnyMinion;
 
-    public override string CustomPackedImagePath => "res://Example/MinionTest/minionlib-minion_strength_potion.tres";
+    public override string CustomPackedImagePath => "res://MinionLib.Example/MinionTest/minionlib-minion_strength_potion.tres";
 
     public override string CustomPackedOutlinePath =>
-        "res://Example/MinionTest/minionlib-minion_strength_potion_outline.tres";
+        "res://MinionLib.Example/MinionTest/minionlib-minion_strength_potion_outline.tres";
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new PowerVar<StrengthPower>(2m)];

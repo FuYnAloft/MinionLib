@@ -1,0 +1,94 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\local.props" Condition="Exists('..\local.props')"/>
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <GodotProjectDir>$(MSBuildProjectDirectory)\..</GodotProjectDir>
+        <ImplicitUsings>true</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <LangVersion>preview</LangVersion>
+        <NoWarn>$(NoWarn);MSB3270</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Sts2Path Condition="'$(Sts2Path)' == '' and '$(SteamLibraryPath)' != ''">$(SteamLibraryPath)\common\Slay the Spire 2</Sts2Path>
+        <ModsPath Condition="'$(ModsPath)' == '' and '$(Sts2Path)' != ''">$(Sts2Path)\mods\</ModsPath>
+        <Sts2DataDir Condition="'$(Sts2DataDir)' == '' and '$(Sts2Path)' != ''">$(Sts2Path)\data_sts2_windows_x86_64</Sts2DataDir>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Version>0.0.0.0-dev</Version>
+    </PropertyGroup>
+
+    <ItemGroup Condition="Exists('$(Sts2DataDir)')">
+        <Reference Include="0Harmony">
+            <HintPath>$(Sts2DataDir)/0Harmony.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="sts2">
+            <HintPath>$(Sts2DataDir)/sts2.dll</HintPath>
+            <Private>false</Private>
+            <Publicize>False</Publicize>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <CompilerVisibleProperty Include="GodotProjectDir"/>
+        <ProjectReference Include="..\MinionLib.csproj"/>
+        <ProjectReference Include="..\MinionLib.Generators\MinionLib.Generators.csproj"
+                          OutputItemType="Analyzer"
+                          ReferenceOutputAssembly="false"
+                          Pack="false"/>
+    </ItemGroup>
+
+    <Target Name="CheckDependencyPaths" BeforeTargets="ResolveAssemblyReferences">
+        <Error
+            Text="Slay the Spire 2 data not found at path '$(Sts2DataDir)'. Update 'Sts2Path' / 'Sts2DataDir' in local.props."
+            Condition="'$(Sts2DataDir)' == '' or !Exists('$(Sts2DataDir)\sts2.dll')"/>
+    </Target>
+
+    <!-- 自动更新 manifest 中的版本号 -->
+    <Target Name="UpdateManifestVersion" BeforeTargets="BeforeBuild;PreparePckForPack">
+        <PropertyGroup>
+            <ManifestTemplateFile>$(MSBuildProjectDirectory)\MinionLib.Example.template.json</ManifestTemplateFile>
+            <ManifestOutputFile>$(MSBuildProjectDirectory)\MinionLib.Example.json</ManifestOutputFile>
+        </PropertyGroup>
+
+        <Message Text="Updating version in $(ManifestOutputFile) to $(Version)" Importance="high"/>
+
+        <ItemGroup>
+            <FileLines Include="$([System.IO.File]::ReadAllText($(ManifestTemplateFile)).Replace('VERSION-CODE', '$(Version)'))"/>
+        </ItemGroup>
+
+        <WriteLinesToFile File="$(ManifestOutputFile)" Lines="@(FileLines)" Overwrite="true" WriteOnlyWhenDifferent="true"/>
+    </Target>
+
+    <!-- 构建后自动将 dll 和 manifest 复制到 mods 目录 -->
+    <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent">
+        <Message Text="Copying .dll and manifest to mods folder." Importance="high"/>
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"/>
+        <Copy SourceFiles="$(MSBuildProjectDirectory)\..\MinionLib.Example.json" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"
+              Condition="Exists('$(MSBuildProjectDirectory)\..\MinionLib.Example.json')"/>
+    </Target>
+
+    <!--执行 Godot 导出命令将 .pck 导出到 mods 目录 -->
+    <Target Name="GodotPublish" AfterTargets="Publish" Condition="'$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
+        <Message Text="Exporting Godot .pck to mods folder" Importance="high"/>
+        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExport&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
+              WorkingDirectory="$(MSBuildProjectDirectory)\.."
+              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
+              ContinueOnError="WarnAndContinue"
+              Condition="'$(Configuration)' != 'ExportRelease'"/>
+        <!-- 当配置为 ExportRelease 时，使用 BasicExportNoExample 配置 -->
+        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExportNoExample&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
+              WorkingDirectory="$(MSBuildProjectDirectory)\.."
+              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
+              ContinueOnError="WarnAndContinue"
+              Condition="'$(Configuration)' == 'ExportRelease'"/>
+    </Target>
+
+    <Target Name="GodotPublishSkipped" AfterTargets="Publish" Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')">
+        <Message Text="Skipping Godot .pck export because GodotPath is not configured." Importance="high"/>
+    </Target>
+</Project>

@@ -1,4 +1,4 @@
-﻿using MegaCrit.Sts2.Core.Animation;
+using MegaCrit.Sts2.Core.Animation;
 using MegaCrit.Sts2.Core.Bindings.MegaSpine;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -17,7 +17,7 @@ public sealed class DefenseakaMinion : MinionModel
 
     public override int MaxInitialHp => 6;
 
-    protected override string VisualsPath => "res://Example/MinionTest/scenes/creature_visuals/pettest_defenseaka.tscn";
+    protected override string VisualsPath => "res://MinionLib.Example/MinionTest/scenes/creature_visuals/pettest_defenseaka.tscn";
 
     public override CreatureAnimator GenerateAnimator(MegaSprite controller)
     {

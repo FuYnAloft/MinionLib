@@ -24,7 +24,7 @@ public sealed class MinionAdvanceCard()
 
         using var accessor = new PetsOrderAccessor(target.PetOwner);
         if (accessor.Pets == null) return;
-        minion.Position = minion.Position switch
+        var nextPosition = minion.Position switch
         {
             MinionPosition.Front => MinionPosition.FrontUpper,
             MinionPosition.FrontUpper => MinionPosition.Front,
@@ -32,6 +32,7 @@ public sealed class MinionAdvanceCard()
             MinionPosition.BackUpper => MinionPosition.Back,
             _ => MinionPosition.Front
         };
+        minion.SetPosition(nextPosition);
         accessor.Pets.Remove(target);
         accessor.Pets.Insert(0, target);
         _ = MinionAnimCmd.Rearrange(duration: 0.5f);

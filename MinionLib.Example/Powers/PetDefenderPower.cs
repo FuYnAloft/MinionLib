@@ -12,11 +12,11 @@ public sealed class PetDefenderPower : CustomPowerModel
 
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    public override string CustomPackedIconPath => "res://Example/MinionTest/orb.png";
+    public override string CustomPackedIconPath => "res://MinionLib.Example/MinionTest/orb.png";
 
-    public override string CustomBigIconPath => "res://Example/MinionTest/orb.png";
+    public override string CustomBigIconPath => "res://MinionLib.Example/MinionTest/orb.png";
 
-    public override string CustomBigBetaIconPath => "res://Example/MinionTest/orb.png";
+    public override string CustomBigBetaIconPath => "res://MinionLib.Example/MinionTest/orb.png";
 
     public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
         ICombatState combatState)

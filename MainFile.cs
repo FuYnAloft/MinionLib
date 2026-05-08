@@ -4,7 +4,6 @@ using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
-using MinionLib.Content;
 using MinionLib.Initialization;
 
 namespace MinionLib;
@@ -18,7 +17,6 @@ public partial class MainFile : Node
     {
         Harmony harmony = new(ModId);
 
-        CustomContentRegistry.RegisterAssembly(typeof(MainFile).Assembly);
         harmony.PatchAll();
 
         MinionHookInitializer.Initialize();

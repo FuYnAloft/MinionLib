@@ -16,7 +16,7 @@ public sealed class AttackakaMinion : MinionModel
 
     public override int MaxInitialHp => 6;
 
-    protected override string VisualsPath => "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn";
+    protected override string VisualsPath => "res://MinionLib.Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn";
 
     public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, Creature self, MinionSummonOptions options)
     {

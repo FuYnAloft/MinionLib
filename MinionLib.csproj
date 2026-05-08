@@ -51,18 +51,15 @@
 
     <ItemGroup>
         <Compile Remove="MinionLib/**"/>
+        <Compile Remove="MinionLib.Example/**/*.cs"/>
         <Compile Remove="materials/**"/>
         <Compile Remove="shaders/**"/>
         <Compile Remove="images/**"/>
         <EmbeddedResource Remove="MinionLib/**"/>
+        <EmbeddedResource Remove="MinionLib.Example/**"/>
         <EmbeddedResource Remove="materials/**"/>
         <EmbeddedResource Remove="shaders/**"/>
         <EmbeddedResource Remove="images/**"/>
-    </ItemGroup>
-
-    <!-- 当配置为 ExportRelease 时，排除 example 目录下的所有 C# 文件 -->
-    <ItemGroup Condition="'$(Configuration)' == 'ExportRelease'">
-        <Compile Remove="Example/**/*.cs"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -78,7 +75,6 @@
         <Content Include="LICENSE"/>
         <Content Include="README.md"/>
         <Content Include="docs/**/*"/>
-        <Content Include="Example/MinionTest/**"/>
         <Content Include="local.props.template"/>
         <None Include="Tools\ComponentCodeGeneration\**"/>
     </ItemGroup>

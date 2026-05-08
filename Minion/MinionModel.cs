@@ -14,6 +14,11 @@ public abstract class MinionModel : MonsterModel
 
     public MinionPosition Position { get; internal set; }
 
+    public void SetPosition(MinionPosition position)
+    {
+        Position = position;
+    }
+
     protected override MonsterMoveStateMachine GenerateMoveStateMachine()
     {
         MoveState idle = new("MINION_IDLE", _ => Task.CompletedTask)

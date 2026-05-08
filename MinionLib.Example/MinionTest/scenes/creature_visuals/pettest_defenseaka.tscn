@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" uid="uid://cghtlla3sw0po" path="res://src/Core/Nodes/Combat/NCreatureVisuals.cs" id="1_ncreature"]
-[ext_resource type="Texture2D" path="res://Example/MinionTest/image.png" id="2_attackaka"]
+[ext_resource type="Texture2D" path="res://MinionLib.Example/MinionTest/image.png" id="2_defenseaka"]
 
-[node name="MinionLibAttackaka" type="Node2D"]
+[node name="MinionLibDefenseaka" type="Node2D"]
 script = ExtResource("1_ncreature")
 metadata/_edit_group_ = true
 
@@ -11,8 +11,8 @@ metadata/_edit_group_ = true
 unique_name_in_owner = true
 position = Vector2(0, -56)
 scale = Vector2(0.28, 0.28)
-texture = ExtResource("2_attackaka")
-self_modulate = Color(1, 0.85, 0.85, 1)
+texture = ExtResource("2_defenseaka")
+self_modulate = Color(0.84, 0.92, 1, 1)
 
 [node name="Bounds" type="Control" parent="."]
 unique_name_in_owner = true

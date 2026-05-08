@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.Models;
 
 namespace MinionLib.Content;
 
-internal static class CustomContentRegistry
+public static class CustomContentRegistry
 {
     private static readonly object Sync = new();
     private static readonly HashSet<Assembly> RegisteredAssemblies = [];
