@@ -17,7 +17,8 @@ public partial class MainFile : Node
     {
         Harmony harmony = new(ModId);
 
-        harmony.PatchAll();
+        if (!MinionPatchInstaller.Install(harmony, typeof(MainFile).Assembly))
+            throw new InvalidOperationException($"{ModId} critical patches failed.");
 
         MinionHookInitializer.Initialize();
 
