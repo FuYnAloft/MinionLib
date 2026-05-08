@@ -1,0 +1,15 @@
+{
+  "id": "MinionLib.BaseLibCompat",
+  "name": "MinionLib BaseLib Compatibility",
+  "author": "FuYnAloft",
+  "description": "Optional BaseLib compatibility layer for MinionLib.",
+  "version": "VERSION-CODE",
+  "has_pck": false,
+  "has_dll": true,
+  "affects_gameplay": false,
+  "min_game_version": "0.105.0",
+  "dependencies": [
+    "MinionLib",
+    "BaseLib"
+  ]
+}

@@ -52,11 +52,13 @@
     <ItemGroup>
         <Compile Remove="MinionLib/**"/>
         <Compile Remove="MinionLib.Example/**/*.cs"/>
+        <Compile Remove="MinionLib.BaseLibCompat/**/*.cs"/>
         <Compile Remove="materials/**"/>
         <Compile Remove="shaders/**"/>
         <Compile Remove="images/**"/>
         <EmbeddedResource Remove="MinionLib/**"/>
         <EmbeddedResource Remove="MinionLib.Example/**"/>
+        <EmbeddedResource Remove="MinionLib.BaseLibCompat/**"/>
         <EmbeddedResource Remove="materials/**"/>
         <EmbeddedResource Remove="shaders/**"/>
         <EmbeddedResource Remove="images/**"/>

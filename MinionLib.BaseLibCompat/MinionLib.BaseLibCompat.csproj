@@ -1,0 +1,83 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\local.props" Condition="Exists('..\local.props')"/>
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <GodotProjectDir>$(MSBuildProjectDirectory)\..</GodotProjectDir>
+        <ImplicitUsings>true</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <LangVersion>preview</LangVersion>
+        <NoWarn>$(NoWarn);MSB3270</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Sts2Path Condition="'$(Sts2Path)' == '' and '$(SteamLibraryPath)' != ''">$(SteamLibraryPath)\common\Slay the Spire 2</Sts2Path>
+        <ModsPath Condition="'$(ModsPath)' == '' and '$(Sts2Path)' != ''">$(Sts2Path)\mods\</ModsPath>
+        <Sts2DataDir Condition="'$(Sts2DataDir)' == '' and '$(Sts2Path)' != ''">$(Sts2Path)\data_sts2_windows_x86_64</Sts2DataDir>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>FuYnAloft.Sts2.MinionLib.BaseLibCompat</PackageId>
+        <Version>0.0.0.0-dev</Version>
+        <Authors>FuYnAloft</Authors>
+        <Description>Optional BaseLib compatibility layer for MinionLib.</Description>
+        <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/FuYnAloft/MinionLib</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup Condition="Exists('$(Sts2DataDir)')">
+        <Reference Include="0Harmony">
+            <HintPath>$(Sts2DataDir)/0Harmony.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="sts2">
+            <HintPath>$(Sts2DataDir)/sts2.dll</HintPath>
+            <Private>false</Private>
+            <Publicize>False</Publicize>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <CompilerVisibleProperty Include="GodotProjectDir"/>
+        <ProjectReference Include="..\MinionLib.csproj"/>
+        <PackageReference Include="Alchyr.Sts2.BaseLib" Version="3.0.3" ExcludeAssets="runtime"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="MinionLib.BaseLibCompat.template.json"/>
+        <None Include="..\README.md" Pack="true" PackagePath="README.md"/>
+        <Content Include="MinionLib.BaseLibCompat.json" Pack="true" PackagePath="Content/MinionLib.BaseLibCompat.json"
+                 Condition="Exists('MinionLib.BaseLibCompat.json')"/>
+    </ItemGroup>
+
+    <Target Name="CheckDependencyPaths" BeforeTargets="ResolveAssemblyReferences">
+        <Error
+                Text="Slay the Spire 2 data not found at path '$(Sts2DataDir)'. Update 'Sts2Path' / 'Sts2DataDir' in local.props."
+                Condition="'$(Sts2DataDir)' == '' or !Exists('$(Sts2DataDir)\sts2.dll')"/>
+    </Target>
+
+    <Target Name="UpdateManifestVersion" BeforeTargets="BeforeBuild;GenerateNuspec">
+        <PropertyGroup>
+            <ManifestTemplateFile>$(MSBuildProjectDirectory)\MinionLib.BaseLibCompat.template.json</ManifestTemplateFile>
+            <ManifestOutputFile>$(MSBuildProjectDirectory)\MinionLib.BaseLibCompat.json</ManifestOutputFile>
+        </PropertyGroup>
+
+        <ItemGroup>
+            <FileLines Include="$([System.IO.File]::ReadAllText($(ManifestTemplateFile)).Replace('VERSION-CODE', '$(Version)'))"/>
+        </ItemGroup>
+
+        <WriteLinesToFile File="$(ManifestOutputFile)" Lines="@(FileLines)" Overwrite="true" WriteOnlyWhenDifferent="true"/>
+    </Target>
+
+    <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent">
+        <Message Text="Copying BaseLib compatibility dll and manifest to mods folder." Importance="high"/>
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"/>
+        <Copy SourceFiles="$(MSBuildProjectDirectory)\MinionLib.BaseLibCompat.json"
+              DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"
+              Condition="Exists('$(MSBuildProjectDirectory)\MinionLib.BaseLibCompat.json')"/>
+    </Target>
+</Project>
