@@ -19,7 +19,7 @@
 
     <PropertyGroup>
         <PackageId>FuYnAloft.Sts2.MinionLib.RitsuCompat</PackageId>
-        <Version>0.0.0.0-dev</Version>
+        <Version>0.3.6</Version>
         <Authors>FuYnAloft</Authors>
         <Description>Optional RitsuLib compatibility layer for MinionLib.</Description>
         <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>

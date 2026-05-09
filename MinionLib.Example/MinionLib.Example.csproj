@@ -18,7 +18,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Version>0.0.0.0-dev</Version>
+        <Version>0.3.6</Version>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 

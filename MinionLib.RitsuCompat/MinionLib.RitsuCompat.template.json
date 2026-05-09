@@ -1,6 +1,7 @@
 {
   "id": "MinionLib.RitsuCompat",
   "name": "MinionLib RitsuLib Compatibility",
+  "pck_name": "MinionLib.RitsuCompat",
   "author": "FuYnAloft",
   "description": "Optional RitsuLib compatibility layer for MinionLib.",
   "version": "VERSION-CODE",
@@ -9,7 +10,13 @@
   "affects_gameplay": false,
   "min_game_version": "0.105.0",
   "dependencies": [
-    "MinionLib",
-    "STS2-RitsuLib"
+    {
+      "id": "MinionLib",
+      "min_version": "VERSION-CODE"
+    },
+    {
+      "id": "STS2-RitsuLib",
+      "min_version": "0.2.27"
+    }
   ]
 }

@@ -1,12 +1,13 @@
 {
   "id": "MinionLib",
   "name": "MinionLib",
+  "pck_name": "MinionLib",
   "author": "FuYnAloft",
   "description": "A library mod that provides basic functionalities for minion mechanics and component-based cards.\n一个为随从机制和基于组件的卡牌提供基础功能的库模组。",
   "version": "VERSION-CODE",
   "has_pck": true,
   "has_dll": true,
-  "affects_gameplay": false,
+  "affects_gameplay": true,
   "min_game_version": "0.105.0",
   "dependencies": []
 }
