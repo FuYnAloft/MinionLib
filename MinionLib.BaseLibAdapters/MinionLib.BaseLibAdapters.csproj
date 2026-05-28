@@ -12,5 +12,6 @@
 
     <ItemGroup>
         <None Include="README.md"/>
+        <None Include="THIRDPARTY-LICENSE"/>
     </ItemGroup>
 </Project>
