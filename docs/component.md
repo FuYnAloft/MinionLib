@@ -1,10 +1,12 @@
 # Component 使用文档
 
+## 简介
+
 本文面向已经熟悉 C# 和 STS2 `CardModel` 的开发者。目标是把 MinionLib Component 的使用边界、推荐写法、常见实现路径整理成一份可以直接交给开发者或代码生成工具使用的说明。
 
 Component 的核心价值在于把“卡牌身份”和“可复用行为”拆开管理。一张卡仍然声明费用、类型、稀有度、目标、数值和关键词；可复用的行为进入 Component，例如打出时追加伤害、右键融合、根据能量改写费用、跨时机记录战斗历史、向卡牌描述追加标准文本。
 
-## 适用场景
+### 适用场景
 
 Component 适合处理这些真实开发场景：
 
@@ -15,64 +17,85 @@ Component 适合处理这些真实开发场景：
 - MR 评审需要减少重复检查：同一个机制散落在十几张卡的 `OnPlay` 里时，每个 MR 都要重新检查费用判断、选择 UI、同步、描述和升级差值。机制收进 Component 后，评审者重点看组件实现一次，之后在卡牌 MR 里确认参数、挂载位置和独有结算即可。
 - AI 代码生成需要复用路径：让 AI 直接从卡牌文本生成完整 `OnPlay`，它容易重复写费用判断、选择逻辑和状态字段。文档明确“已有机制先挂 Component，卡牌只补参数和独有效果”，可以降低单次生成的复杂度，也能引导 AI 复用已经测试过的组件。
 
+### 使用边界
+
 Component 不适合承载一次性的大段卡牌主效果。某张卡独有的复杂结算继续放在卡牌自己的 `OnPlay(..., ComponentContext)` 里；Component 负责可复用、可组合、需要进入通用流程的部分。
 
-## 基本模型
+## Quickstart：完整范例
 
-MinionLib 提供两个核心类型：
+本节先给出三种最常见落地方式：让卡牌基类接入 `ComponentsCardModel`、写一个普通 `CardComponent`、写一个跨时机监听的 `TimingCardComponent`。后续章节会解释这些代码背后的流程、序列化和本地化规则。
 
-- `ComponentsCardModel`：带组件列表的卡牌基类，继承自 `CardModel`。
-- `CardComponent`：组件基类，提供状态、描述、HoverTip、目标、费用、出牌时机、右键等扩展点。
+### 场景 1：接入 ComponentsCardModel
 
-项目可以让自己的业务卡牌基类直接或间接继承 `ComponentsCardModel`。这样普通卡牌只需要继承业务基类，就天然支持 `CanonicalComponents`、`AddComponent`、`GetComponent<T>` 和组件化 hook。
-
-## ComponentsCardModel 标准原则
-
-使用 `ComponentsCardModel` 后，卡牌类遵守下面几条原则：
-
-- 所有卡牌 hook 都使用带 `ComponentContext componentContext` 的签名。例如 `OnPlay(PlayerChoiceContext, CardPlay, ComponentContext)`、`AfterCardPlayed(PlayerChoiceContext, CardPlay, ComponentContext)`、`OnUpgrade(ComponentContext)`、`AfterDowngraded(ComponentContext)`。
-- 旧的原版 hook 会被 sealed。编译器提示 “Try adding `ComponentContext componentContext` as the last parameter” 时，按提示改签名。
-- 卡牌自己的主效果写在 Core 阶段。组件可以在 Prefix 阶段先执行，也可以在 Postfix 阶段收尾。
-- `CanonicalComponents` 声明初始组件。这里应该放构造参数稳定、可序列化、可深拷贝的组件。
-- `AddComponent` 适合运行时授予行为。运行时挂载的组件同样需要能序列化和反序列化，尤其是跨回合、进存档、复制卡牌后仍可能存在的组件。
-- `GetComponent<T>` 用来调用组件提供的显式入口，例如 `this.UseMode(...)` 内部通常会拿到 `ModeComponent` 再执行选择流程。
-
-最小卡牌形态：
+先让项目自己的卡牌基类继承 `ComponentsCardModel`，业务卡牌继续继承这个项目基类。这样每张卡都能声明 `CanonicalComponents`，并且所有卡牌 hook 都使用带 `ComponentContext` 的签名。
 
 ```csharp
-public class SimpleStrike : MyCardBase
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MinionLib.Component;
+using MinionLib.Component.Core;
+using MinionLib.Component.Interfaces;
+using YourMod.Components;
+
+namespace YourMod.Cards;
+
+public abstract class MyCardBase(
+    int cost,
+    CardType type,
+    CardRarity rarity,
+    TargetType targetType)
+    : ComponentsCardModel(cost, type, rarity, targetType);
+
+public sealed class QuickStudy : MyCardBase
 {
     protected override IEnumerable<ICardComponent> CanonicalComponents =>
     [
-        new StrikeComponent(6)
+        new DrawOnPlayComponent(1),
+        new SameOwnerPlayCounterComponent()
     ];
 
-    public SimpleStrike()
-        : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
+    public QuickStudy()
+        : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+
+    protected override Task OnPlay(
+        PlayerChoiceContext choiceContext,
+        CardPlay cardPlay,
+        ComponentContext componentContext)
+    {
+        // 当前卡独有的结算写在 Core 阶段。
+        return Task.CompletedTask;
+    }
+
+    protected override void OnUpgrade(ComponentContext componentContext)
+    {
+        AddComponent(new DrawOnPlayComponent(1), isUpgrade: true);
+    }
 }
 ```
 
-`CanonicalComponents` 表示这张卡的初始组件。卡牌第一次访问组件列表时，MinionLib 会深拷贝这些组件并挂到当前卡牌实例上。复制卡、存档恢复和战斗中生成卡时，组件状态会跟着当前卡实例走。
+这张卡启动时挂上两个组件：
 
-运行时追加组件：
+- `DrawOnPlayComponent(1)`：打出后抽 1 张牌，升级时通过 `AddComponent(..., isUpgrade: true)` 追加到 2。
+- `SameOwnerPlayCounterComponent()`：监听战斗开始、打牌后、战斗结束，并记录当前拥有者本场战斗打出了多少张牌。
 
-```csharp
-card.AddComponent(new DrawOnPlayComponent(1));
-```
+### 场景 2：普通 CardComponent
 
-运行时读取组件：
-
-```csharp
-var mode = card.GetComponent<ModeComponent>();
-```
-
-同类型组件默认会尝试合并。需要控制合并规则时，在组件里覆写 `TryMergeWith` 和 `TrySubtractiveMergeWith`。
-
-## 推荐写法
-
-组件类建议固定成这个形态：
+普通组件适合复用一段固定行为。下面的 `DrawOnPlayComponent` 负责“打出后抽 N 张牌”，同时处理状态保存、描述数值、升级合并。
 
 ```csharp
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MinionLib.Component;
+using MinionLib.Component.Core;
+using MinionLib.Component.Interfaces;
+
+namespace YourMod.Components;
+
 public sealed partial class DrawOnPlayComponent : CardComponent
 {
     [ComponentState<DynamicVar>]
@@ -90,8 +113,126 @@ public sealed partial class DrawOnPlayComponent : CardComponent
     {
         return CardPileCmd.Draw(choiceContext, Cards, Card!.Owner);
     }
+
+    public override bool TryMergeWith(
+        ICardComponent incoming,
+        ApplyComponentOptions options,
+        out ICardComponent? merged)
+    {
+        if (incoming is not DrawOnPlayComponent draw)
+        {
+            merged = null;
+            return false;
+        }
+
+        Cards += draw.Cards;
+        if (options.IsUpgrade)
+            DynamicVars["Cards"].SetWasJustUpgraded();
+
+        merged = this;
+        return true;
+    }
 }
 ```
+
+本地化：
+
+```yaml
+DrawOnPlayComponent:
+  prefix: 打出时抽{Cards:diff()}张牌。
+```
+
+### 场景 3：TimingCardComponent
+
+`TimingCardComponent` 适合监听卡牌主流程之外的事件。下面的组件记录当前卡牌拥有者本场战斗打出了多少张牌，并在战斗开始和战斗结束时重置。
+
+```csharp
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MinionLib.Component.Core;
+using MinionLib.Component.Utils;
+
+namespace YourMod.Components;
+
+public sealed partial class SameOwnerPlayCounterComponent : TimingCardComponent
+{
+    [ComponentState<DynamicVar>]
+    public partial int PlayedThisCombat { get; private set; }
+
+    public SameOwnerPlayCounterComponent()
+        : base(Timing.BeforeCombatStart, Timing.AfterCardPlayed, Timing.AfterCombatEnd) { }
+
+    protected override Task OnTimingPostfix(OnTimingContext context)
+    {
+        if (Card?.Owner == null) return Task.CompletedTask;
+
+        switch (context.Timing)
+        {
+            case Timing.BeforeCombatStart:
+            case Timing.AfterCombatEnd:
+                PlayedThisCombat = 0;
+                break;
+            case Timing.AfterCardPlayed:
+                var playedCard = context.CardPlay?.Card;
+                if (playedCard?.Owner == Card.Owner)
+                    PlayedThisCombat++;
+                break;
+        }
+
+        return Task.CompletedTask;
+    }
+}
+```
+
+本地化：
+
+```yaml
+SameOwnerPlayCounterComponent:
+  postfix: 本场战斗你已打出{PlayedThisCombat}张牌。
+```
+
+## 核心模型与原则
+
+### 基本模型
+
+MinionLib 提供两个核心类型：
+
+- `ComponentsCardModel`：带组件列表的卡牌基类，继承自 `CardModel`。
+- `CardComponent`：组件基类，提供状态、描述、HoverTip、目标、费用、出牌时机、右键等扩展点。
+
+项目可以让自己的业务卡牌基类直接或间接继承 `ComponentsCardModel`。这样普通卡牌只需要继承业务基类，就天然支持 `CanonicalComponents`、`AddComponent`、`GetComponent<T>` 和组件化 hook。
+
+### ComponentsCardModel 标准原则
+
+使用 `ComponentsCardModel` 后，卡牌类遵守下面几条原则：
+
+- 所有卡牌 hook 都使用带 `ComponentContext componentContext` 的签名。例如 `OnPlay(PlayerChoiceContext, CardPlay, ComponentContext)`、`AfterCardPlayed(PlayerChoiceContext, CardPlay, ComponentContext)`、`OnUpgrade(ComponentContext)`、`AfterDowngraded(ComponentContext)`。
+- 旧的原版 hook 会被 sealed。编译器提示 “Try adding `ComponentContext componentContext` as the last parameter” 时，按提示改签名。
+- 卡牌自己的主效果写在 Core 阶段。组件可以在 Prefix 阶段先执行，也可以在 Postfix 阶段收尾。
+- `CanonicalComponents` 声明初始组件。这里应该放构造参数稳定、可序列化、可深拷贝的组件。
+- `AddComponent` 适合运行时授予行为。运行时挂载的组件同样需要能序列化和反序列化，尤其是跨回合、进存档、复制卡牌后仍可能存在的组件。
+- `GetComponent<T>` 用来调用组件提供的显式入口，例如 `this.UseMode(...)` 内部通常会拿到 `ModeComponent` 再执行选择流程。
+
+Quickstart 里的 `MyCardBase` 和 `QuickStudy` 展示了最小接入路径。`CanonicalComponents` 表示卡牌的初始组件。卡牌第一次访问组件列表时，MinionLib 会深拷贝这些组件并挂到当前卡牌实例上。复制卡、存档恢复和战斗中生成卡时，组件状态会跟着当前卡实例走。
+
+运行时追加组件：
+
+```csharp
+card.AddComponent(new DrawOnPlayComponent(1));
+```
+
+运行时读取组件：
+
+```csharp
+var mode = card.GetComponent<ModeComponent>();
+```
+
+同类型组件默认会尝试合并。需要控制合并规则时，在组件里覆写 `TryMergeWith` 和 `TrySubtractiveMergeWith`。
+
+### 推荐写法
+
+组件类建议采用 Quickstart 中 `DrawOnPlayComponent` 的形态：`sealed partial` 类型、可序列化状态字段、明确的 hook、可评审的合并规则。
 
 推荐规则：
 
@@ -121,7 +262,7 @@ protected override void OnUpgrade(ComponentContext componentContext)
 
 这些签名属于 `ComponentsCardModel` 的标准原则。卡牌和组件同时存在时，优先让组件承担可复用行为，让卡牌类保留当前卡独有的结算。
 
-## 出牌流程
+### 出牌流程
 
 `ComponentsCardModel` 把一次卡牌 hook 拆成多个阶段：
 
@@ -137,7 +278,7 @@ protected override void OnUpgrade(ComponentContext componentContext)
 
 组件 hook 收到的 `ComponentContext` 带有当前阶段。高级组件可以移动阶段来跳过后续流程，但普通组件不建议修改阶段。
 
-## 状态与序列化
+### 状态与序列化
 
 卡牌保存组件状态时，会写入两个层次的信息：
 
@@ -175,7 +316,7 @@ public partial int Damage { get; private set; }
 DynamicVars.Damage.SetWasJustUpgraded();
 ```
 
-## 描述文本
+### 描述文本
 
 `CardComponent` 默认读取两个本地化 key：
 
@@ -223,7 +364,7 @@ protected override string FormatPrefix(LocString loc)
 写描述时要让文本还原到玩家操作：  
 “右键这张牌，选择至多 2 张手牌融合；被选择的牌从战斗中移除。”比“进行融合处理”更容易评审。
 
-## HoverTip、目标、费用和可用性
+### HoverTip、目标、费用和可用性
 
 Component 可以影响多个卡牌表面属性：
 
@@ -250,7 +391,9 @@ public override Color? GlowColor => IsActive ? Colors.Gold : null;
 
 费用改写组件要特别小心递归。组件读取 `card.EnergyCost.GetResolved()` 时，如果自己也参与费用修改，需要一个 suppression scope 或等价保护，避免刷新状态时再次触发费用计算。
 
-## Keyword 与 Component 的职责
+## Keyword 与本地化
+
+### Keyword 与 Component 的职责
 
 `CardKeyword` 是卡面的字段和 tooltip 入口。它让玩家看到“融合”“爆能强化”“无法使用”等关键词，也让代码可以通过 `card.Keywords.Contains(...)` 做轻量判定。
 
@@ -295,7 +438,7 @@ protected override Task OnPlay(
 
 只加 Keyword 会出现“卡面有字，打出没效果”。只加 Component 会出现“效果存在，卡面缺少关键词和 tooltip”。
 
-## 最小自定义 Keyword
+### 最小自定义 Keyword
 
 Keyword 注册属于具体内容库的能力，Component 本身不依赖这部分。下面以 BaseMod 风格的关键词注册流程为例，目标是得到一个静态 `CardKeyword` 字段，并让它能从 `card_keywords` 表读取标题和说明。
 
@@ -364,86 +507,11 @@ protected override IEnumerable<IHoverTip> ExtraHoverTipsC =>
 
 多数卡牌只需要第 3 步。`HoverTipFactory.FromKeyword(...)` 适合机制说明没有自动出现在当前位置、或某个 Power/Relic 也需要展示同一个 tooltip 的场景。
 
-## 最小自定义 Component
+## 常用实现场景
 
-下面实现一个“打出时抽 N 张牌”的组件。
+### 普通 Component 检查点
 
-```csharp
-using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MinionLib.Component;
-using MinionLib.Component.Core;
-using MinionLib.Component.Interfaces;
-
-namespace YourMod.Components;
-
-public sealed partial class DrawOnPlayComponent : CardComponent
-{
-    [ComponentState<DynamicVar>]
-    public partial int Cards { get; private set; }
-
-    public DrawOnPlayComponent(int cards)
-    {
-        Cards = cards;
-    }
-
-    public override Task OnPlayPostfix(
-        PlayerChoiceContext choiceContext,
-        CardPlay cardPlay,
-        ComponentContext componentContext)
-    {
-        return CardPileCmd.Draw(choiceContext, Cards, Card!.Owner);
-    }
-
-    public override bool TryMergeWith(
-        ICardComponent incoming,
-        ApplyComponentOptions options,
-        out ICardComponent? merged)
-    {
-        if (incoming is not DrawOnPlayComponent draw)
-        {
-            merged = null;
-            return false;
-        }
-
-        Cards += draw.Cards;
-        if (options.IsUpgrade)
-            DynamicVars["Cards"].SetWasJustUpgraded();
-
-        merged = this;
-        return true;
-    }
-}
-```
-
-本地化：
-
-```yaml
-DrawOnPlayComponent:
-  prefix: 打出时抽{Cards:diff()}张牌。
-```
-
-卡牌使用：
-
-```csharp
-public class QuickStudy : MyCardBase
-{
-    protected override IEnumerable<ICardComponent> CanonicalComponents =>
-    [
-        new DrawOnPlayComponent(1)
-    ];
-
-    public QuickStudy()
-        : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
-
-    protected override void OnUpgrade(ComponentContext componentContext)
-    {
-        AddComponent(new DrawOnPlayComponent(1), isUpgrade: true);
-    }
-}
-```
+Quickstart 的 `DrawOnPlayComponent` 是最小普通组件范例。写同类组件时，按下面顺序检查即可：
 
 这个组件解决了四个点：
 
@@ -452,7 +520,7 @@ public class QuickStudy : MyCardBase
 - 状态：`Cards` 随卡保存和复制。
 - 升级：升级追加同类组件时，`TryMergeWith` 把数值合并，并标记升级差值。
 
-## 运行时授予组件
+### 运行时授予组件
 
 运行时授予组件适合表达“给另一张牌临时附加行为”。例如某张 Power 让手牌中的下一张攻击牌获得“打出时抽 1 张牌”：
 
@@ -469,7 +537,7 @@ targetCard.AddComponent(new DrawOnPlayComponent(1));
 
 对于只影响单次出牌的短效行为，直接在当前卡的 `OnPlay` 中执行更清晰。运行时授予适合玩家之后能看到、能交互、能被复制或能被保存的行为。
 
-## 右键组件
+### 右键组件
 
 右键组件适合处理“这张牌在手牌中可以额外操作”的机制。典型流程：
 
@@ -511,35 +579,9 @@ public abstract partial class FusionComponent : CardComponent
 
 右键组件里尤其需要避免只改本地 UI 状态。选择、移除卡、加牌、改费用这类动作应走命令或已有同步 API。
 
-## TimingCardComponent
+### TimingCardComponent
 
-`TimingCardComponent` 适合跨时机监听。组件声明一组 `Timing`，MinionLib 生成的 hook 会在对应时间调用 `OnTimingPrefix` 或 `OnTimingPostfix`。
-
-```csharp
-public sealed partial class InvocationTrackerComponent : TimingCardComponent
-{
-    public InvocationTrackerComponent()
-        : base(Timing.BeforeCombatStart, Timing.AfterCardPlayed, Timing.AfterCombatEnd) { }
-
-    protected override Task OnTimingPostfix(OnTimingContext context)
-    {
-        switch (context.Timing)
-        {
-            case Timing.BeforeCombatStart:
-                ResetProgress();
-                break;
-            case Timing.AfterCardPlayed:
-                Record(context.CardPlay);
-                break;
-            case Timing.AfterCombatEnd:
-                ResetProgress();
-                break;
-        }
-
-        return Task.CompletedTask;
-    }
-}
-```
+`TimingCardComponent` 适合跨时机监听。组件声明一组 `Timing`，MinionLib 生成的 hook 会在对应时间调用 `OnTimingPrefix` 或 `OnTimingPostfix`。Quickstart 的 `SameOwnerPlayCounterComponent` 展示了战斗开始重置、打牌后记录、战斗结束清理的完整形态。
 
 写这类组件时要明确三件事：
 
@@ -547,7 +589,9 @@ public sealed partial class InvocationTrackerComponent : TimingCardComponent
 - 组件状态在哪里保存：卡上、玩家全局状态、战斗历史，还是静态缓存。
 - 触发动作如何同步：自动打出、抽牌、消耗、选择卡牌都需要使用游戏命令或同步选择 API。
 
-## 常见错误
+## 落地检查
+
+### 常见错误
 
 - 只加 Keyword，忘记挂 Component。卡面显示机制，实际出牌时没有额外行为。
 - 只挂 Component，忘记加 Keyword 或 HoverTip。行为存在，玩家看不出这张牌为什么能右键、为什么改了费用。
@@ -558,7 +602,7 @@ public sealed partial class InvocationTrackerComponent : TimingCardComponent
 - 组件合并规则没写。升级或运行时多次 `AddComponent` 后，开发者预期是叠加，实际可能追加多个实例或合并失败。
 - 本地化 key 跟 `ComponentId` 对不上。卡牌描述里组件文本为空，评审时需要看最终生成的本地化表。
 
-## 评审清单
+### 评审清单
 
 评审一个新 Component 或使用 Component 的卡牌时，按这个顺序看：
 
@@ -575,7 +619,7 @@ public sealed partial class InvocationTrackerComponent : TimingCardComponent
 11. 复制卡、升级预览、存档恢复、战斗结束清理是否覆盖。
 12. CI 失败时先看生成器报错、本地化缺 key、组件构造参数和旧 hook 签名。
 
-## 推荐文件位置
+### 推荐文件位置
 
 一个中等规模项目可以按机制归档：
 
@@ -601,7 +645,7 @@ Localization/
 
 组件和关键词分开放，可以让开发者从卡牌类快速跳到行为实现。MR 中看到一张卡新增 `ModKeywords.Fusion` 和 `new FusionComponent(...)` 时，评审者能立刻检查显示层和行为层是否同步。
 
-## 参考实现
+### 参考实现
 
 读源码时建议从这些文件开始，路径以 MinionLib 仓库根目录为基准：
 
