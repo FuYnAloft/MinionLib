@@ -25,7 +25,7 @@ public sealed class SummonAttackakaCard() : CustomCardModel(0, CardType.Power, C
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        _ = await MinionCmd.AddMinion<AttackakaMinion>(Owner, new MinionSummonOptions(
+        _ = await MinionCmd.AddMinion<AttackakaMinion>(choiceContext, Owner, new MinionSummonOptions(
             DynamicVars.Summon.BaseValue,
             DynamicVars["StrengthPower"].BaseValue,
             Source: this,
