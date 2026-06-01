@@ -20,17 +20,17 @@ public class MyMinion : MinionModel
 	public override int MinInitialHp => 6; // 作为敌方方怪物生成时的血量，通常无需在意
 	public override int MaxInitialHp => 6; // 作为敌方方怪物生成时的血量，通常无需在意
 	protected override string VisualsPath => "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn"; // 随从的视觉资源路径，tscn 格式，建议参考原版游戏的怪物
-    
+
     // 召唤时执行的代码，通常用来设置血量、应用初始能力等，options 是在召唤随从时传入的参数
-	public override async Task OnSummon(Player owner, Creature self, MinionSummonOptions options) // 注意使用 self 而非 this
+	public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, Creature self, MinionSummonOptions options) // 注意使用 self 而非 this
 	{
 		if (options.MaxHp is decimal maxHp)
 			await CreatureCmd.SetMaxAndCurrentHp(self, maxHp); // 设置血量
 
 		if (options.PrimaryStatAmount is decimal strength && strength > 0m)
-			await PowerCmd.Apply<StrengthPower>(self, strength, owner.Creature, options.Source); // 根据传入的参数设置力量
+			await PowerCmd.Apply<StrengthPower>(choiceContext, self, strength, owner.Creature, options.Source); // 根据传入的参数设置力量
 
-		await PowerCmd.Apply<PetAttackerPower>(self, 1m, owner.Creature, options.Source); // 获得 “攻击者” 能力
+		await PowerCmd.Apply<PetAttackerPower>(choiceContext, self, 1m, owner.Creature, options.Source); // 获得 “攻击者” 能力
 	}
 }
 ```
@@ -77,7 +77,7 @@ public sealed class MyAttackAction : CustomActionModel
 	public override bool AutoRemoveAtTurnEnd => true;                       // 是否在回合结束自动移除
 	public override PowerType Type => PowerType.Buff;                       // Power 的类型
 	public override PowerStackType StackType => PowerStackType.Counter;     // Power 的堆叠属性
-    
+
     // 核心重载，定义 Action 被触发时的行为，类似于卡牌的 OnPlay
     // 和卡牌一样，如果目标无需选定（如所有敌人），target 将会是 null
 	protected override async Task OnAct(PlayerChoiceContext choiceContext, Creature actor, Creature? target)
@@ -106,7 +106,7 @@ MinionLib 还提供了许多预定义的目标类型，位于 `MinionLib.Targeti
 ```csharp
 public sealed class EmpowerMinionCard : CustomCardModel
 {
-	public EmpowerMinionCard() : base(1, CardType.Skill, CardRarity.Uncommon, 
+	public EmpowerMinionCard() : base(1, CardType.Skill, CardRarity.Uncommon,
         MinionTargetTypes.AnyMinion // 使用了 MinionTargetTypes.AnyMinion 这个预定义的目标类型，表示可以选择任何一个（你的）随从作为目标
         ) { }
 
@@ -114,8 +114,8 @@ public sealed class EmpowerMinionCard : CustomCardModel
 	{
 		if (cardPlay.Target is not { Monster: MinionModel } target) return;
 
-		await PowerCmd.Apply<StrengthPower>(target, 2m, Owner.Creature, this);
-		await PowerCmd.Apply<DexterityPower>(target, 2m, Owner.Creature, this);
+		await PowerCmd.Apply<StrengthPower>(choiceContext, target, 2m, Owner.Creature, this);
+		await PowerCmd.Apply<DexterityPower>(choiceContext, target, 2m, Owner.Creature, this);
 	}
 }
 ```
@@ -135,11 +135,11 @@ public sealed class BoundStrikeCard()
 {
     // 如果绑定的随从已死亡，框变为红色
     protected override bool ShouldGlowRedInternal => ResolveBoundMinion() is not { IsAlive: true };
-    
+
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new BoundMinionDamageVar(0m, ValueProp.Move)]; // 定义 DynamicVar，与原版 DamageVar 不同的是，此处会依据随从的数值计算
 
-    
+
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		if (cardPlay.Target == null) return;
