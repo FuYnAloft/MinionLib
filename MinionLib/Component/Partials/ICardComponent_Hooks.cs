@@ -1042,6 +1042,16 @@ public partial interface ICardComponent
         return Task.CompletedTask;
     }
     
+    Task AfterModifyingGoldGainedPrefix(Player player, decimal amount, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+    
+    Task AfterModifyingGoldGainedPostfix(Player player, decimal amount, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+    
     void AfterTransformedFromPrefix(ComponentContext componentContext)
     {
     }

@@ -175,6 +175,17 @@ public abstract partial class ComponentsCardModel
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try using the C-ending one instead, or disable this warning if intended.", false)]
+    public sealed override Decimal ModifyGoldGained(Player player, Decimal amount)
+    {
+        EnsureComponentsInitialized();
+        var result = amount;
+        foreach (var component in _components!)
+            result = component.ModifyGoldGained(player, result);
+        return ModifyGoldGainedC(player, result);
+    }
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try using the C-ending one instead, or disable this warning if intended.", false)]
     public sealed override ActMap ModifyGeneratedMap(IRunState runState, ActMap map, int actIndex)
     {
         EnsureComponentsInitialized();
@@ -328,13 +339,24 @@ public abstract partial class ComponentsCardModel
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try using the C-ending one instead, or disable this warning if intended.", false)]
-    public sealed override Decimal ModifyPowerAmountGiven(PowerModel power, Creature giver, Decimal amount, Creature? target, CardModel? cardSource)
+    public sealed override Decimal ModifyPowerAmountGivenAdditive(PowerModel power, Creature giver, Decimal amount, Creature? target, CardModel? cardSource)
     {
         EnsureComponentsInitialized();
         var result = amount;
         foreach (var component in _components!)
-            result = component.ModifyPowerAmountGiven(power, giver, result, target, cardSource);
-        return ModifyPowerAmountGivenC(power, giver, result, target, cardSource);
+            result = component.ModifyPowerAmountGivenAdditive(power, giver, result, target, cardSource);
+        return ModifyPowerAmountGivenAdditiveC(power, giver, result, target, cardSource);
+    }
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try using the C-ending one instead, or disable this warning if intended.", false)]
+    public sealed override Decimal ModifyPowerAmountGivenMultiplicative(PowerModel power, Creature giver, Decimal amount, Creature? target, CardModel? cardSource)
+    {
+        EnsureComponentsInitialized();
+        var result = amount;
+        foreach (var component in _components!)
+            result = component.ModifyPowerAmountGivenMultiplicative(power, giver, result, target, cardSource);
+        return ModifyPowerAmountGivenMultiplicativeC(power, giver, result, target, cardSource);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -763,14 +785,6 @@ public abstract partial class ComponentsCardModel
     {
         EnsureComponentsInitialized();
         return _components!.All(c => c.ShouldFlush(player)) && ShouldFlushC;
-    }
-
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Obsolete("This member is sealed. Try using the C-ending one instead, or disable this warning if intended.", false)]
-    public sealed override bool ShouldGainGold(Decimal amount, Player player)
-    {
-        EnsureComponentsInitialized();
-        return _components!.All(c => c.ShouldGainGold(amount, player)) && ShouldGainGoldC;
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]

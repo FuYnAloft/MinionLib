@@ -1044,6 +1044,16 @@ public abstract partial class CardComponent
         return Task.CompletedTask;
     }
     
+    public virtual Task AfterModifyingGoldGainedPrefix(Player player, decimal amount, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+    
+    public virtual Task AfterModifyingGoldGainedPostfix(Player player, decimal amount, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+    
     public virtual void AfterTransformedFromPrefix(ComponentContext componentContext)
     {
     }
