@@ -23,9 +23,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{B9F5D21E
 	ProjectSection(SolutionItems) = preProject
 		build/GameFolder.props = build/GameFolder.props
 		build/ModBuild.targets = build/ModBuild.targets
-		build/Adapters.template.json = build/Adapters.template.json
-		build/AdaptersNuget.targets = build/AdaptersNuget.targets
-		build/AdaptersAutoCopy.template.targets = build/AdaptersAutoCopy.template.targets
 	EndProjectSection
 EndProject
 
@@ -63,6 +60,6 @@ Global
 	EndGlobalSection
 
 	GlobalSection(NestedProjects) = preSolution
-    		{B9F5D21E-74B0-4660-84AF-541530932290} = {D5230232-0941-4EBA-92BA-AFFE1EF224BE}
-    	EndGlobalSection
+						{B9F5D21E-74B0-4660-84AF-541530932290} = {D5230232-0941-4EBA-92BA-AFFE1EF224BE}
+	EndGlobalSection
 EndGlobal
