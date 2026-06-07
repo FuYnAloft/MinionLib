@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using BaseLib.Abstracts;
 using BaseLib.Cards.Variables;
 using BaseLib.Patches.Content;
@@ -11,7 +14,7 @@ using MinionLib.Component;
 
 namespace MinionLib.BaseLibAdapters;
 
-public abstract class CustomComponentsCardModel : ComponentsCardModel, ICustomModel, ILocalizationProvider
+internal abstract class CustomComponentsCardModel : ComponentsCardModel, ICustomModel, ILocalizationProvider
 {
     /// <summary>
     /// For convenience; can be manually overridden if necessary.

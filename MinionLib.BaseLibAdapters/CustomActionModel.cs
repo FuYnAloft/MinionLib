@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BaseLib.Abstracts;
 using BaseLib.Hooks;
 using MinionLib.Action;
@@ -8,7 +9,7 @@ namespace MinionLib.BaseLibAdapters;
 ///     Your power can either inherit CustomPowerModel directly, or a different power class and ICustomPowerModel.
 ///     This class exists mainly to avoid needing to inherit multiple classes for most powers.
 /// </summary>
-public abstract class CustomActionModel : ActionModel, ICustomPower, ILocalizationProvider, IHealthBarForecastSource
+internal abstract class CustomActionModel : ActionModel, ICustomPower, ILocalizationProvider, IHealthBarForecastSource
 {
     public virtual string? CustomPackedIconPath => null; //64x64
     public virtual string? CustomBigIconPath => null; //256x256

@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
@@ -24,7 +27,7 @@ namespace MinionLib.RitsuAdapters;
 ///     <see cref="CardModelHandGlowExtensions" />。对于任意手牌高亮颜色，请使用 <see cref="ModCardHandOutlineRegistry" /> /
 ///     <see cref="ModCardHandOutlineRegistry" /> / <c>ModContentRegistry.RegisterCardHandOutline&lt;TCard&gt;()</c>。
 /// </summary>
-public abstract class ModComponentsCardTemplate(
+internal abstract class ModComponentsCardTemplate(
     int baseCost,
     CardType type,
     CardRarity rarity,
