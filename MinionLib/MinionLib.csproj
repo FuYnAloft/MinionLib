@@ -31,5 +31,7 @@
         <Error Text=" Godot not found at path '$(GodotPath)'" Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')"/>
     </Target>
 
+    <Import Project="Build/ModBuild.targets" Condition="Exists('Build/ModBuild.targets')"/>
+
     <Import Project="Build/Nuget.targets" Condition="Exists('Build/Nuget.targets')"/>
 </Project>

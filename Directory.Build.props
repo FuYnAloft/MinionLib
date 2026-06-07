@@ -23,7 +23,7 @@
     <Import Project="$(MSBuildThisFileDirectory)LocalSettings.props"
             Condition="Exists('$(MSBuildThisFileDirectory)LocalSettings.props')"/>
 
-    <Import Project="$(MSBuildThisFileDirectory)build/GameFolder.props"/>
+    <Import Project="$(MSBuildThisFileDirectory)GameFolder.props"/>
 
     <ItemGroup Condition="Exists('$(Sts2DataDir)') And '$(IsLocal)' == 'true'">
         <Reference Include="0Harmony">

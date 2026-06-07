@@ -26,7 +26,7 @@
     </Target>
 
     <!-- 构建后自动将此模组的 dll, manifest 和依赖模组的文件复制到 mods 目录 -->
-    <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent" Condition="'$(AdapteeId)' == ''">
+    <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent">
         <Message Text="Copying .dll and manifest to mods folder." Importance="high"/>
         <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"/>
         <Copy SourceFiles="$(ManifestOutputFile)" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/"/>
