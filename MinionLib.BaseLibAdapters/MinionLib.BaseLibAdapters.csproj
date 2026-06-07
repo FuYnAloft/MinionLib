@@ -1,6 +1,7 @@
 <Project Sdk="Godot.NET.Sdk/4.5.1">
     <PropertyGroup>
         <AdapteeId>BaseLib</AdapteeId>
+        <ImplicitUsings>false</ImplicitUsings>
     </PropertyGroup>
 
     <ItemGroup>

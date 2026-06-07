@@ -7984,6 +7984,84 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
+    public sealed override async Task AfterModifyingGoldGained(Player player, decimal amount)
+    {
+        EnsureComponentsInitialized();
+
+        var componentContext = new ComponentContext(ComponentPhase.Init);
+        
+        var count = Components.Count;
+        var snapshot = ArrayPool<ICardComponent>.Shared.Rent(count);
+        for (var i = 0; i < count; i++)
+        {
+            snapshot[i] = Components[i];
+        }
+        
+        try
+        {
+            for (var transitions = 0;
+                 transitions < MaxPhaseTransitions && componentContext.Phase != ComponentPhase.Final;
+                 transitions++)
+            {
+                componentContext.MoveNextPhase();
+
+                switch (componentContext.Phase)
+                {
+                    case ComponentPhase.Prefix:
+                        for(var i = 0; i < count; i++)
+                        {
+                            var component = snapshot[i];
+                            if (component.ComponentsCard != this) continue;
+                            await component.AfterModifyingGoldGainedPrefix(player, amount, componentContext);
+                            if (componentContext.Phase != ComponentPhase.Prefix) break;
+                        }
+
+                        break;
+                    case ComponentPhase.Postfix:
+                        for(var i = count - 1; i >= 0; i--)
+                        {
+                            var component = snapshot[i];
+                            if(component.ComponentsCard != this) continue;
+                            await component.AfterModifyingGoldGainedPostfix(player, amount, componentContext);
+                            if (componentContext.Phase != ComponentPhase.Postfix) break;
+                        }
+
+                        break;
+                    case ComponentPhase.Prime:
+                    case ComponentPhase.Core:
+                    case ComponentPhase.Final:
+                        await AfterModifyingGoldGainedPhased(player, amount, componentContext);
+                        break;
+                    case ComponentPhase.Init:
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            if (componentContext.Phase != ComponentPhase.Final)
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
+        }
+        finally
+        {
+            ArrayPool<ICardComponent>.Shared.Return(snapshot, clearArray: true);
+        }
+    }
+
+    protected virtual Task AfterModifyingGoldGainedPhased(Player player, decimal amount, ComponentContext componentContext)
+    {
+        if (componentContext.Phase == ComponentPhase.Core)
+            return AfterModifyingGoldGained(player, amount, componentContext);
+
+        return Task.CompletedTask;
+    }
+
+    protected virtual Task AfterModifyingGoldGained(Player player, decimal amount, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+    
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override void AfterTransformedFrom()
     {
         EnsureComponentsInitialized();

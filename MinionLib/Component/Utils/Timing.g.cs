@@ -110,6 +110,7 @@ public enum Timing
     BeforeSideTurnStart,
     AfterSideTurnStart,
     AfterSideTurnStartLate,
+    AfterModifyingGoldGained,
     AfterTransformedFrom,
     AfterTransformedTo,
 }

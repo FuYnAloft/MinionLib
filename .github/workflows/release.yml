@@ -110,7 +110,7 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path "$env:GITHUB_WORKSPACE/.packages" | Out-Null
           
-          $projects = @("MinionLib", "MinionLib.RitsuAdapters", "MinionLib.BaseLibAdapters")
+          $projects = @("MinionLib")
           
           foreach ($proj in $projects) {
             Write-Host "Packing $proj..." -ForegroundColor Cyan
@@ -199,7 +199,7 @@ jobs:
           $releasesDir = "$env:GITHUB_WORKSPACE/releases"
           New-Item -ItemType Directory -Force -Path $releasesDir | Out-Null
           
-          $modProjects = @("MinionLib", "MinionLib.RitsuAdapters", "MinionLib.BaseLibAdapters")
+          $modProjects = @("MinionLib")
           
           foreach ($mod in $modProjects) {
             $modPath = Join-Path $modsDir $mod
@@ -248,13 +248,10 @@ jobs:
           
           > **Note:**  
           > The core library (**MinionLib**) operates standalone and requires no additional dependencies. 
-          > The adapter packages are strictly optional; they **do not introduce any new features**. Their sole purpose is to provide adapter classes to bridge with their respective adaptee libraries.
           
           | Included Mod Package | Required Dependency (Adaptee) | Required Version |
           | :--- | :--- | :--- |
           | **MinionLib** (Core Library) | *None* | - |
-          | **MinionLib.RitsuAdapters** | STS2.RitsuLib | $env:RITSULIB_VERSION |
-          | **MinionLib.BaseLibAdapters** | Alchyr.Sts2.BaseLib | $env:BASELIB_VERSION |
           
           "@ > "release-notes.md"
 

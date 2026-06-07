@@ -6,7 +6,6 @@
             <BaseLibVersion>$([System.IO.Path]::GetFileName($(PkgAlchyr_Sts2_BaseLib)))</BaseLibVersion>
 
             <ManifestTemplateFile>$(MSBuildProjectDirectory)/$(MSBuildProjectName).template.json</ManifestTemplateFile>
-            <ManifestTemplateFile Condition="'$(AdapteeId)' != ''">$(MSBuildThisFileDirectory)Adapters.template.json</ManifestTemplateFile>
 
             <ManifestOutputFile>$(IntermediateOutputPath)$(MSBuildProjectName).json</ManifestOutputFile>
         </PropertyGroup>

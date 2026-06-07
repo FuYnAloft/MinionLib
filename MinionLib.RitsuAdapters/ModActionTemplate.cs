@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MinionLib.Action;
@@ -13,7 +14,7 @@ namespace MinionLib.RitsuAdapters;
 ///     Mod 能力的基础 <see cref="PowerModel" />：提供可选能量悬浮提示、关键词提示，以及
 ///     <see cref="IModPowerAssetOverrides" /> 图标路径。
 /// </summary>
-public abstract class ModActionTemplate : ActionModel, IModPowerAssetOverrides
+internal abstract class ModActionTemplate : ActionModel, IModPowerAssetOverrides
 {
     /// <summary>
     ///     Keyword ids surfaced on this power's hover tips. <b>Display-only</b>: unlike

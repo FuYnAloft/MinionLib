@@ -115,6 +115,11 @@ public partial interface ICardComponent
 
   Decimal ModifyEnergyGain(Player player, Decimal amount) => amount;
 
+  Decimal ModifyGoldGained(Player player, Decimal amount)
+  {
+    return amount;
+  }
+
   ActMap ModifyGeneratedMap(IRunState runState, ActMap map, int actIndex) => map;
 
   ActMap ModifyGeneratedMapLate(IRunState runState, ActMap map, int actIndex) => map;
@@ -187,14 +192,24 @@ public partial interface ICardComponent
 
   Decimal ModifyOrbValue(OrbModel orb, Decimal value) => value;
 
-  Decimal ModifyPowerAmountGiven(
+  Decimal ModifyPowerAmountGivenAdditive(
     PowerModel power,
     Creature giver,
     Decimal amount,
     Creature? target,
     CardModel? cardSource)
   {
-    return amount;
+    return 0M;
+  }
+
+  Decimal ModifyPowerAmountGivenMultiplicative(
+    PowerModel power,
+    Creature giver,
+    Decimal amount,
+    Creature? target,
+    CardModel? cardSource)
+  {
+    return 1M;
   }
 
   Decimal ModifyRestSiteHealAmount(Creature creature, Decimal amount) => amount;
@@ -361,8 +376,6 @@ public partial interface ICardComponent
   bool ShouldEtherealTrigger(CardModel card) => true;
 
   bool ShouldFlush(Player player) => true;
-
-  bool ShouldGainGold(Decimal amount, Player player) => true;
 
   bool ShouldGainStars(Decimal amount, Player player) => true;
 

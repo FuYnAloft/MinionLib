@@ -14,7 +14,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="Directory.Build.*" Visible="false"/>
+        <None Include=".gdignore" Visible="false"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="..\MinionLib.RitsuAdapters\*.cs" LogicalName="EmbeddedSources.RitsuAdapters.%(FileName).cs" Visible="false"/>
+        <EmbeddedResource Include="..\MinionLib.BaseLibAdapters\*.cs" LogicalName="EmbeddedSources.BaseLibAdapters.%(FileName).cs" Visible="false"/>
     </ItemGroup>
 </Project>

@@ -111,6 +111,11 @@ public abstract partial class CardComponent
 
   public virtual Decimal ModifyEnergyGain(Player player, Decimal amount) => amount;
 
+  public virtual Decimal ModifyGoldGained(Player player, Decimal amount)
+  {
+    return amount;
+  }
+
   public virtual ActMap ModifyGeneratedMap(IRunState runState, ActMap map, int actIndex) => map;
 
   public virtual ActMap ModifyGeneratedMapLate(IRunState runState, ActMap map, int actIndex) => map;
@@ -181,16 +186,26 @@ public abstract partial class CardComponent
     return cost;
   }
 
-  public virtual Decimal ModifyOrbValue(Player player, Decimal value) => value;
+  public virtual Decimal ModifyOrbValue(OrbModel orb, Decimal value) => value;
 
-  public virtual Decimal ModifyPowerAmountGiven(
+  public virtual Decimal ModifyPowerAmountGivenAdditive(
     PowerModel power,
     Creature giver,
     Decimal amount,
     Creature? target,
     CardModel? cardSource)
   {
-    return amount;
+    return 0M;
+  }
+
+  public virtual Decimal ModifyPowerAmountGivenMultiplicative(
+    PowerModel power,
+    Creature giver,
+    Decimal amount,
+    Creature? target,
+    CardModel? cardSource)
+  {
+    return 1M;
   }
 
   public virtual Decimal ModifyRestSiteHealAmount(Creature creature, Decimal amount) => amount;
@@ -357,8 +372,6 @@ public abstract partial class CardComponent
   public virtual bool ShouldEtherealTrigger(CardModel card) => true;
 
   public virtual bool ShouldFlush(Player player) => true;
-
-  public virtual bool ShouldGainGold(Decimal amount, Player player) => true;
 
   public virtual bool ShouldGainStars(Decimal amount, Player player) => true;
 

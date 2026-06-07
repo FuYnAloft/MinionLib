@@ -1,6 +1,0 @@
-<Project>
-    <Import Project="$(MSBuildThisFileDirectory)build/ModBuild.targets"/>
-
-    <Import Project="$(MSBuildThisFileDirectory)build/AdaptersNuget.targets"
-            Condition="'$(AdapteeId)' != ''"/>
-</Project>

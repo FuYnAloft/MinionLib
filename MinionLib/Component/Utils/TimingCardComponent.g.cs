@@ -3087,6 +3087,36 @@ public abstract partial class TimingCardComponent
         return Task.CompletedTask;
 
     }
+    public override Task AfterModifyingGoldGainedPrefix(Player player, decimal amount, ComponentContext componentContext)
+    {
+        if (Timings.Contains(Timing.AfterModifyingGoldGained))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingGoldGained,
+                Player: player,
+                Amount: amount
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
+    }
+    public override Task AfterModifyingGoldGainedPostfix(Player player, decimal amount, ComponentContext componentContext)
+    {
+        if (Timings.Contains(Timing.AfterModifyingGoldGained))
+        {
+            var ctx = new OnTimingContext(
+                Timing.AfterModifyingGoldGained,
+                Player: player,
+                Amount: amount
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
+    }
     public override void AfterTransformedFromPrefix(ComponentContext componentContext)
     {
         if (Timings.Contains(Timing.AfterTransformedFrom))
