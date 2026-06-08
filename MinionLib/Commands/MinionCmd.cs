@@ -1,13 +1,15 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MinionLib.Minion;
 
 namespace MinionLib.Commands;
 
 public static class MinionCmd
 {
-    public static async Task<Creature> AddMinion<T>(Player player, MinionSummonOptions options = default)
+    public static async Task<Creature> AddMinion<T>(PlayerChoiceContext choiceContext, Player player,
+        MinionSummonOptions options = default)
         where T : MinionModel
     {
         ArgumentNullException.ThrowIfNull(player);
@@ -16,7 +18,7 @@ public static class MinionCmd
         if (pet.Monster is MinionModel minionModel) minionModel.Position = options.Position;
         PetOrderSnapshotManager.TakeSnapshot(player);
 
-        if (pet.Monster is MinionModel minion) await minion.OnSummon(player, pet, options);
+        if (pet.Monster is MinionModel minion) await minion.OnSummon(choiceContext, player, options);
 
         _ = MinionAnimCmd.Rearrange();
 
