@@ -14,7 +14,7 @@ using MinionLib.Component;
 
 namespace MinionLib.BaseLibAdapters;
 
-internal abstract class CustomComponentsCardModel : ComponentsCardModel, ICustomModel, ILocalizationProvider
+public abstract class CustomComponentsCardModel : ComponentsCardModel, ICustomModel, ILocalizationProvider
 {
     /// <summary>
     /// For convenience; can be manually overridden if necessary.

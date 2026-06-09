@@ -14,13 +14,11 @@ internal static class AdapterGeneratorHelper
     /// </summary>
     public static bool CheckPresence(Compilation compilation, string assemblyName, string namespaceName)
     {
-        // 1. 检测引用程序集
         var hasDll = compilation.ReferencedAssemblyNames.Any(ai =>
             string.Equals(ai.Name, assemblyName, StringComparison.OrdinalIgnoreCase));
 
         if (hasDll) return true;
 
-        // 2. 检测顶级命名空间
         var hasNamespace = compilation.GlobalNamespace.GetNamespaceMembers().Any(n =>
             string.Equals(n.Name, namespaceName, StringComparison.OrdinalIgnoreCase));
 
@@ -30,9 +28,20 @@ internal static class AdapterGeneratorHelper
     /// <summary>
     ///     提取指定前缀的嵌入源文件并释放到目标项目中
     /// </summary>
-    public static void EmitEmbeddedSources(SourceProductionContext spc, string resourcePrefix)
+    /// <param name="spc">源文件生产上下文</param>
+    /// <param name="resourcePrefix">嵌入资源的前缀（例如 "EmbeddedSources.RitsuAdapters."）</param>
+    /// <param name="subNamespace">子命名空间名称（例如 "RitsuAdapters" 或 "BaseLibAdapters"）</param>
+    /// <param name="assemblyName">目标编译项目的程序集名称</param>
+    public static void EmitEmbeddedSources(
+        SourceProductionContext spc,
+        string resourcePrefix,
+        string subNamespace,
+        string? assemblyName)
     {
         var assembly = typeof(AdapterGeneratorHelper).Assembly;
+
+        // 规范化程序集名称作为合法的命名空间前缀
+        var safeNamespacePrefix = SanitizeNamespace(assemblyName ?? "MinionLib");
 
         // 筛选出符合特定前缀的资源
         var resourceNames = assembly.GetManifestResourceNames()
@@ -47,11 +56,14 @@ internal static class AdapterGeneratorHelper
             using var reader = new StreamReader(stream, Encoding.UTF8);
             var rawSource = reader.ReadToEnd();
 
-            // 提取文件名（例如 "ModComponentsCardTemplate.cs"）
+            // 根据传入的 subNamespace 参数动态替换命名空间，不再硬编码具体名称
+            var originalNamespace = $"namespace MinionLib.{subNamespace};";
+            var targetNamespace = $"namespace {safeNamespacePrefix}.{subNamespace};";
+            var updatedSource = rawSource.Replace(originalNamespace, targetNamespace);
+
+            // 提取文件名
             var fileName = resourceName.Substring(resourcePrefix.Length);
 
-            // 为了防止同名冲突，将前缀名融入到 hintName 中
-            // 例如："EmbeddedSources.RitsuAdapters." 转换成 "RitsuAdapters."
             var category = resourcePrefix.Replace("EmbeddedSources.", "");
             var hintName = $"{category}{Path.ChangeExtension(fileName, ".g.cs")}";
 
@@ -63,10 +75,27 @@ internal static class AdapterGeneratorHelper
 
                                  #nullable enable
 
-                                 {{{rawSource}}}
+                                 {{{updatedSource}}}
                                  """;
 
             spc.AddSource(hintName, SourceText.From(finalSource, Encoding.UTF8));
         }
+    }
+
+    /// <summary>
+    ///     清除程序集名称中的非法字符以确保其能作为合法的命名空间段
+    /// </summary>
+    private static string SanitizeNamespace(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "MinionLib";
+
+        var sb = new StringBuilder();
+        foreach (var c in name)
+            if (char.IsLetterOrDigit(c) || c == '.')
+                sb.Append(c);
+            else
+                sb.Append('_');
+
+        return sb.ToString();
     }
 }

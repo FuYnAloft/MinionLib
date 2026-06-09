@@ -14,7 +14,7 @@ namespace MinionLib.RitsuAdapters;
 ///     Mod 能力的基础 <see cref="PowerModel" />：提供可选能量悬浮提示、关键词提示，以及
 ///     <see cref="IModPowerAssetOverrides" /> 图标路径。
 /// </summary>
-internal abstract class ModActionTemplate : ActionModel, IModPowerAssetOverrides
+public abstract class ModActionTemplate : ActionModel, IModPowerAssetOverrides
 {
     /// <summary>
     ///     Keyword ids surfaced on this power's hover tips. <b>Display-only</b>: unlike

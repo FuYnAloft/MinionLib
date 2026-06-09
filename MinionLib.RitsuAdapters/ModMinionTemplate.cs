@@ -37,7 +37,7 @@ namespace MinionLib.RitsuAdapters;
 #pragma warning disable CS0618
 // Template keeps the obsolete IModMonsterCreatureVisualsFactory wired so existing derived classes and external
 // consumers that type-check against the old interface name continue to work.
-internal abstract class ModMinionTemplate : MinionModel, IModMonsterAssetOverrides,
+public abstract class ModMinionTemplate : MinionModel, IModMonsterAssetOverrides,
     IModCreatureVisualsFactory, IModMonsterCreatureVisualsFactory, IModCreatureAnimatorFactory,
     IModCreatureCombatAnimationStateMachineFactory, IModNonSpineAnimationStateMachineFactory
 #pragma warning restore CS0618

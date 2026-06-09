@@ -27,7 +27,7 @@ namespace MinionLib.RitsuAdapters;
 ///     <see cref="CardModelHandGlowExtensions" />。对于任意手牌高亮颜色，请使用 <see cref="ModCardHandOutlineRegistry" /> /
 ///     <see cref="ModCardHandOutlineRegistry" /> / <c>ModContentRegistry.RegisterCardHandOutline&lt;TCard&gt;()</c>。
 /// </summary>
-internal abstract class ModComponentsCardTemplate(
+public abstract class ModComponentsCardTemplate(
     int baseCost,
     CardType type,
     CardRarity rarity,

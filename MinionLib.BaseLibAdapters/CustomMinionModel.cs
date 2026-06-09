@@ -7,7 +7,7 @@ using MinionLib.Minion;
 
 namespace MinionLib.BaseLibAdapters;
 
-internal abstract class CustomMinionModel : MinionModel, ICustomModel, ISceneConversions
+public abstract class CustomMinionModel : MinionModel, ICustomModel, ISceneConversions
 {
     /// <summary>
     /// Override this or place your scene at res://scenes/creature_visuals/modname-class_name.tscn
