@@ -1,0 +1,483 @@
+---
+title: Minion Quickstart
+description: Create a minimal minion, summon card, action, buff card, and bound minion card.
+sidebar:
+order: 2
+---
+
+import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
+
+This guide builds a small minion flow:
+
+1. Create a minion model.
+2. Create a card that summons it.
+3. Add a clickable action to the minion.
+4. Create a card that targets minions.
+5. Create a generated card bound to a specific minion.
+
+For complete examples, compare the code in `MinionLib.Example/Minions`, `MinionLib.Example/Cards`, `MinionLib.Example/Actions`, and `MinionLib.Example/Powers`.
+
+## Pick base classes
+
+If your project does not use BaseLib or RitsuLib, inherit MinionLib's native classes. If it does, install the matching dependency as described in [Environment Setup](/MinionLib/en/quickstart/environment/) and inherit the generated adapter classes.
+
+<Tabs syncKey="adapter">
+    <TabItem label="Vanilla">
+
+        ```csharp
+        using MinionLib.Action;
+        using MinionLib.Component;
+        using MinionLib.Component.Core;
+        using MinionLib.Minion;
+
+        public abstract class MyMinionBase : MinionModel;
+
+        public abstract class MyCardBase(
+        int cost,
+        CardType type,
+        CardRarity rarity,
+        TargetType target)
+        : ComponentsCardModel(cost, type, rarity, target);
+
+        public abstract class MyActionBase : ActionModel;
+        ```
+
+    </TabItem>
+    <TabItem label="BaseLib">
+
+        ```csharp
+        using MyCoolMod.BaseLibAdapters;
+
+        public abstract class MyMinionBase : CustomMinionModel;
+
+        public abstract class MyCardBase(
+        int cost,
+        CardType type,
+        CardRarity rarity,
+        TargetType target)
+        : CustomComponentsCardModel(cost, type, rarity, target);
+
+        public abstract class MyActionBase : CustomActionModel;
+        ```
+
+    </TabItem>
+    <TabItem label="RitsuLib">
+
+        ```csharp
+        using MyCoolMod.RitsuAdapters;
+
+        public abstract class MyMinionBase : ModMinionTemplate;
+
+        public abstract class MyCardBase(
+        int cost,
+        CardType type,
+        CardRarity rarity,
+        TargetType target)
+        : ModComponentsCardTemplate(cost, type, rarity, target);
+
+        public abstract class MyActionBase : ModActionTemplate;
+        ```
+
+    </TabItem>
+</Tabs>
+
+<Aside type="caution" title="Replace the namespace">
+    `MyCoolMod` is only an example assembly name. Use your generated namespace, such as `{YourAssembly}.BaseLibAdapters`
+    or `{YourAssembly}.RitsuAdapters`.
+</Aside>
+
+## Create a minion
+
+A minion is a specialized monster model. A minimal implementation usually provides visuals, initial HP, and summon initialization.
+
+<Tabs syncKey="adapter">
+    <TabItem label="Vanilla">
+
+        ```csharp
+        using MegaCrit.Sts2.Core.Commands;
+        using MegaCrit.Sts2.Core.Entities.Creatures;
+        using MegaCrit.Sts2.Core.Entities.Players;
+        using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+        using MegaCrit.Sts2.Core.Models;
+        using MegaCrit.Sts2.Core.Powers;
+        using MinionLib.Minion;
+        using MinionLib.Powers;
+
+        public sealed class MyMinion : MinionModel
+        {
+            public override int MinInitialHp => 6;
+            public override int MaxInitialHp => 6;
+            protected override string VisualsPath =>
+            "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn";
+
+            public override async Task OnSummon(
+            PlayerChoiceContext choiceContext,
+            Player owner,
+            MinionSummonOptions options)
+        {
+            var self = owner.PlayerCombatState?.Pets.FirstOrDefault(p => ReferenceEquals(p.Monster, this));
+            if (self == null) return;
+
+            if (options.MaxHp is decimal maxHp)
+            await CreatureCmd.SetMaxAndCurrentHp(self, maxHp);
+
+            if (options.PrimaryStatAmount is decimal strength && strength > 0m)
+            await PowerCmd.Apply<StrengthPower>(self, strength, owner.Creature, options.Source);
+
+            await PowerCmd.Apply<MinionGuardianPower>(self, 1m, owner.Creature, options.Source);
+        }
+        }
+        ```
+
+    </TabItem>
+    <TabItem label="BaseLib">
+
+        ```csharp
+        using MegaCrit.Sts2.Core.Commands;
+        using MegaCrit.Sts2.Core.Entities.Creatures;
+        using MegaCrit.Sts2.Core.Entities.Players;
+        using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+        using MegaCrit.Sts2.Core.Models;
+        using MegaCrit.Sts2.Core.Powers;
+        using MinionLib.Minion;
+        using MinionLib.Powers;
+        using MyCoolMod.BaseLibAdapters;
+
+        public sealed class MyMinion : CustomMinionModel
+        {
+            public override int MinInitialHp => 6;
+            public override int MaxInitialHp => 6;
+            public override string? CustomVisualPath =>
+            "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn";
+
+            public override async Task OnSummon(
+            PlayerChoiceContext choiceContext,
+            Player owner,
+            MinionSummonOptions options)
+        {
+            var self = owner.PlayerCombatState?.Pets.FirstOrDefault(p => ReferenceEquals(p.Monster, this));
+            if (self == null) return;
+
+            if (options.MaxHp is decimal maxHp)
+            await CreatureCmd.SetMaxAndCurrentHp(self, maxHp);
+
+            if (options.PrimaryStatAmount is decimal strength && strength > 0m)
+            await PowerCmd.Apply<StrengthPower>(self, strength, owner.Creature, options.Source);
+
+            await PowerCmd.Apply<MinionGuardianPower>(self, 1m, owner.Creature, options.Source);
+        }
+        }
+        ```
+
+    </TabItem>
+    <TabItem label="RitsuLib">
+
+        ```csharp
+        using MegaCrit.Sts2.Core.Commands;
+        using MegaCrit.Sts2.Core.Entities.Creatures;
+        using MegaCrit.Sts2.Core.Entities.Players;
+        using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+        using MegaCrit.Sts2.Core.Models;
+        using MegaCrit.Sts2.Core.Powers;
+        using MinionLib.Minion;
+        using MinionLib.Powers;
+        using MyCoolMod.RitsuAdapters;
+
+        public sealed class MyMinion : ModMinionTemplate
+        {
+            public override int MinInitialHp => 6;
+            public override int MaxInitialHp => 6;
+            public override string? CustomVisualsPath =>
+            "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn";
+
+            public override async Task OnSummon(
+            PlayerChoiceContext choiceContext,
+            Player owner,
+            MinionSummonOptions options)
+        {
+            var self = owner.PlayerCombatState?.Pets.FirstOrDefault(p => ReferenceEquals(p.Monster, this));
+            if (self == null) return;
+
+            if (options.MaxHp is decimal maxHp)
+            await CreatureCmd.SetMaxAndCurrentHp(self, maxHp);
+
+            if (options.PrimaryStatAmount is decimal strength && strength > 0m)
+            await PowerCmd.Apply<StrengthPower>(self, strength, owner.Creature, options.Source);
+
+            await PowerCmd.Apply<MinionGuardianPower>(self, 1m, owner.Creature, options.Source);
+        }
+        }
+        ```
+
+    </TabItem>
+</Tabs>
+
+<Aside type="note" title="Resolve the creature instance">
+    `this` inside `OnSummon` is the model object. To operate on the combat creature, first find the `Creature` in
+    `owner.PlayerCombatState.Pets` whose `Monster` references the current model.
+</Aside>
+
+## Create a summon card
+
+Use`MinionCmd.AddMinion<T>()` to summon a minion.`MinionSummonOptions` carries HP, primary stats, source, and position.
+
+<Tabs syncKey="adapter">
+    <TabItem label="Vanilla">
+
+        ```csharp
+        using MegaCrit.Sts2.Core.Entities.Cards;
+        using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+        using MinionLib.Component;
+        using MinionLib.Component.Core;
+        using MinionLib.Commands;
+        using MinionLib.Minion;
+
+        public sealed class SummonMyMinionCard()
+        : ComponentsCardModel(1, CardType.Power, CardRarity.Rare, TargetType.Self)
+        {
+            protected override async Task OnPlay(
+            PlayerChoiceContext choiceContext,
+            CardPlay cardPlay,
+            ComponentContext componentContext)
+        {
+            _ = await MinionCmd.AddMinion<MyMinion>(choiceContext, Owner, new MinionSummonOptions(
+            MaxHp: 8m,
+            PrimaryStatAmount: 2m,
+            Source: this,
+            Position: MinionPosition.Front));
+        }
+
+            protected override void OnUpgrade(ComponentContext componentContext) {}
+        }
+        ```
+
+    </TabItem>
+    <TabItem label="BaseLib">
+
+        ```csharp
+        using MegaCrit.Sts2.Core.Entities.Cards;
+        using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+        using MinionLib.Component.Core;
+        using MinionLib.Commands;
+        using MinionLib.Minion;
+        using MyCoolMod.BaseLibAdapters;
+
+        public sealed class SummonMyMinionCard()
+        : CustomComponentsCardModel(1, CardType.Power, CardRarity.Rare, TargetType.Self)
+        {
+            protected override async Task OnPlay(
+            PlayerChoiceContext choiceContext,
+            CardPlay cardPlay,
+            ComponentContext componentContext)
+        {
+            _ = await MinionCmd.AddMinion<MyMinion>(choiceContext, Owner, new MinionSummonOptions(
+            MaxHp: 8m,
+            PrimaryStatAmount: 2m,
+            Source: this,
+            Position: MinionPosition.Front));
+        }
+
+            protected override void OnUpgrade(ComponentContext componentContext) {}
+        }
+        ```
+
+    </TabItem>
+    <TabItem label="RitsuLib">
+
+        ```csharp
+        using MegaCrit.Sts2.Core.Entities.Cards;
+        using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+        using MinionLib.Component.Core;
+        using MinionLib.Commands;
+        using MinionLib.Minion;
+        using MyCoolMod.RitsuAdapters;
+
+        public sealed class SummonMyMinionCard()
+        : ModComponentsCardTemplate(1, CardType.Power, CardRarity.Rare, TargetType.Self)
+        {
+            protected override async Task OnPlay(
+            PlayerChoiceContext choiceContext,
+            CardPlay cardPlay,
+            ComponentContext componentContext)
+        {
+            _ = await MinionCmd.AddMinion<MyMinion>(choiceContext, Owner, new MinionSummonOptions(
+            MaxHp: 8m,
+            PrimaryStatAmount: 2m,
+            Source: this,
+            Position: MinionPosition.Front));
+        }
+
+            protected override void OnUpgrade(ComponentContext componentContext) {}
+        }
+        ```
+
+    </TabItem>
+</Tabs>
+
+## Create a clickable action
+
+An action is a power - like model that can be clicked.After it is applied to a minion, the player can click the minion or action icon to resolve it.
+
+<Tabs syncKey="adapter">
+    <TabItem label="Vanilla">
+
+        ```csharp
+        using MegaCrit.Sts2.Core.Commands;
+        using MegaCrit.Sts2.Core.Entities.Creatures;
+        using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+        using MegaCrit.Sts2.Core.Powers;
+        using MegaCrit.Sts2.Core.ValueProps;
+        using MinionLib.Action;
+        using MinionLib.Commands;
+
+        public sealed class MyAttackAction : ActionModel
+        {
+            public override TargetType TargetType => TargetType.AnyEnemy;
+            public override bool AutoRemoveAtTurnEnd => true;
+            public override PowerType Type => PowerType.Buff;
+            public override PowerStackType StackType => PowerStackType.Counter;
+
+            protected override async Task OnAct(
+            PlayerChoiceContext choiceContext,
+            Creature actor,
+            Creature? target)
+        {
+            if (target == null) return;
+
+            await MinionAnimCmd.PlayBumpAttackAsync(actor, target);
+            await CreatureCmd.Damage(choiceContext, target, 4m, ValueProp.Move, actor, null);
+        }
+        }
+        ```
+
+    </TabItem>
+    <TabItem label="BaseLib">
+
+        ```csharp
+        using MegaCrit.Sts2.Core.Commands;
+        using MegaCrit.Sts2.Core.Entities.Creatures;
+        using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+        using MegaCrit.Sts2.Core.Powers;
+        using MegaCrit.Sts2.Core.ValueProps;
+        using MinionLib.Commands;
+        using MyCoolMod.BaseLibAdapters;
+
+        public sealed class MyAttackAction : CustomActionModel
+        {
+            public override TargetType TargetType => TargetType.AnyEnemy;
+            public override bool AutoRemoveAtTurnEnd => true;
+            public override PowerType Type => PowerType.Buff;
+            public override PowerStackType StackType => PowerStackType.Counter;
+
+            protected override async Task OnAct(
+            PlayerChoiceContext choiceContext,
+            Creature actor,
+            Creature? target)
+        {
+            if (target == null) return;
+
+            await MinionAnimCmd.PlayBumpAttackAsync(actor, target);
+            await CreatureCmd.Damage(choiceContext, target, 4m, ValueProp.Move, actor, null);
+        }
+        }
+        ```
+
+    </TabItem>
+    <TabItem label="RitsuLib">
+
+        ```csharp
+        using MegaCrit.Sts2.Core.Commands;
+        using MegaCrit.Sts2.Core.Entities.Creatures;
+        using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+        using MegaCrit.Sts2.Core.Powers;
+        using MegaCrit.Sts2.Core.ValueProps;
+        using MinionLib.Commands;
+        using MyCoolMod.RitsuAdapters;
+
+        public sealed class MyAttackAction : ModActionTemplate
+        {
+            public override TargetType TargetType => TargetType.AnyEnemy;
+            public override bool AutoRemoveAtTurnEnd => true;
+            public override PowerType Type => PowerType.Buff;
+            public override PowerStackType StackType => PowerStackType.Counter;
+
+            protected override async Task OnAct(
+            PlayerChoiceContext choiceContext,
+            Creature actor,
+            Creature? target)
+        {
+            if (target == null) return;
+
+            await MinionAnimCmd.PlayBumpAttackAsync(actor, target);
+            await CreatureCmd.Damage(choiceContext, target, 4m, ValueProp.Move, actor, null);
+        }
+        }
+        ```
+
+    </TabItem>
+</Tabs>
+
+Apply the action after resolving`self` in `OnSummon`:
+
+```csharp
+await PowerCmd.Apply<MyAttackAction>(self, 1m, owner.Creature, options.Source);
+```
+
+## Target minions
+
+MinionLib provides`MinionTargetTypes` for card and power targets.
+
+```csharp
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Powers;
+using MinionLib.Component;
+using MinionLib.Component.Core;
+using MinionLib.Minion;
+using MinionLib.Targeting;
+
+public sealed class EmpowerMinionCard()
+    : ComponentsCardModel(1, CardType.Skill, CardRarity.Uncommon, MinionTargetTypes.AnyMinion)
+{
+    protected override async Task OnPlay(
+        PlayerChoiceContext choiceContext,
+        CardPlay cardPlay,
+        ComponentContext componentContext)
+    {
+        if (cardPlay.Target is not { Monster: MinionModel } target) return;
+
+        await PowerCmd.Apply<StrengthPower>(target, 2m, Owner.Creature, this);
+        await PowerCmd.Apply<DexterityPower>(target, 2m, Owner.Creature, this);
+    }
+}
+```
+
+Common target types live in `MinionLib.Targeting.MinionTargetTypes`, including`AnyMinion`, `AnyMinionOrOwner`, `AllMinions`, and`AllCreatures`.
+
+## Create a bound minion card
+
+This feature is being reworked and is temporarily unavailable; the workaround is to store the creature`CombatId` manually and resolve the matching`Creature` from combat state when needed.
+
+## Guardian and positions
+
+The built - in `MinionGuardianPower` lets a minion intercept damage for its owner:
+
+```csharp
+await PowerCmd.Apply<MinionGuardianPower>(self, 1m, owner.Creature, options.Source);
+```
+
+Summoning can specify a position:
+
+```csharp
+public enum MinionPosition
+{
+    Front,
+    Back,
+    FrontUpper,
+    BackUpper,
+    Upper
+}
+```
+
+Position affects visuals and mechanics that depend on minion order.

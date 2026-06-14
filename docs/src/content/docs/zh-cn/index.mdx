@@ -1,40 +1,43 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
-template: splash # Remove or comment out this line to display the site sidebar on this page.
+title: MinionLib
+description: Slay the Spire 2 模组开发中的随从、行动与组件化卡牌库。
+template: splash
+sidebar:
+hidden: true
+prev: false
+next: false
 hero:
-  tagline: Congrats on setting up a new Starlight project!
-  image:
-    file: ../../../assets/houston.webp
+tagline: 为 Slay the Spire 2 模组提供随从、可点击行动、组件化卡牌和自定义目标系统。
   actions:
-    - text: Example Guide
-      link: /MinionLib/zh-cn/guides/example/
+- text: 配置环境
+link: /MinionLib/zh-cn/quickstart/environment/
+icon: setting
+- text: 随从快速入门
+link: /MinionLib/zh-cn/quickstart/minion-quickstart/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
-      variant: minimal
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Next steps
+## 你可以用它做什么
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+    <Card title="随从系统" icon="document">
+        创建可召唤、可站位、可绑定卡牌的友方生物，并使用 `MinionCmd` 管理召唤和移动。
 	</Card>
-	<Card title="Change page layout" icon="document">
-		Delete `template: splash` in `src/content/docs/index.mdx` to display a
-		sidebar on this page.
+    <Card title="可点击行动" icon="right-arrow">
+        把行动做成能力图标，点击随从或行动图标后选择目标并结算效果。
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+    <Card title="Component Cards" icon="add-document">
+        将可复用的卡牌行为拆成 `CardComponent`，统一处理描述、升级、状态保存和跨时机监听。
 	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
+    <Card title="自定义目标" icon="setting">
+        为卡牌和能力扩展目标类型，例如选择任意随从、随从或主人、所有生物等。
 	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+    <Card title="Guardian" icon="open-book">
+        使用内置守护者能力，让随从替玩家阻挡伤害。
+    </Card>
+    <Card title="BaseLib / RitsuLib 适配" icon="pencil">
+        引用对应库后，MinionLib 的 Source Generator 会自动生成适配器基类。
 	</Card>
 </CardGrid>

@@ -20,6 +20,17 @@ export default defineConfig({
                     lang: 'en',
                 }
             },
+            sidebar: [
+                {
+                    label: 'Quickstart',
+                    translations: {
+                        'zh-CN': '快速入门',
+                    },
+                    autogenerate: {
+                        directory: 'quickstart',
+                    },
+                },
+            ],
             social: [{icon: 'github', label: 'GitHub', href: 'https://github.com/FuYnAloft/MinionLib'}],
         }),
     ],

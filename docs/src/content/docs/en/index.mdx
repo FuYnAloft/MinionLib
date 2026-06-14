@@ -1,40 +1,43 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
-template: splash # Remove or comment out this line to display the site sidebar on this page.
+title: MinionLib
+description: A Slay the Spire 2 modding library for minions, actions, and component-based cards.
+template: splash
+sidebar:
+hidden: true
+prev: false
+next: false
 hero:
-  tagline: Congrats on setting up a new Starlight project!
-  image:
-    file: ../../../assets/houston.webp
+tagline: Build summoned allies, clickable actions, component cards, and custom target types for Slay the Spire 2 mods.
   actions:
-    - text: Example Guide
-      link: /MinionLib/en/guides/example/
+- text: Set up your project
+link: /MinionLib/en/quickstart/environment/
+icon: setting
+- text: Minion quickstart
+link: /MinionLib/en/quickstart/minion-quickstart/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
-      variant: minimal
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Next steps
+## What MinionLib provides
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+    <Card title="Minions" icon="document">
+        Create summoned allies with positions, ownership, bound cards, and summon helpers through `MinionCmd`.
 	</Card>
-	<Card title="Change page layout" icon="document">
-		Delete `template: splash` in `src/content/docs/index.mdx` to display a
-		sidebar on this page.
+    <Card title="Clickable actions" icon="right-arrow">
+        Expose creature actions as power icons, then resolve targeting and effects when the player clicks them.
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+    <Card title="Component cards" icon="add-document">
+        Move reusable card behavior into `CardComponent` types with description, upgrade, state, and timing support.
 	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
+    <Card title="Custom targeting" icon="setting">
+        Add target types for minions, owners, all creatures, intersections, unions, and other mod-specific rules.
 	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+    <Card title="Guardian" icon="open-book">
+        Use the built-in Guardian power to let minions intercept damage for their owner.
+    </Card>
+    <Card title="BaseLib / RitsuLib adapters" icon="pencil">
+        When those libraries are referenced, MinionLib source generators emit adapter base classes for your mod.
 	</Card>
 </CardGrid>

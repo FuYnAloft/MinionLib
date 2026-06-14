@@ -1,0 +1,121 @@
+---
+title: Environment Setup
+description: Add MinionLib to a Slay the Spire 2 mod project correctly.
+sidebar:
+order: 1
+---
+
+import {Aside, Steps, Tabs, TabItem} from '@astrojs/starlight/components';
+
+## Install from NuGet
+
+<Steps>
+    1. Add the MinionLib package to your mod project `.csproj`.
+
+    ```xml
+    <ItemGroup>
+        <PackageReference Include="FuYnAloft.Sts2.MinionLib" Version="0.5.2"/>
+    </ItemGroup>
+    ```
+
+    2. Build the project normally. The package provides the runtime assembly, Godot content files, and source
+    generators.
+    3. If your project also references BaseLib or RitsuLib, MinionLib generates matching adapter base classes during
+    compilation.
+</Steps>
+
+<Aside type="danger" title="Do not reference GitHub Release DLLs manually">
+    Install `FuYnAloft.Sts2.MinionLib` from NuGet. Do not download DLLs from GitHub Releases and reference them locally:
+    that skips the NuGet analyzer/source generator, `buildTransitive` target, and content files, so generated adapters
+    and automatic copying will not work correctly.
+</Aside>
+
+## Configure ModsPath
+
+The MinionLib NuGet package includes a transitive MSBuild target. After build, when `ModsPath` is not empty and `ShouldAutoCopyMinionLib` is not set to `false`, it copies:
+
+- `MinionLib.dll`
+- `MinionLib.pck`
+- `MinionLib.json`
+
+The destination is:
+
+```text
+$(ModsPath)/MinionLib/
+```
+
+Many Slay the Spire 2 mod templates already define `ModsPath`, `Sts2Path`, `SteamLibraryPath`, or equivalent properties. Prefer the template's existing setup. If your project does not have one, add a local-only props file such as:
+
+```xml
+<Project>
+  <PropertyGroup>
+    <ModsPath>D:/SteamLibrary/steamapps/common/Slay the Spire 2/mods/</ModsPath>
+  </PropertyGroup>
+</Project>
+```
+
+<Aside type="note" title="Keep local paths out of git">
+    `ModsPath` is usually machine-specific. Put it in `LocalSettings.props`, a user-level props file, or the local
+    settings file recommended by your template, and do not commit it.
+</Aside>
+
+To disable automatic copying, set:
+
+```xml
+<Project>
+  <PropertyGroup>
+    <ShouldAutoCopyMinionLib>false</ShouldAutoCopyMinionLib>
+  </PropertyGroup>
+</Project>
+```
+
+## BaseLib and RitsuLib support
+
+MinionLib's source generators detect whether your project references BaseLib or RitsuLib:
+
+- BaseLib: referenced assembly `BaseLib`, or top-level namespace `BaseLib`.
+- RitsuLib: referenced assembly `STS2-RitsuLib`, or top-level namespace `STS2RitsuLib`.
+
+When detected, adapters are generated under your project's namespace. If your assembly is named `MyCoolMod`:
+
+<Tabs syncKey="adapter">
+    <TabItem label="Vanilla">
+
+        Without another content library, inherit MinionLib's native base classes:
+
+        | Purpose | Class |
+        | --- | --- |
+        | Minion | `MinionLib.Minion.MinionModel` |
+        | Component card | `MinionLib.Component.ComponentsCardModel` |
+        | Action | `MinionLib.Action.ActionModel` |
+
+    </TabItem>
+    <TabItem label="BaseLib">
+
+        With BaseLib referenced, the generator emits:
+
+        | Native class | BaseLib adapter |
+        | --- | --- |
+        | `MinionModel` | `MyCoolMod.BaseLibAdapters.CustomMinionModel` |
+        | `ComponentsCardModel` | `MyCoolMod.BaseLibAdapters.CustomComponentsCardModel` |
+        | `ActionModel` | `MyCoolMod.BaseLibAdapters.CustomActionModel` |
+
+    </TabItem>
+    <TabItem label="RitsuLib">
+
+        With RitsuLib referenced, the generator emits:
+
+        | Native class | RitsuLib adapter |
+        | --- | --- |
+        | `MinionModel` | `MyCoolMod.RitsuAdapters.ModMinionTemplate` |
+        | `ComponentsCardModel` | `MyCoolMod.RitsuAdapters.ModComponentsCardTemplate` |
+        | `ActionModel` | `MyCoolMod.RitsuAdapters.ModActionTemplate` |
+
+    </TabItem>
+</Tabs>
+
+<Aside type="caution" title="The namespace uses your assembly name">
+    Do not import `MinionLib.BaseLibAdapters` or `MinionLib.RitsuAdapters` in a consuming mod. The generator replaces
+    those template namespaces with `{YourAssembly}.BaseLibAdapters` or `{YourAssembly}.RitsuAdapters`. Invalid namespace
+    characters in the assembly name are replaced with `_`.
+</Aside>
