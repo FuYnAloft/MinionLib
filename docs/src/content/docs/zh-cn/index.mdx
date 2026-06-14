@@ -3,17 +3,17 @@ title: MinionLib
 description: Slay the Spire 2 模组开发中的随从、行动与组件化卡牌库。
 template: splash
 sidebar:
-hidden: true
+  hidden: true
 prev: false
 next: false
 hero:
-tagline: 为 Slay the Spire 2 模组提供随从、可点击行动、组件化卡牌和自定义目标系统。
+  tagline: 为 Slay the Spire 2 模组提供随从、可点击行动、组件化卡牌和自定义目标系统。
   actions:
-- text: 配置环境
-link: /MinionLib/zh-cn/quickstart/environment/
-icon: setting
-- text: 随从快速入门
-link: /MinionLib/zh-cn/quickstart/minion-quickstart/
+    - text: 配置环境
+      link: /MinionLib/zh-cn/quickstart/environment/
+      icon: setting
+    - text: 随从快速入门
+      link: /MinionLib/zh-cn/quickstart/minion-quickstart/
       icon: right-arrow
 ---
 
@@ -22,22 +22,22 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 ## 你可以用它做什么
 
 <CardGrid stagger>
-    <Card title="随从系统" icon="document">
-        创建可召唤、可站位、可绑定卡牌的友方生物，并使用 `MinionCmd` 管理召唤和移动。
+	<Card title="随从系统" icon="document">
+		创建可召唤、可站位、可绑定卡牌的友方生物，并使用 `MinionCmd` 管理召唤和移动。
 	</Card>
-    <Card title="可点击行动" icon="right-arrow">
-        把行动做成能力图标，点击随从或行动图标后选择目标并结算效果。
+	<Card title="可点击行动" icon="right-arrow">
+		把行动做成能力图标，点击随从或行动图标后选择目标并结算效果。
 	</Card>
-    <Card title="Component Cards" icon="add-document">
-        将可复用的卡牌行为拆成 `CardComponent`，统一处理描述、升级、状态保存和跨时机监听。
+	<Card title="Component Cards" icon="add-document">
+		将可复用的卡牌行为拆成 `CardComponent`，统一处理描述、升级、状态保存和跨时机监听。
 	</Card>
-    <Card title="自定义目标" icon="setting">
-        为卡牌和能力扩展目标类型，例如选择任意随从、随从或主人、所有生物等。
+	<Card title="自定义目标" icon="setting">
+		为卡牌和能力扩展目标类型，例如选择任意随从、随从或主人、所有生物等。
 	</Card>
-    <Card title="Guardian" icon="open-book">
-        使用内置守护者能力，让随从替玩家阻挡伤害。
-    </Card>
-    <Card title="BaseLib / RitsuLib 适配" icon="pencil">
-        引用对应库后，MinionLib 的 Source Generator 会自动生成适配器基类。
+	<Card title="Guardian" icon="open-book">
+		使用内置守护者能力，让随从替玩家阻挡伤害。
+	</Card>
+	<Card title="BaseLib / RitsuLib 适配" icon="pencil">
+		引用对应库后，MinionLib 的 Source Generator 会自动生成适配器基类。
 	</Card>
 </CardGrid>

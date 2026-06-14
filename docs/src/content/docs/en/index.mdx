@@ -3,17 +3,17 @@ title: MinionLib
 description: A Slay the Spire 2 modding library for minions, actions, and component-based cards.
 template: splash
 sidebar:
-hidden: true
+  hidden: true
 prev: false
 next: false
 hero:
-tagline: Build summoned allies, clickable actions, component cards, and custom target types for Slay the Spire 2 mods.
+  tagline: Build summoned allies, clickable actions, component cards, and custom target types for Slay the Spire 2 mods.
   actions:
-- text: Set up your project
-link: /MinionLib/en/quickstart/environment/
-icon: setting
-- text: Minion quickstart
-link: /MinionLib/en/quickstart/minion-quickstart/
+    - text: Set up your project
+      link: /MinionLib/en/quickstart/environment/
+      icon: setting
+    - text: Minion quickstart
+      link: /MinionLib/en/quickstart/minion-quickstart/
       icon: right-arrow
 ---
 
@@ -22,22 +22,22 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 ## What MinionLib provides
 
 <CardGrid stagger>
-    <Card title="Minions" icon="document">
-        Create summoned allies with positions, ownership, bound cards, and summon helpers through `MinionCmd`.
+	<Card title="Minions" icon="document">
+		Create summoned allies with positions, ownership, bound cards, and summon helpers through `MinionCmd`.
 	</Card>
-    <Card title="Clickable actions" icon="right-arrow">
-        Expose creature actions as power icons, then resolve targeting and effects when the player clicks them.
+	<Card title="Clickable actions" icon="right-arrow">
+		Expose creature actions as power icons, then resolve targeting and effects when the player clicks them.
 	</Card>
-    <Card title="Component cards" icon="add-document">
-        Move reusable card behavior into `CardComponent` types with description, upgrade, state, and timing support.
+	<Card title="Component cards" icon="add-document">
+		Move reusable card behavior into `CardComponent` types with description, upgrade, state, and timing support.
 	</Card>
-    <Card title="Custom targeting" icon="setting">
-        Add target types for minions, owners, all creatures, intersections, unions, and other mod-specific rules.
+	<Card title="Custom targeting" icon="setting">
+		Add target types for minions, owners, all creatures, intersections, unions, and other mod-specific rules.
 	</Card>
-    <Card title="Guardian" icon="open-book">
-        Use the built-in Guardian power to let minions intercept damage for their owner.
-    </Card>
-    <Card title="BaseLib / RitsuLib adapters" icon="pencil">
-        When those libraries are referenced, MinionLib source generators emit adapter base classes for your mod.
+	<Card title="Guardian" icon="open-book">
+		Use the built-in Guardian power to let minions intercept damage for their owner.
+	</Card>
+	<Card title="BaseLib / RitsuLib adapters" icon="pencil">
+		When those libraries are referenced, MinionLib source generators emit adapter base classes for your mod.
 	</Card>
 </CardGrid>

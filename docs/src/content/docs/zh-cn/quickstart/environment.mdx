@@ -2,7 +2,7 @@
 title: 环境配置
 description: 在 Slay the Spire 2 模组项目中正确引用 MinionLib。
 sidebar:
-order: 1
+    order: 1
 ---
 
 import {Aside, Steps, Tabs, TabItem} from '@astrojs/starlight/components';
@@ -10,7 +10,7 @@ import {Aside, Steps, Tabs, TabItem} from '@astrojs/starlight/components';
 ## 安装方式
 
 <Steps>
-    1. 在你的模组项目 `.csproj` 中添加 MinionLib 包引用。
+1. 在你的模组项目 `.csproj` 中添加 MinionLib 包引用。
 
     ```xml
     <ItemGroup>
@@ -18,8 +18,8 @@ import {Aside, Steps, Tabs, TabItem} from '@astrojs/starlight/components';
     </ItemGroup>
     ```
 
-    2. 正常构建项目。NuGet 包会带上 MinionLib 的运行时文件、Godot 内容文件和 Source Generator。
-    3. 如果项目还引用了 BaseLib 或 RitsuLib，MinionLib 会在编译时自动生成对应适配器类。
+2. 正常构建项目。NuGet 包会带上 MinionLib 的运行时文件、Godot 内容文件和 Source Generator。
+3. 如果项目还引用了 BaseLib 或 RitsuLib，MinionLib 会在编译时自动生成对应适配器类。
 </Steps>
 
 <Aside type="danger" title="不要手动引用 GitHub Release DLL">

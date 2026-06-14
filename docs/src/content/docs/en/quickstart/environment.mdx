@@ -2,7 +2,7 @@
 title: Environment Setup
 description: Add MinionLib to a Slay the Spire 2 mod project correctly.
 sidebar:
-order: 1
+    order: 1
 ---
 
 import {Aside, Steps, Tabs, TabItem} from '@astrojs/starlight/components';
@@ -10,7 +10,7 @@ import {Aside, Steps, Tabs, TabItem} from '@astrojs/starlight/components';
 ## Install from NuGet
 
 <Steps>
-    1. Add the MinionLib package to your mod project `.csproj`.
+1. Add the MinionLib package to your mod project `.csproj`.
 
     ```xml
     <ItemGroup>
@@ -18,10 +18,10 @@ import {Aside, Steps, Tabs, TabItem} from '@astrojs/starlight/components';
     </ItemGroup>
     ```
 
-    2. Build the project normally. The package provides the runtime assembly, Godot content files, and source
-    generators.
-    3. If your project also references BaseLib or RitsuLib, MinionLib generates matching adapter base classes during
-    compilation.
+2. Build the project normally. The package provides the runtime assembly, Godot content files, and source
+generators.
+3. If your project also references BaseLib or RitsuLib, MinionLib generates matching adapter base classes during
+compilation.
 </Steps>
 
 <Aside type="danger" title="Do not reference GitHub Release DLLs manually">
