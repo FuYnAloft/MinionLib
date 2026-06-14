@@ -1,10 +1,24 @@
-# Component 使用文档
+---
+title: Component 快速入门
+description: 使用 ComponentsCardModel 和 CardComponent 组织可复用卡牌行为。
+sidebar:
+    order: 3
+---
+
+import {Aside} from '@astrojs/starlight/components';
+
+# Component 快速入门
 
 ## 简介
 
 本文面向已经熟悉 C# 和 STS2 `CardModel` 的开发者。目标是把 MinionLib Component 的使用边界、推荐写法、常见实现路径整理成一份可以直接交给开发者或代码生成工具使用的说明。
 
 Component 的核心价值在于把“卡牌身份”和“可复用行为”拆开管理。一张卡仍然声明费用、类型、稀有度、目标、数值和关键词；可复用的行为进入 Component，例如打出时追加伤害、右键融合、根据能量改写费用、跨时机记录战斗历史、向卡牌描述追加标准文本。
+
+<Aside type="note" title="先完成环境配置">
+    如果你的项目还没有引用 MinionLib，请先阅读[环境配置](/MinionLib/zh-cn/quickstart/environment/)。Component 依赖 NuGet
+    包中的 Source Generator，不建议用本地 DLL 引用。
+</Aside>
 
 ### 适用场景
 
@@ -659,4 +673,4 @@ Localization/
 - `MinionLib.Generators/ComponentStatePropertyGenerator.cs`
 - `MinionLib.Generators/DynamicVarSourceGenerator.cs`
 
-示例项目中的 `Scripts/Components/` 也有可直接对照的组件形态：普通出牌组件、费用改写组件、右键组件、多选项组件和跨时机组件都能在这里找到。
+示例项目中的 `MinionLib.Example/Components/` 也有可直接对照的组件形态：普通出牌组件、费用改写组件、右键组件、多选项组件和跨时机组件都能在这里找到。

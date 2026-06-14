@@ -1,0 +1,116 @@
+---
+title: 环境配置
+description: 在 Slay the Spire 2 模组项目中正确引用 MinionLib。
+sidebar:
+    order: 1
+---
+
+import {Aside, Steps, Tabs, TabItem} from '@astrojs/starlight/components';
+
+## 安装方式
+
+<Steps>
+1. 在你的模组项目 `.csproj` 中添加 MinionLib 包引用。
+
+    ```xml
+    <ItemGroup>
+        <PackageReference Include="FuYnAloft.Sts2.MinionLib" Version="0.5.2"/>
+    </ItemGroup>
+    ```
+
+2. 正常构建项目。NuGet 包会带上 MinionLib 的运行时文件、Godot 内容文件和 Source Generator。
+3. 如果项目还引用了 BaseLib 或 RitsuLib，MinionLib 会在编译时自动生成对应适配器类。
+</Steps>
+
+<Aside type="danger" title="不要手动引用 GitHub Release DLL">
+    请从 NuGet 安装 `FuYnAloft.Sts2.MinionLib`。不要下载 GitHub Release 里的 DLL 再本地引用，否则项目拿不到 NuGet 包里的
+    analyzer/source generator、`buildTransitive` target 和内容文件，BaseLib/RitsuLib 适配器也无法正确生成。
+</Aside>
+
+## 配置 ModsPath
+
+MinionLib 的 NuGet 包包含一个 transitive MSBuild target。构建后，如果 `ModsPath` 非空且 `ShouldAutoCopyMinionLib` 没有被设为 `false`，它会自动复制这些文件：
+
+- `MinionLib.dll`
+- `MinionLib.pck`
+- `MinionLib.json`
+
+目标目录是：
+
+```text
+$(ModsPath)/MinionLib/
+```
+
+很多 Slay the Spire 2 模组项目模板已经有 `ModsPath`、`Sts2Path`、`SteamLibraryPath` 或类似属性。优先使用模板已有配置；没有时，可以在只保存在本机的 props 文件里添加：
+
+```xml
+<Project>
+  <PropertyGroup>
+    <ModsPath>D:/SteamLibrary/steamapps/common/Slay the Spire 2/mods/</ModsPath>
+  </PropertyGroup>
+</Project>
+```
+
+<Aside type="note" title="本机路径不要提交">
+    `ModsPath` 通常是每个开发者自己的本机路径。建议放在 `LocalSettings.props`、用户级 props 或模板推荐的本地配置文件中，并确保它不进入仓库。
+</Aside>
+
+如果你不希望 MinionLib 自动复制运行时文件，可以显式关闭：
+
+```xml
+<Project>
+  <PropertyGroup>
+    <ShouldAutoCopyMinionLib>false</ShouldAutoCopyMinionLib>
+  </PropertyGroup>
+</Project>
+```
+
+## BaseLib 与 RitsuLib 支持
+
+MinionLib 会通过 Source Generator 检测当前项目是否引用了 BaseLib 或 RitsuLib：
+
+- BaseLib：检测引用程序集 `BaseLib`，或顶级命名空间 `BaseLib`。
+- RitsuLib：检测引用程序集 `STS2-RitsuLib`，或顶级命名空间 `STS2RitsuLib`。
+
+检测到后，生成器会把适配器类生成到你的项目命名空间下。假设你的程序集名是 `MyCoolMod`：
+
+<Tabs syncKey="adapter">
+    <TabItem label="Vanilla">
+
+        不使用额外内容库时，直接继承 MinionLib 原生类：
+
+        | 用途 | 类 |
+        | --- | --- |
+        | 随从 | `MinionLib.Minion.MinionModel` |
+        | 组件卡牌 | `MinionLib.Component.ComponentsCardModel` |
+        | 行动 | `MinionLib.Action.ActionModel` |
+
+    </TabItem>
+    <TabItem label="BaseLib">
+
+        引用 BaseLib 后，生成器会产生：
+
+        | 原生类 | BaseLib 适配类 |
+        | --- | --- |
+        | `MinionModel` | `MyCoolMod.BaseLibAdapters.CustomMinionModel` |
+        | `ComponentsCardModel` | `MyCoolMod.BaseLibAdapters.CustomComponentsCardModel` |
+        | `ActionModel` | `MyCoolMod.BaseLibAdapters.CustomActionModel` |
+
+    </TabItem>
+    <TabItem label="RitsuLib">
+
+        引用 RitsuLib 后，生成器会产生：
+
+        | 原生类 | RitsuLib 适配类 |
+        | --- | --- |
+        | `MinionModel` | `MyCoolMod.RitsuAdapters.ModMinionTemplate` |
+        | `ComponentsCardModel` | `MyCoolMod.RitsuAdapters.ModComponentsCardTemplate` |
+        | `ActionModel` | `MyCoolMod.RitsuAdapters.ModActionTemplate` |
+
+    </TabItem>
+</Tabs>
+
+<Aside type="caution" title="命名空间来自你的程序集名">
+    生成器不会让你引用 `MinionLib.BaseLibAdapters` 或 `MinionLib.RitsuAdapters`。它会把模板命名空间替换成 `{你的程序集名}.BaseLibAdapters`
+    或 `{你的程序集名}.RitsuAdapters`。程序集名中不能作为命名空间字符的符号会被替换为 `_`。
+</Aside>

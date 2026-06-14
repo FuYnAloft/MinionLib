@@ -1,0 +1,215 @@
+---
+title: Component Quickstart
+description: Use ComponentsCardModel and CardComponent to organize reusable card behavior.
+sidebar:
+    order: 3
+---
+
+import {Aside} from '@astrojs/starlight/components';
+
+This page is for mod authors who already know STS2 `CardModel` basics and want to move reusable card behavior into MinionLib components.
+
+<Aside type="note" title="Set up MinionLib first">
+    If your project does not reference MinionLib yet, start with [Environment
+    Setup](/MinionLib/en/quickstart/environment/). Components depend on the source generators shipped in the NuGet
+    package, so local DLL references are not a supported setup.
+</Aside>
+
+## Why components
+
+`ComponentsCardModel` keeps the card identity on the card class and moves reusable behavior into `CardComponent` types. A card still declares cost, type, rarity, target, numbers, and keywords. Components handle reusable rules such as draw-on-play, right-click behavior, cost changes, state tracking, extra descriptions, hover tips, and timing hooks.
+
+Components are a good fit when:
+
+- Several cards share the same behavior and should upgrade or localize it consistently.
+- The behavior has state that must survive card copies, saves, and combat sync.
+- The behavior happens outside the card's main `OnPlay`, such as turn start, combat start, card exhaust, or right-click handling.
+- The card display must stay synchronized with behavior through dynamic vars, hover tips, glow, target requirements, or availability checks.
+
+Keep one-off card effects in the card's own `OnPlay(..., ComponentContext)`. Use components for behavior that is reusable, composable, or needs to participate in MinionLib's card lifecycle.
+
+## Minimal card base
+
+Let your mod's card base inherit `ComponentsCardModel`, then let concrete cards inherit your base class.
+
+```csharp
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MinionLib.Component;
+using MinionLib.Component.Core;
+using MinionLib.Component.Interfaces;
+using YourMod.Components;
+
+namespace YourMod.Cards;
+
+public abstract class MyCardBase(
+    int cost,
+    CardType type,
+    CardRarity rarity,
+    TargetType targetType)
+    : ComponentsCardModel(cost, type, rarity, targetType);
+
+public sealed class QuickStudy : MyCardBase
+{
+    protected override IEnumerable<ICardComponent> CanonicalComponents =>
+    [
+        new DrawOnPlayComponent(1),
+        new SameOwnerPlayCounterComponent()
+    ];
+
+    public QuickStudy()
+        : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+
+    protected override Task OnPlay(
+        PlayerChoiceContext choiceContext,
+        CardPlay cardPlay,
+        ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+
+    protected override void OnUpgrade(ComponentContext componentContext)
+    {
+        AddComponent(new DrawOnPlayComponent(1), isUpgrade: true);
+    }
+}
+```
+
+After a card inherits `ComponentsCardModel`, use the hook signatures that include `ComponentContext`. The old vanilla hooks are sealed to prevent components from being skipped.
+
+## A normal component
+
+This component draws cards after the card is played. It stores its value, exposes it as a dynamic var, and merges upgrades into the existing instance.
+
+```csharp
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MinionLib.Component;
+using MinionLib.Component.Core;
+using MinionLib.Component.Interfaces;
+
+namespace YourMod.Components;
+
+public sealed partial class DrawOnPlayComponent : CardComponent
+{
+    [ComponentState<DynamicVar>]
+    public partial int Cards { get; private set; }
+
+    public DrawOnPlayComponent(int cards)
+    {
+        Cards = cards;
+    }
+
+    public override Task OnPlayPostfix(
+        PlayerChoiceContext choiceContext,
+        CardPlay cardPlay,
+        ComponentContext componentContext)
+    {
+        return CardPileCmd.Draw(choiceContext, Cards, Card!.Owner);
+    }
+
+    public override bool TryMergeWith(
+        ICardComponent incoming,
+        ApplyComponentOptions options,
+        out ICardComponent? merged)
+    {
+        if (incoming is not DrawOnPlayComponent draw)
+        {
+            merged = null;
+            return false;
+        }
+
+        Cards += draw.Cards;
+        if (options.IsUpgrade)
+            DynamicVars["Cards"].SetWasJustUpgraded();
+
+        merged = this;
+        return true;
+    }
+}
+```
+
+Example localization:
+
+```yaml
+DrawOnPlayComponent:
+  prefix: Draw {Cards:diff()} card.
+```
+
+## A timing component
+
+Use `TimingCardComponent` for behavior outside the main card play flow.
+
+```csharp
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MinionLib.Component.Core;
+using MinionLib.Component.Utils;
+
+namespace YourMod.Components;
+
+public sealed partial class SameOwnerPlayCounterComponent : TimingCardComponent
+{
+    [ComponentState<DynamicVar>]
+    public partial int PlayedThisCombat { get; private set; }
+
+    public SameOwnerPlayCounterComponent()
+        : base(Timing.BeforeCombatStart, Timing.AfterCardPlayed, Timing.AfterCombatEnd) { }
+
+    protected override Task OnTimingPostfix(OnTimingContext context)
+    {
+        if (Card?.Owner == null) return Task.CompletedTask;
+
+        switch (context.Timing)
+        {
+            case Timing.BeforeCombatStart:
+            case Timing.AfterCombatEnd:
+                PlayedThisCombat = 0;
+                break;
+            case Timing.AfterCardPlayed:
+                var playedCard = context.CardPlay?.Card;
+                if (playedCard?.Owner == Card.Owner)
+                    PlayedThisCombat++;
+                break;
+        }
+
+        return Task.CompletedTask;
+    }
+}
+```
+
+Example localization:
+
+```yaml
+SameOwnerPlayCounterComponent:
+  postfix: You have played {PlayedThisCombat} cards this combat.
+```
+
+## Rules of thumb
+
+- Component classes should usually be `sealed partial`; source generators emit registration, state serialization, and dynamic var plumbing.
+- Fields that must be saved should use `[ComponentState]`.
+- Values shown in descriptions should use `[ComponentState<TDynamicVar>]` or `[LocArg]`.
+- Do not store runtime objects such as `CardModel`, `Creature`, `PlayerChoiceContext`, delegates, or UI nodes in component state.
+- Use command APIs such as `CardPileCmd`, `CreatureCmd`, `PowerCmd`, and related game commands for combat effects.
+- Implement `TryMergeWith` or `TrySubtractiveMergeWith` when repeated components should combine predictably.
+
+## Review checklist
+
+When reviewing a component card, check:
+
+1. The card inherits a component-aware base class.
+2. `CanonicalComponents` declares the reusable behavior.
+3. Player-facing keywords or hover tips match the behavior.
+4. Card hooks use the `ComponentContext` overloads.
+5. Component state is serializable and does not capture runtime objects.
+6. Upgrades and repeated `AddComponent` calls merge as intended.
+7. Localization keys match the generated component id.
+
+Reference implementations live under `MinionLib/Component/` and `MinionLib.Example/Components/`.

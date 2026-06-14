@@ -47,7 +47,7 @@
 
 ## 文档
 
-- 快速入门：[docs/quickstart.md](./docs/quickstart.md)
+[项目文档链接](https://fuynaloft.github.io/MinionLib)
 
 ## 许可证
 
