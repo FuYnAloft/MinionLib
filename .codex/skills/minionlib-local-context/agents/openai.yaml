@@ -1,0 +1,4 @@
+interface:
+  display_name: "MinionLib Local Context"
+  short_description: "Create or repair MinionLib AGENTS.local.md."
+  default_prompt: "Create or update AGENTS.local.md for this MinionLib checkout."
