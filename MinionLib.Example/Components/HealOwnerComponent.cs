@@ -28,7 +28,7 @@ public sealed partial class HealOwnerComponent : AmountCardComponent
 
         Amount += heal.Amount;
         if (heal.Amount != 0 && options.IsUpgrade)
-            DynamicVars["Heal"].SetWasJustUpgraded();
+            DynamicVars["Amount"].SetWasJustUpgraded();
         merged = Amount <= 0 ? null : this;
         return true;
     }
@@ -44,7 +44,7 @@ public sealed partial class HealOwnerComponent : AmountCardComponent
 
         Amount -= heal.Amount;
         if (heal.Amount != 0 && options.IsUpgrade)
-            DynamicVars["Heal"].SetWasJustUpgraded();
+            DynamicVars["Amount"].SetWasJustUpgraded();
         merged = Amount <= 0 ? null : this;
         return true;
     }

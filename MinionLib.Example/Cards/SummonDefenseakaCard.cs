@@ -1,5 +1,3 @@
-using BaseLib.Abstracts;
-using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
@@ -13,22 +11,21 @@ using MinionLib.Minion;
 
 namespace MinionLib.Example.Cards;
 
-[Pool(typeof(TokenCardPool))]
-public sealed class SummonDefenseakaCard() : CustomCardModel(0, CardType.Power, CardRarity.Rare, TargetType.Self, false)
+[RegisterCard(typeof(TokenCardPool))]
+public sealed class SummonDefenseakaCard()
+    : ExampleCardTemplate(0, CardType.Power, CardRarity.Rare, TargetType.Self, false)
 {
-    public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
-
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new SummonVar(6m), new PowerVar<DexterityPower>(4m)];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         [HoverTipFactory.Static(StaticHoverTip.SummonDynamic, DynamicVars.Summon)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var pet = await MinionCmd.AddMinion<DefenseakaMinion>(Owner, new MinionSummonOptions(
+        var pet = await MinionCmd.AddMinion<DefenseakaMinion>(choiceContext, Owner, new MinionSummonOptions(
             DynamicVars.Summon.BaseValue,
-            DynamicVars["DexterityPower"].BaseValue,
+            DynamicVars.Dexterity.BaseValue,
             Source: this));
 
         // Mirror Osty's shield visualization: defender minion displays owner's block ring/status.
@@ -38,6 +35,6 @@ public sealed class SummonDefenseakaCard() : CustomCardModel(0, CardType.Power, 
     protected override void OnUpgrade()
     {
         DynamicVars.Summon.UpgradeValueBy(2m);
-        DynamicVars["DexterityPower"].UpgradeValueBy(1m);
+        DynamicVars.Dexterity.UpgradeValueBy(1m);
     }
 }

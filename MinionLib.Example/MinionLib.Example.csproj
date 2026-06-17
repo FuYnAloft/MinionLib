@@ -1,0 +1,29 @@
+<Project Sdk="Godot.NET.Sdk/4.5.1">
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>true</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\MinionLib\MinionLib.csproj">
+            <Private>true</Private>
+        </ProjectReference>
+        <ProjectReference Include="../MinionLib.Generators/MinionLib.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" Pack="false"/>
+        <PackageReference Include="STS2.RitsuLib" Version="0.4.24" GeneratePathProperty="true" PrivateAssets="All"/>
+    </ItemGroup>
+
+    <PropertyGroup>
+        <RitsuLibDeployDir>$(ModsPath)RitsuLib/</RitsuLibDeployDir>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <AdditionalFiles Include="MinionLib.Example/localization/**/*.json"/>
+        <None Include="MinionLib.Example.template.json"/>
+        <None Include="MinionLib.Example/**"/>
+        <None Include="Example/**"/>
+    </ItemGroup>
+
+
+    <Import Project="../MinionLib/Build/ModBuild.targets" Condition="Exists('../MinionLib/Build/ModBuild.targets')"/>
+</Project>

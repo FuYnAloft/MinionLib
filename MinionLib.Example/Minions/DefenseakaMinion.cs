@@ -1,8 +1,8 @@
-﻿using MegaCrit.Sts2.Core.Animation;
+using MegaCrit.Sts2.Core.Animation;
 using MegaCrit.Sts2.Core.Bindings.MegaSpine;
 using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MinionLib.Example.Powers;
 using MinionLib.Minion;
@@ -10,15 +10,17 @@ using MinionLib.Powers;
 
 namespace MinionLib.Example.Minions;
 
-public sealed class DefenseakaMinion : MinionModel
+[RegisterMonster]
+public sealed class DefenseakaMinion : ExampleMinionTemplate
 {
     public override int MinInitialHp => 6;
 
     public override int MaxInitialHp => 6;
 
-    protected override string VisualsPath => "res://Example/MinionTest/scenes/creature_visuals/pettest_defenseaka.tscn";
+    protected override string VisualsScenePath =>
+        "res://Example/MinionTest/scenes/creature_visuals/pettest_defenseaka.tscn";
 
-    public override CreatureAnimator GenerateAnimator(MegaSprite controller)
+    protected override CreatureAnimator SetupCustomCreatureAnimator(MegaSprite controller)
     {
         AnimState idle = new("idle_loop", true);
         AnimState cast = new("cast") { NextState = idle };
@@ -42,14 +44,16 @@ public sealed class DefenseakaMinion : MinionModel
         return animator;
     }
 
-    public override async Task OnSummon(Player owner, Creature self, MinionSummonOptions options)
+    public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, MinionSummonOptions options)
     {
+        var self = Creature;
+
         if (options.MaxHp is decimal maxHp) await CreatureCmd.SetMaxAndCurrentHp(self, maxHp);
 
         if (options.PrimaryStatAmount is decimal dexterity && dexterity > 0m)
-            await PowerCmd.Apply<DexterityPower>(self, dexterity, owner.Creature, options.Source);
+            await PowerCmd.Apply<DexterityPower>(choiceContext, self, dexterity, owner.Creature, options.Source);
 
-        await PowerCmd.Apply<PetDefenderPower>(self, 1m, owner.Creature, options.Source);
-        await PowerCmd.Apply<MinionGuardianPower>(self, 1m, owner.Creature, options.Source);
+        await PowerCmd.Apply<PetDefenderPower>(choiceContext, self, 1m, owner.Creature, options.Source);
+        await PowerCmd.Apply<MinionGuardianPower>(choiceContext, self, 1m, owner.Creature, options.Source);
     }
 }

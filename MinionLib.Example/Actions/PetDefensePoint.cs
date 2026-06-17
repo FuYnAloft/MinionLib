@@ -5,26 +5,22 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
-using MinionLib.Action;
 using MinionLib.Targeting;
 
 namespace MinionLib.Example.Actions;
 
-public sealed class PetDefensePoint : CustomActionModel
+[RegisterPower]
+public sealed class PetDefensePoint : ExampleActionTemplate
 {
     public override TargetType TargetType => MinionTargetTypes.AnyMinionOrOwner;
 
     public override bool AutoRemoveAtTurnEnd => true;
 
+    public override bool DecrementAfterAct => true;
+
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
-
-    public override string CustomPackedIconPath => "res://Example/MinionTest/orb.png";
-
-    public override string CustomBigIconPath => "res://Example/MinionTest/orb.png";
-
-    public override string CustomBigBetaIconPath => "res://Example/MinionTest/orb.png";
 
     protected override async Task OnAct(PlayerChoiceContext choiceContext, Creature? target)
     {

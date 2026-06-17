@@ -1,0 +1,21 @@
+{
+  "id": "__THIS_NAME__",
+  "name": "__THIS_NAME__",
+  "author": "FuYnAloft",
+  "description": "Example mod for MinionLib.",
+  "version": "__THIS_VERSION__",
+  "has_pck": true,
+  "has_dll": true,
+  "dependencies": [
+    {
+      "id": "MinionLib",
+      "min_version": "__THIS_VERSION__"
+    },
+    {
+      "id": "STS2-RitsuLib",
+      "min_version": "__STS2-RitsuLib_VERSION__"
+    }
+  ],
+  "affects_gameplay": true,
+  "min_game_version": "__GAME_VERSION__"
+}

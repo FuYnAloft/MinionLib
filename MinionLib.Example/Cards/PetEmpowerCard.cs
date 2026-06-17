@@ -1,5 +1,3 @@
-using BaseLib.Abstracts;
-using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -11,12 +9,10 @@ using MinionLib.Targeting;
 
 namespace MinionLib.Example.Cards;
 
-[Pool(typeof(TokenCardPool))]
+[RegisterCard(typeof(TokenCardPool))]
 public sealed class PetEmpowerCard()
-    : CustomCardModel(0, CardType.Skill, CardRarity.Rare, MinionTargetTypes.AnyMinion, false)
+    : ExampleCardTemplate(0, CardType.Skill, CardRarity.Rare, MinionTargetTypes.AnyMinion, false)
 {
-    public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
-
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new PowerVar<StrengthPower>(999m), new PowerVar<DexterityPower>(999m)];
 
@@ -24,15 +20,15 @@ public sealed class PetEmpowerCard()
     {
         if (cardPlay.Target is not { Monster: MinionModel }) return;
 
-        await PowerCmd.Apply<StrengthPower>(cardPlay.Target, DynamicVars["StrengthPower"].BaseValue, Owner.Creature,
-            this);
-        await PowerCmd.Apply<DexterityPower>(cardPlay.Target, DynamicVars["DexterityPower"].BaseValue, Owner.Creature,
-            this);
+        await PowerCmd.Apply<StrengthPower>(choiceContext, cardPlay.Target, DynamicVars.Strength.BaseValue,
+            Owner.Creature, this);
+        await PowerCmd.Apply<DexterityPower>(choiceContext, cardPlay.Target, DynamicVars.Dexterity.BaseValue,
+            Owner.Creature, this);
     }
 
     protected override void OnUpgrade()
     {
-        DynamicVars["StrengthPower"].UpgradeValueBy(1000m);
-        DynamicVars["DexterityPower"].UpgradeValueBy(1000m);
+        DynamicVars.Strength.UpgradeValueBy(1000m);
+        DynamicVars.Dexterity.UpgradeValueBy(1000m);
     }
 }

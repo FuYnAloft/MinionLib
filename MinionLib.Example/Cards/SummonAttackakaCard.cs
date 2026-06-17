@@ -1,5 +1,3 @@
-using BaseLib.Abstracts;
-using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
@@ -12,22 +10,21 @@ using MinionLib.Minion;
 
 namespace MinionLib.Example.Cards;
 
-[Pool(typeof(TokenCardPool))]
-public sealed class SummonAttackakaCard() : CustomCardModel(0, CardType.Power, CardRarity.Rare, TargetType.Self, false)
+[RegisterCard(typeof(TokenCardPool))]
+public sealed class SummonAttackakaCard()
+    : ExampleCardTemplate(0, CardType.Power, CardRarity.Rare, TargetType.Self, false)
 {
-    public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
-
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new SummonVar(6m), new PowerVar<StrengthPower>(4m)];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         [HoverTipFactory.Static(StaticHoverTip.SummonDynamic, DynamicVars.Summon)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        _ = await MinionCmd.AddMinion<AttackakaMinion>(Owner, new MinionSummonOptions(
+        _ = await MinionCmd.AddMinion<AttackakaMinion>(choiceContext, Owner, new MinionSummonOptions(
             DynamicVars.Summon.BaseValue,
-            DynamicVars["StrengthPower"].BaseValue,
+            DynamicVars.Strength.BaseValue,
             Source: this,
             Position: MinionPosition.FrontUpper));
     }
@@ -35,6 +32,6 @@ public sealed class SummonAttackakaCard() : CustomCardModel(0, CardType.Power, C
     protected override void OnUpgrade()
     {
         DynamicVars.Summon.UpgradeValueBy(2m);
-        DynamicVars["StrengthPower"].UpgradeValueBy(1m);
+        DynamicVars.Strength.UpgradeValueBy(1m);
     }
 }

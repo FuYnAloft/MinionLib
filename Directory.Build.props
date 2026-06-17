@@ -9,7 +9,7 @@
         <PathMap>$(AppOutputBase)=./</PathMap>
         <LangVersion>preview</LangVersion>
         <NoWarn>$(NoWarn);MSB3270</NoWarn>
-        <Version>100.0.0.0-dev</Version> <!-- 版本号由命令行参数传入 -->
+        <Version>100.0.0-dev</Version> <!-- 版本号由命令行参数传入 -->
     </PropertyGroup>
 
     <PropertyGroup>

@@ -1,5 +1,4 @@
-﻿{
-  "MINIONLIB-MINION_STRENGTH_POTION.title": "Minion Strength Potion",
-  "MINIONLIB-MINION_STRENGTH_POTION.description": "Give a minion [blue]{StrengthPower}[/blue] [gold]Strength[/gold]."
+{
+  "MINION_LIB_EXAMPLE_POTION_MINION_STRENGTH_POTION.title": "Minion Strength Potion",
+  "MINION_LIB_EXAMPLE_POTION_MINION_STRENGTH_POTION.description": "Give a minion [blue]{StrengthPower:diff()}[/blue] [gold]Strength[/gold]."
 }
-
