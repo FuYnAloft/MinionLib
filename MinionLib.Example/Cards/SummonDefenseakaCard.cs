@@ -14,7 +14,7 @@ using MinionLib.Minion;
 namespace MinionLib.Example.Cards;
 
 [Pool(typeof(TokenCardPool))]
-public sealed class SummonDefenseakaCard() : CustomCardModel(0, CardType.Power, CardRarity.Rare, TargetType.Self, false)
+public sealed class SummonDefenseakaCard() : CustomCardModel(0, CardType.Power, CardRarity.Rare, TargetType.Self, false), IMinionSummonCard
 {
     public override string CustomPortraitPath => "res://images/packed/card_portraits/beta.png";
 

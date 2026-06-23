@@ -35,7 +35,8 @@ public readonly record struct MinionSummonOptions(
     decimal? SecondaryStatAmount = null,
     decimal? TertiaryStatAmount = null,
     CardModel? Source = null,
-    MinionPosition Position = MinionPosition.Front);
+    MinionPosition Position = MinionPosition.Front,
+    MinionSummonOverflowBehavior OverflowBehavior = MinionSummonOverflowBehavior.Fail);
 
 public enum MinionPosition
 {
@@ -44,4 +45,29 @@ public enum MinionPosition
     FrontUpper,
     BackUpper,
     Upper
+}
+
+/// <summary>
+///     当召唤随从时，若玩家已达随从上限，定义如何处理溢出。
+/// </summary>
+public enum MinionSummonOverflowBehavior
+{
+    /// <summary>
+    ///     直接抛出 <see cref="MinionLimitExceededException" />，由调用方自行处理（默认行为）。
+    ///     <para>
+    ///         召唤卡通常通过 <see cref="IMinionSummonCard" /> 在打出前检查上限，
+    ///         达到上限时卡牌变为无法打出状态，因此正常流程不会触发此异常。
+    ///     </para>
+    /// </summary>
+    Fail,
+
+    /// <summary>
+    ///     移除最早召唤的随从以腾出位置。
+    /// </summary>
+    ReplaceOldest,
+
+    /// <summary>
+    ///     忽略上限检查，直接召唤。
+    /// </summary>
+    Ignore,
 }
