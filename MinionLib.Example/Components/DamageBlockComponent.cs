@@ -23,7 +23,7 @@ public sealed partial class DamageBlockComponent : CardComponent
         if (Card == null) return;
         if (cardPlay.Target != null)
             await CreatureCmd.Damage(choiceContext, cardPlay.Target, DynamicVars.Damage,
-                Card.Owner.Creature, Card);
+                Card.Owner.Creature, Card, cardPlay);
         await CreatureCmd.GainBlock(Card.Owner.Creature, DynamicVars.Block, cardPlay);
     }
 

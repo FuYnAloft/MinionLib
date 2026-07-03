@@ -376,18 +376,23 @@ public abstract partial class ComponentsCardModel(
         EnsureComponentsInitialized();
     }
 
-    protected sealed override PileType GetResultPileTypeForCardPlay()
+    protected sealed override (PileType, CardPilePosition) GetResultPileTypeAndPositionForCardPlay()
     {
         EnsureComponentsInitialized();
         foreach (var component in _components!)
             if (component.GetResultPileTypeForCardPlay() is { } t)
-                return t;
-        return GetResultPileTypeForCardPlayC();
+                return (t, CardPilePosition.Bottom);
+        return GetResultPileTypeAndPositionForCardPlayC();
+    }
+
+    protected virtual (PileType, CardPilePosition) GetResultPileTypeAndPositionForCardPlayC()
+    {
+        return (GetResultPileTypeForCardPlayC(), CardPilePosition.Bottom);
     }
 
     protected virtual PileType GetResultPileTypeForCardPlayC()
     {
-        return base.GetResultPileTypeForCardPlay();
+        return base.GetResultPileTypeAndPositionForCardPlay().Item1;
     }
 
     private void HandlePhaseTransitionLimitExceeded(ComponentPhase lastPhase)

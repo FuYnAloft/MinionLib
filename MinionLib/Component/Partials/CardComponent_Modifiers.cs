@@ -90,6 +90,17 @@ public abstract partial class CardComponent
     return 0M;
   }
 
+  public virtual Decimal ModifyDamageAdditive(
+    Creature? target,
+    Decimal amount,
+    ValueProp props,
+    Creature? dealer,
+    CardModel? cardSource,
+    CardPlay? cardPlay)
+  {
+    return ModifyDamageAdditive(target, amount, props, dealer, cardSource);
+  }
+
   public virtual Decimal ModifyDamageCap(
     Creature? target,
     ValueProp props,
@@ -97,6 +108,16 @@ public abstract partial class CardComponent
     CardModel? cardSource)
   {
     return Decimal.MaxValue;
+  }
+
+  public virtual Decimal ModifyDamageCap(
+    Creature? target,
+    ValueProp props,
+    Creature? dealer,
+    CardModel? cardSource,
+    CardPlay? cardPlay)
+  {
+    return ModifyDamageCap(target, props, dealer, cardSource);
   }
 
   public virtual Decimal ModifyDamageMultiplicative(
@@ -107,6 +128,17 @@ public abstract partial class CardComponent
     CardModel? cardSource)
   {
     return 1M;
+  }
+
+  public virtual Decimal ModifyDamageMultiplicative(
+    Creature? target,
+    Decimal amount,
+    ValueProp props,
+    Creature? dealer,
+    CardModel? cardSource,
+    CardPlay? cardPlay)
+  {
+    return ModifyDamageMultiplicative(target, amount, props, dealer, cardSource);
   }
 
   public virtual Decimal ModifyEnergyGain(Player player, Decimal amount) => amount;

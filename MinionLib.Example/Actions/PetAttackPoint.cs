@@ -26,6 +26,6 @@ public sealed class PetAttackPoint : ExampleActionTemplate
         if (target == null) return;
         var actor = Owner;
         await MinionAnimCmd.PlayBumpAttackAsync(actor, target,
-            () => CreatureCmd.Damage(choiceContext, target, 0m, ValueProp.Move, actor, null));
+            () => CreatureCmd.Damage(choiceContext, target, 0m, ValueProp.Move, actor, null, null));
     }
 }

@@ -131,35 +131,35 @@ public abstract partial class ComponentsCardModel
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try using the C-ending one instead, or disable this warning if intended.", false)]
-    public sealed override Decimal ModifyDamageAdditive(Creature? target, Decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
+    public sealed override Decimal ModifyDamageAdditive(Creature? target, Decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource, CardPlay? cardPlay)
     {
         EnsureComponentsInitialized();
         var result = amount;
         foreach (var component in _components!)
-            result = component.ModifyDamageAdditive(target, result, props, dealer, cardSource);
-        return ModifyDamageAdditiveC(target, result, props, dealer, cardSource);
+            result = component.ModifyDamageAdditive(target, result, props, dealer, cardSource, cardPlay);
+        return ModifyDamageAdditiveC(target, result, props, dealer, cardSource, cardPlay);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try using the C-ending one instead, or disable this warning if intended.", false)]
-    public sealed override Decimal ModifyDamageCap(Creature? target, ValueProp props, Creature? dealer, CardModel? cardSource)
+    public sealed override Decimal ModifyDamageCap(Creature? target, ValueProp props, Creature? dealer, CardModel? cardSource, CardPlay? cardPlay)
     {
         EnsureComponentsInitialized();
         var result = Decimal.MaxValue;
         foreach (var component in _components!)
-            result = component.ModifyDamageCap(target, props, dealer, cardSource);
-        return ModifyDamageCapC(target, props, dealer, cardSource);
+            result = component.ModifyDamageCap(target, props, dealer, cardSource, cardPlay);
+        return ModifyDamageCapC(target, props, dealer, cardSource, cardPlay);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try using the C-ending one instead, or disable this warning if intended.", false)]
-    public sealed override Decimal ModifyDamageMultiplicative(Creature? target, Decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
+    public sealed override Decimal ModifyDamageMultiplicative(Creature? target, Decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource, CardPlay? cardPlay)
     {
         EnsureComponentsInitialized();
         var result = amount;
         foreach (var component in _components!)
-            result = component.ModifyDamageMultiplicative(target, result, props, dealer, cardSource);
-        return ModifyDamageMultiplicativeC(target, result, props, dealer, cardSource);
+            result = component.ModifyDamageMultiplicative(target, result, props, dealer, cardSource, cardPlay);
+        return ModifyDamageMultiplicativeC(target, result, props, dealer, cardSource, cardPlay);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
