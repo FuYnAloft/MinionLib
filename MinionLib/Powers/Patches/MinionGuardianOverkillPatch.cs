@@ -1,5 +1,6 @@
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
@@ -10,18 +11,19 @@ using MinionLib.Minion;
 namespace MinionLib.Powers.Patches;
 
 [HarmonyPatch(typeof(CreatureCmd), nameof(CreatureCmd.Damage), typeof(PlayerChoiceContext),
-    typeof(IEnumerable<Creature>), typeof(decimal), typeof(ValueProp), typeof(Creature), typeof(CardModel))]
+    typeof(IEnumerable<Creature>), typeof(decimal), typeof(ValueProp), typeof(Creature), typeof(CardModel), typeof(CardPlay))]
 public static class MinionGuardianOverkillPatch
 {
     private static readonly AsyncLocal<bool> IsHandling = new();
     public static readonly AsyncLocal<Creature?> SuppressedOwner = new();
 
     [HarmonyPrefix]
-    private static bool Prefix(PlayerChoiceContext choiceContext, IEnumerable<Creature> targets, decimal amount,
+    private static bool Prefix(PlayerChoiceContext choiceContext, IEnumerable<Creature>? targets, decimal amount,
         ValueProp props,
-        Creature? dealer, CardModel? cardSource, ref Task<IEnumerable<DamageResult>> __result)
+        Creature? dealer, CardModel? cardSource, CardPlay? cardPlay, ref Task<IEnumerable<DamageResult>> __result)
     {
         if (IsHandling.Value) return true;
+        if (targets == null) return true;
 
         var targetList = targets.ToList();
         if (targetList.Count != 1) return true;
@@ -30,7 +32,7 @@ public static class MinionGuardianOverkillPatch
 
         if (!ShouldHandle(target, props)) return true;
 
-        __result = HandleWithOverkillRedirect(choiceContext, targetList, amount, props, dealer, cardSource);
+        __result = HandleWithOverkillRedirect(choiceContext, targetList, amount, props, dealer, cardSource, cardPlay);
         return false;
     }
 
@@ -44,14 +46,15 @@ public static class MinionGuardianOverkillPatch
     }
 
     private static async Task<IEnumerable<DamageResult>> HandleWithOverkillRedirect(PlayerChoiceContext choiceContext,
-        IReadOnlyList<Creature> targets, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
+        IReadOnlyList<Creature> targets, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource,
+        CardPlay? cardPlay)
     {
         IsHandling.Value = true;
         try
         {
             var owner = targets[0];
             if (owner.Player == null || owner.CombatState == null)
-                return await CreatureCmd.Damage(choiceContext, targets, amount, props, dealer, cardSource);
+                return await CreatureCmd.Damage(choiceContext, targets, amount, props, dealer, cardSource, cardPlay);
 
             var guardianOrder = PetOrderSnapshotManager.GetSnapshot(owner.Player, false)
                 .Where(p => IsFrontGuardian(p) && p.CombatId.HasValue)
@@ -64,7 +67,7 @@ public static class MinionGuardianOverkillPatch
             {
                 // Let base flow run once so owner's block and first guardian redirect still use vanilla math,
                 // but suppress fallback HP loss on owner (it will be redistributed below).
-                initialResults = (await CreatureCmd.Damage(choiceContext, targets, amount, props, dealer, cardSource))
+                initialResults = (await CreatureCmd.Damage(choiceContext, targets, amount, props, dealer, cardSource, cardPlay))
                     .ToList();
             }
             finally
@@ -94,7 +97,7 @@ public static class MinionGuardianOverkillPatch
                 if (remaining > 0m)
                 {
                     var ownerFinalFallback =
-                        (await CreatureCmd.Damage(choiceContext, [owner], remaining, directProps, dealer, cardSource))
+                        (await CreatureCmd.Damage(choiceContext, [owner], remaining, directProps, dealer, cardSource, cardPlay))
                         .FirstOrDefault()
                         ?? new DamageResult(owner, directProps);
                     redirectedResults.Add(ownerFinalFallback);
@@ -112,7 +115,7 @@ public static class MinionGuardianOverkillPatch
                 if (defender is not { IsAlive: true } || !IsFrontGuardian(defender)) continue;
 
                 var defenderResult =
-                    (await CreatureCmd.Damage(choiceContext, [defender], remaining, directProps, dealer, cardSource))
+                    (await CreatureCmd.Damage(choiceContext, [defender], remaining, directProps, dealer, cardSource, cardPlay))
                     .FirstOrDefault()
                     ?? new DamageResult(defender, directProps);
                 redirectedResults.Add(defenderResult);
@@ -122,7 +125,7 @@ public static class MinionGuardianOverkillPatch
             if (remaining > 0m)
             {
                 var ownerFinal =
-                    (await CreatureCmd.Damage(choiceContext, [owner], remaining, directProps, dealer, cardSource))
+                    (await CreatureCmd.Damage(choiceContext, [owner], remaining, directProps, dealer, cardSource, cardPlay))
                     .FirstOrDefault()
                     ?? new DamageResult(owner, directProps);
                 redirectedResults.Add(ownerFinal);

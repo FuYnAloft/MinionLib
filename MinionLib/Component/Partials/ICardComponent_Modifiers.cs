@@ -89,6 +89,17 @@ public partial interface ICardComponent
     Decimal amount,
     ValueProp props,
     Creature? dealer,
+    CardModel? cardSource,
+    CardPlay? cardPlay)
+  {
+    return ModifyDamageAdditive(target, amount, props, dealer, cardSource);
+  }
+
+  Decimal ModifyDamageAdditive(
+    Creature? target,
+    Decimal amount,
+    ValueProp props,
+    Creature? dealer,
     CardModel? cardSource)
   {
     return 0M;
@@ -98,9 +109,30 @@ public partial interface ICardComponent
     Creature? target,
     ValueProp props,
     Creature? dealer,
+    CardModel? cardSource,
+    CardPlay? cardPlay)
+  {
+    return ModifyDamageCap(target, props, dealer, cardSource);
+  }
+
+  Decimal ModifyDamageCap(
+    Creature? target,
+    ValueProp props,
+    Creature? dealer,
     CardModel? cardSource)
   {
     return Decimal.MaxValue;
+  }
+
+  Decimal ModifyDamageMultiplicative(
+    Creature? target,
+    Decimal amount,
+    ValueProp props,
+    Creature? dealer,
+    CardModel? cardSource,
+    CardPlay? cardPlay)
+  {
+    return ModifyDamageMultiplicative(target, amount, props, dealer, cardSource);
   }
 
   Decimal ModifyDamageMultiplicative(
