@@ -1978,7 +1978,7 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task AfterBlockBroken(Creature creature)
+    public sealed override async Task AfterBlockBroken(PlayerChoiceContext choiceContext, Creature target, Creature? breaker)
     {
         EnsureComponentsInitialized();
 
@@ -2006,7 +2006,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if (component.ComponentsCard != this) continue;
-                            await component.AfterBlockBrokenPrefix(creature, componentContext);
+                            await component.AfterBlockBrokenPrefix(choiceContext, target, breaker, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
 
@@ -2016,7 +2016,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if(component.ComponentsCard != this) continue;
-                            await component.AfterBlockBrokenPostfix(creature, componentContext);
+                            await component.AfterBlockBrokenPostfix(choiceContext, target, breaker, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
 
@@ -2024,7 +2024,7 @@ public abstract partial class ComponentsCardModel
                     case ComponentPhase.Prime:
                     case ComponentPhase.Core:
                     case ComponentPhase.Final:
-                        await AfterBlockBrokenPhased(creature, componentContext);
+                        await AfterBlockBrokenPhased(choiceContext, target, breaker, componentContext);
                         break;
                     case ComponentPhase.Init:
                     default:
@@ -2041,15 +2041,15 @@ public abstract partial class ComponentsCardModel
         }
     }
 
-    protected virtual Task AfterBlockBrokenPhased(Creature creature, ComponentContext componentContext)
+    protected virtual Task AfterBlockBrokenPhased(PlayerChoiceContext choiceContext, Creature target, Creature? breaker, ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
-            return AfterBlockBroken(creature, componentContext);
+            return AfterBlockBroken(choiceContext, target, breaker, componentContext);
 
         return Task.CompletedTask;
     }
 
-    protected virtual Task AfterBlockBroken(Creature creature, ComponentContext componentContext)
+    protected virtual Task AfterBlockBroken(PlayerChoiceContext choiceContext, Creature target, Creature? breaker, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
@@ -2990,6 +2990,84 @@ public abstract partial class ComponentsCardModel
         return Task.CompletedTask;
     }
     
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
+    public sealed override async Task BeforeCombatRewardOffered(RewardsSet rewardsSet, CombatRoom room)
+    {
+        EnsureComponentsInitialized();
+
+        var componentContext = new ComponentContext(ComponentPhase.Init);
+
+        var count = Components.Count;
+        var snapshot = ArrayPool<ICardComponent>.Shared.Rent(count);
+        for (var i = 0; i < count; i++)
+        {
+            snapshot[i] = Components[i];
+        }
+
+        try
+        {
+            for (var transitions = 0;
+                 transitions < MaxPhaseTransitions && componentContext.Phase != ComponentPhase.Final;
+                 transitions++)
+            {
+                componentContext.MoveNextPhase();
+
+                switch (componentContext.Phase)
+                {
+                    case ComponentPhase.Prefix:
+                        for(var i = 0; i < count; i++)
+                        {
+                            var component = snapshot[i];
+                            if (component.ComponentsCard != this) continue;
+                            await component.BeforeCombatRewardOfferedPrefix(rewardsSet, room, componentContext);
+                            if (componentContext.Phase != ComponentPhase.Prefix) break;
+                        }
+
+                        break;
+                    case ComponentPhase.Postfix:
+                        for(var i = count - 1; i >= 0; i--)
+                        {
+                            var component = snapshot[i];
+                            if(component.ComponentsCard != this) continue;
+                            await component.BeforeCombatRewardOfferedPostfix(rewardsSet, room, componentContext);
+                            if (componentContext.Phase != ComponentPhase.Postfix) break;
+                        }
+
+                        break;
+                    case ComponentPhase.Prime:
+                    case ComponentPhase.Core:
+                    case ComponentPhase.Final:
+                        await BeforeCombatRewardOfferedPhased(rewardsSet, room, componentContext);
+                        break;
+                    case ComponentPhase.Init:
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            if (componentContext.Phase != ComponentPhase.Final)
+                HandlePhaseTransitionLimitExceeded(componentContext.Phase);
+        }
+        finally
+        {
+            ArrayPool<ICardComponent>.Shared.Return(snapshot, clearArray: true);
+        }
+    }
+
+    protected virtual Task BeforeCombatRewardOfferedPhased(RewardsSet rewardsSet, CombatRoom room, ComponentContext componentContext)
+    {
+        if (componentContext.Phase == ComponentPhase.Core)
+            return BeforeCombatRewardOffered(rewardsSet, room, componentContext);
+
+        return Task.CompletedTask;
+    }
+
+    protected virtual Task BeforeCombatRewardOffered(RewardsSet rewardsSet, CombatRoom room, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
     public sealed override async Task AfterCombatVictoryEarly(CombatRoom room)
@@ -5020,7 +5098,7 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task AfterModifyingCardPlayResultPileOrPosition(CardModel card, PileType pileType, CardPilePosition position)
+    public sealed override async Task AfterModifyingCardPlayResultLocation(CardModel card, CardLocation cardLocation)
     {
         EnsureComponentsInitialized();
 
@@ -5048,7 +5126,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if (component.ComponentsCard != this) continue;
-                            await component.AfterModifyingCardPlayResultPileOrPositionPrefix(card, pileType, position, componentContext);
+                            await component.AfterModifyingCardPlayResultLocationPrefix(card, cardLocation, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
 
@@ -5058,7 +5136,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if(component.ComponentsCard != this) continue;
-                            await component.AfterModifyingCardPlayResultPileOrPositionPostfix(card, pileType, position, componentContext);
+                            await component.AfterModifyingCardPlayResultLocationPostfix(card, cardLocation, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
 
@@ -5066,7 +5144,7 @@ public abstract partial class ComponentsCardModel
                     case ComponentPhase.Prime:
                     case ComponentPhase.Core:
                     case ComponentPhase.Final:
-                        await AfterModifyingCardPlayResultPileOrPositionPhased(card, pileType, position, componentContext);
+                        await AfterModifyingCardPlayResultLocationPhased(card, cardLocation, componentContext);
                         break;
                     case ComponentPhase.Init:
                     default:
@@ -5083,15 +5161,15 @@ public abstract partial class ComponentsCardModel
         }
     }
 
-    protected virtual Task AfterModifyingCardPlayResultPileOrPositionPhased(CardModel card, PileType pileType, CardPilePosition position, ComponentContext componentContext)
+    protected virtual Task AfterModifyingCardPlayResultLocationPhased(CardModel card, CardLocation cardLocation, ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
-            return AfterModifyingCardPlayResultPileOrPosition(card, pileType, position, componentContext);
+            return AfterModifyingCardPlayResultLocation(card, cardLocation, componentContext);
 
         return Task.CompletedTask;
     }
 
-    protected virtual Task AfterModifyingCardPlayResultPileOrPosition(CardModel card, PileType pileType, CardPilePosition position, ComponentContext componentContext)
+    protected virtual Task AfterModifyingCardPlayResultLocation(CardModel card, CardLocation cardLocation, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }

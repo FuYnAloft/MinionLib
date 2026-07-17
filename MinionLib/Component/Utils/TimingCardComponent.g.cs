@@ -773,13 +773,15 @@ public abstract partial class TimingCardComponent
         return Task.CompletedTask;
 
     }
-    public override Task AfterBlockBrokenPrefix(Creature creature, ComponentContext componentContext)
+    public override Task AfterBlockBrokenPrefix(PlayerChoiceContext choiceContext, Creature target, Creature? breaker, ComponentContext componentContext)
     {
         if (Timings.Contains(Timing.AfterBlockBroken))
         {
             var ctx = new OnTimingContext(
                 Timing.AfterBlockBroken,
-                Creature: creature
+                ChoiceContext: choiceContext,
+                Target: target,
+                Breaker: breaker
             );
 
             return OnTimingPrefix(ctx);
@@ -787,13 +789,15 @@ public abstract partial class TimingCardComponent
         return Task.CompletedTask;
 
     }
-    public override Task AfterBlockBrokenPostfix(Creature creature, ComponentContext componentContext)
+    public override Task AfterBlockBrokenPostfix(PlayerChoiceContext choiceContext, Creature target, Creature? breaker, ComponentContext componentContext)
     {
         if (Timings.Contains(Timing.AfterBlockBroken))
         {
             var ctx = new OnTimingContext(
                 Timing.AfterBlockBroken,
-                Creature: creature
+                ChoiceContext: choiceContext,
+                Target: target,
+                Breaker: breaker
             );
 
             return OnTimingPostfix(ctx);
@@ -1153,6 +1157,36 @@ public abstract partial class TimingCardComponent
         {
             var ctx = new OnTimingContext(
                 Timing.AfterCombatEnd,
+                Room: room
+            );
+
+            return OnTimingPostfix(ctx);
+        }
+        return Task.CompletedTask;
+
+    }
+    public override Task BeforeCombatRewardOfferedPrefix(RewardsSet rewardsSet, CombatRoom room, ComponentContext componentContext)
+    {
+        if (Timings.Contains(Timing.BeforeCombatRewardOffered))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeCombatRewardOffered,
+                RewardsSet: rewardsSet,
+                Room: room
+            );
+
+            return OnTimingPrefix(ctx);
+        }
+        return Task.CompletedTask;
+
+    }
+    public override Task BeforeCombatRewardOfferedPostfix(RewardsSet rewardsSet, CombatRoom room, ComponentContext componentContext)
+    {
+        if (Timings.Contains(Timing.BeforeCombatRewardOffered))
+        {
+            var ctx = new OnTimingContext(
+                Timing.BeforeCombatRewardOffered,
+                RewardsSet: rewardsSet,
                 Room: room
             );
 
@@ -1971,15 +2005,14 @@ public abstract partial class TimingCardComponent
         return Task.CompletedTask;
 
     }
-    public override Task AfterModifyingCardPlayResultPileOrPositionPrefix(CardModel card, PileType pileType, CardPilePosition position, ComponentContext componentContext)
+    public override Task AfterModifyingCardPlayResultLocationPrefix(CardModel card, CardLocation cardLocation, ComponentContext componentContext)
     {
-        if (Timings.Contains(Timing.AfterModifyingCardPlayResultPileOrPosition))
+        if (Timings.Contains(Timing.AfterModifyingCardPlayResultLocation))
         {
             var ctx = new OnTimingContext(
-                Timing.AfterModifyingCardPlayResultPileOrPosition,
+                Timing.AfterModifyingCardPlayResultLocation,
                 Card: card,
-                PileType: pileType,
-                Position: position
+                CardLocation: cardLocation
             );
 
             return OnTimingPrefix(ctx);
@@ -1987,15 +2020,14 @@ public abstract partial class TimingCardComponent
         return Task.CompletedTask;
 
     }
-    public override Task AfterModifyingCardPlayResultPileOrPositionPostfix(CardModel card, PileType pileType, CardPilePosition position, ComponentContext componentContext)
+    public override Task AfterModifyingCardPlayResultLocationPostfix(CardModel card, CardLocation cardLocation, ComponentContext componentContext)
     {
-        if (Timings.Contains(Timing.AfterModifyingCardPlayResultPileOrPosition))
+        if (Timings.Contains(Timing.AfterModifyingCardPlayResultLocation))
         {
             var ctx = new OnTimingContext(
-                Timing.AfterModifyingCardPlayResultPileOrPosition,
+                Timing.AfterModifyingCardPlayResultLocation,
                 Card: card,
-                PileType: pileType,
-                Position: position
+                CardLocation: cardLocation
             );
 
             return OnTimingPostfix(ctx);

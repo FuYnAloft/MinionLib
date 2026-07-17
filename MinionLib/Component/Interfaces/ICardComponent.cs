@@ -49,7 +49,7 @@ public partial interface ICardComponent : IGeneratedBinarySerializable
 
     bool TrySubtractiveMergeWith(ICardComponent incoming, ApplyComponentOptions options, out ICardComponent? merged);
 
-    PileType? GetResultPileTypeForCardPlay()
+    CardLocation? GetResultLocationForCardPlay()
     {
         return null;
     }

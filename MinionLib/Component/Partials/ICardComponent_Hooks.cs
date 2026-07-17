@@ -272,12 +272,12 @@ public partial interface ICardComponent
         return Task.CompletedTask;
     }
     
-    Task AfterBlockBrokenPrefix(Creature creature, ComponentContext componentContext)
+    Task AfterBlockBrokenPrefix(PlayerChoiceContext choiceContext, Creature target, Creature? breaker, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
     
-    Task AfterBlockBrokenPostfix(Creature creature, ComponentContext componentContext)
+    Task AfterBlockBrokenPostfix(PlayerChoiceContext choiceContext, Creature target, Creature? breaker, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
@@ -401,7 +401,17 @@ public partial interface ICardComponent
     {
         return Task.CompletedTask;
     }
-    
+
+    Task BeforeCombatRewardOfferedPrefix(RewardsSet rewardsSet, CombatRoom room, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+
+    Task BeforeCombatRewardOfferedPostfix(RewardsSet rewardsSet, CombatRoom room, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+
     Task AfterCombatVictoryEarlyPrefix(CombatRoom room, ComponentContext componentContext)
     {
         return Task.CompletedTask;
@@ -662,12 +672,12 @@ public partial interface ICardComponent
         return Task.CompletedTask;
     }
     
-    Task AfterModifyingCardPlayResultPileOrPositionPrefix(CardModel card, PileType pileType, CardPilePosition position, ComponentContext componentContext)
+    Task AfterModifyingCardPlayResultLocationPrefix(CardModel card, CardLocation cardLocation, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
     
-    Task AfterModifyingCardPlayResultPileOrPositionPostfix(CardModel card, PileType pileType, CardPilePosition position, ComponentContext componentContext)
+    Task AfterModifyingCardPlayResultLocationPostfix(CardModel card, CardLocation cardLocation, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }

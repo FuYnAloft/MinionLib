@@ -53,14 +53,13 @@ public partial interface ICardComponent
     return playCount;
   }
 
-  (PileType, CardPilePosition) ModifyCardPlayResultPileTypeAndPosition(
+  CardLocation ModifyCardPlayResultLocation(
     CardModel card,
     bool isAutoPlay,
     ResourceInfo resources,
-    PileType pileType,
-    CardPilePosition position)
+    CardLocation cardLocation)
   {
-    return (pileType, position);
+    return cardLocation;
   }
 
   int ModifyOrbPassiveTriggerCounts(OrbModel orb, int triggerCount) => triggerCount;
@@ -89,60 +88,31 @@ public partial interface ICardComponent
     Decimal amount,
     ValueProp props,
     Creature? dealer,
-    CardModel? cardSource)
+    CardModel? cardSource,
+    CardPlay? cardPlay)
   {
     return 0M;
   }
 
-  Decimal ModifyDamageAdditive(
-    Creature? target,
-    Decimal amount,
-    ValueProp props,
-    Creature? dealer,
-    CardModel? cardSource,
-    CardPlay? cardPlay)
-  {
-    return ModifyDamageAdditive(target, amount, props, dealer, cardSource);
-  }
-
   Decimal ModifyDamageCap(
     Creature? target,
     ValueProp props,
     Creature? dealer,
-    CardModel? cardSource)
+    CardModel? cardSource,
+    CardPlay? cardPlay)
   {
     return Decimal.MaxValue;
   }
 
-  Decimal ModifyDamageCap(
-    Creature? target,
-    ValueProp props,
-    Creature? dealer,
-    CardModel? cardSource,
-    CardPlay? cardPlay)
-  {
-    return ModifyDamageCap(target, props, dealer, cardSource);
-  }
-
   Decimal ModifyDamageMultiplicative(
     Creature? target,
     Decimal amount,
     ValueProp props,
     Creature? dealer,
-    CardModel? cardSource)
+    CardModel? cardSource,
+    CardPlay? cardPlay)
   {
     return 1M;
-  }
-
-  Decimal ModifyDamageMultiplicative(
-    Creature? target,
-    Decimal amount,
-    ValueProp props,
-    Creature? dealer,
-    CardModel? cardSource,
-    CardPlay? cardPlay)
-  {
-    return ModifyDamageMultiplicative(target, amount, props, dealer, cardSource);
   }
 
   Decimal ModifyEnergyGain(Player player, Decimal amount) => amount;

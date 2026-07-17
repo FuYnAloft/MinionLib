@@ -274,12 +274,12 @@ public abstract partial class CardComponent
         return Task.CompletedTask;
     }
     
-    public virtual Task AfterBlockBrokenPrefix(Creature creature, ComponentContext componentContext)
+    public virtual Task AfterBlockBrokenPrefix(PlayerChoiceContext choiceContext, Creature target, Creature? breaker, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
     
-    public virtual Task AfterBlockBrokenPostfix(Creature creature, ComponentContext componentContext)
+    public virtual Task AfterBlockBrokenPostfix(PlayerChoiceContext choiceContext, Creature target, Creature? breaker, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
@@ -403,7 +403,17 @@ public abstract partial class CardComponent
     {
         return Task.CompletedTask;
     }
-    
+
+    public virtual Task BeforeCombatRewardOfferedPrefix(RewardsSet rewardsSet, CombatRoom room, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+
+    public virtual Task BeforeCombatRewardOfferedPostfix(RewardsSet rewardsSet, CombatRoom room, ComponentContext componentContext)
+    {
+        return Task.CompletedTask;
+    }
+
     public virtual Task AfterCombatVictoryEarlyPrefix(CombatRoom room, ComponentContext componentContext)
     {
         return Task.CompletedTask;
@@ -664,12 +674,12 @@ public abstract partial class CardComponent
         return Task.CompletedTask;
     }
     
-    public virtual Task AfterModifyingCardPlayResultPileOrPositionPrefix(CardModel card, PileType pileType, CardPilePosition position, ComponentContext componentContext)
+    public virtual Task AfterModifyingCardPlayResultLocationPrefix(CardModel card, CardLocation cardLocation, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
     
-    public virtual Task AfterModifyingCardPlayResultPileOrPositionPostfix(CardModel card, PileType pileType, CardPilePosition position, ComponentContext componentContext)
+    public virtual Task AfterModifyingCardPlayResultLocationPostfix(CardModel card, CardLocation cardLocation, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }

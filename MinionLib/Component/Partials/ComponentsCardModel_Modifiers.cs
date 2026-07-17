@@ -76,13 +76,13 @@ public abstract partial class ComponentsCardModel
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try using the C-ending one instead, or disable this warning if intended.", false)]
-    public sealed override (PileType, CardPilePosition) ModifyCardPlayResultPileTypeAndPosition(CardModel card, bool isAutoPlay, ResourceInfo resources, PileType pileType, CardPilePosition position)
+    public sealed override CardLocation ModifyCardPlayResultLocation(CardModel card, bool isAutoPlay, ResourceInfo resources, CardLocation cardLocation)
     {
         EnsureComponentsInitialized();
-        var result = (pileType, position);
+        var result = cardLocation;
         foreach (var component in _components!)
-            result = component.ModifyCardPlayResultPileTypeAndPosition(card, isAutoPlay, resources, result.Item1, result.Item2);
-        return ModifyCardPlayResultPileTypeAndPositionC(card, isAutoPlay, resources, result.Item1, result.Item2);
+            result = component.ModifyCardPlayResultLocation(card, isAutoPlay, resources, result);
+        return ModifyCardPlayResultLocationC(card, isAutoPlay, resources, result);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]

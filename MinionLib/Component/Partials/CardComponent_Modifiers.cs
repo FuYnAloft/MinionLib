@@ -49,14 +49,13 @@ public abstract partial class CardComponent
     return playCount;
   }
 
-  public virtual (PileType, CardPilePosition) ModifyCardPlayResultPileTypeAndPosition(
+  public virtual CardLocation ModifyCardPlayResultLocation(
     CardModel card,
     bool isAutoPlay,
     ResourceInfo resources,
-    PileType pileType,
-    CardPilePosition position)
+    CardLocation cardLocation)
   {
-    return (pileType, position);
+    return cardLocation;
   }
 
   public virtual int ModifyOrbPassiveTriggerCounts(OrbModel orb, int triggerCount) => triggerCount;
@@ -85,60 +84,31 @@ public abstract partial class CardComponent
     Decimal amount,
     ValueProp props,
     Creature? dealer,
-    CardModel? cardSource)
+    CardModel? cardSource,
+    CardPlay? cardPlay)
   {
     return 0M;
   }
 
-  public virtual Decimal ModifyDamageAdditive(
-    Creature? target,
-    Decimal amount,
-    ValueProp props,
-    Creature? dealer,
-    CardModel? cardSource,
-    CardPlay? cardPlay)
-  {
-    return ModifyDamageAdditive(target, amount, props, dealer, cardSource);
-  }
-
   public virtual Decimal ModifyDamageCap(
     Creature? target,
     ValueProp props,
     Creature? dealer,
-    CardModel? cardSource)
+    CardModel? cardSource,
+    CardPlay? cardPlay)
   {
     return Decimal.MaxValue;
   }
 
-  public virtual Decimal ModifyDamageCap(
-    Creature? target,
-    ValueProp props,
-    Creature? dealer,
-    CardModel? cardSource,
-    CardPlay? cardPlay)
-  {
-    return ModifyDamageCap(target, props, dealer, cardSource);
-  }
-
   public virtual Decimal ModifyDamageMultiplicative(
     Creature? target,
     Decimal amount,
     ValueProp props,
     Creature? dealer,
-    CardModel? cardSource)
+    CardModel? cardSource,
+    CardPlay? cardPlay)
   {
     return 1M;
-  }
-
-  public virtual Decimal ModifyDamageMultiplicative(
-    Creature? target,
-    Decimal amount,
-    ValueProp props,
-    Creature? dealer,
-    CardModel? cardSource,
-    CardPlay? cardPlay)
-  {
-    return ModifyDamageMultiplicative(target, amount, props, dealer, cardSource);
   }
 
   public virtual Decimal ModifyEnergyGain(Player player, Decimal amount) => amount;

@@ -57,14 +57,13 @@ public abstract partial class ComponentsCardModel
     return playCount;
   }
 
-  protected virtual (PileType, CardPilePosition) ModifyCardPlayResultPileTypeAndPositionC(
+  protected virtual CardLocation ModifyCardPlayResultLocationC(
     CardModel card,
     bool isAutoPlay,
     ResourceInfo resources,
-    PileType pileType,
-    CardPilePosition position)
+    CardLocation cardLocation)
   {
-    return (pileType, position);
+    return cardLocation;
   }
 
   protected virtual int ModifyOrbPassiveTriggerCountsC(OrbModel orb, int triggerCount) => triggerCount;
@@ -93,60 +92,31 @@ public abstract partial class ComponentsCardModel
     Decimal amount,
     ValueProp props,
     Creature? dealer,
-    CardModel? cardSource)
+    CardModel? cardSource,
+    CardPlay? cardPlay)
   {
     return 0M;
   }
 
-  protected virtual Decimal ModifyDamageAdditiveC(
-    Creature? target,
-    Decimal amount,
-    ValueProp props,
-    Creature? dealer,
-    CardModel? cardSource,
-    CardPlay? cardPlay)
-  {
-    return ModifyDamageAdditiveC(target, amount, props, dealer, cardSource);
-  }
-
   protected virtual Decimal ModifyDamageCapC(
     Creature? target,
     ValueProp props,
     Creature? dealer,
-    CardModel? cardSource)
+    CardModel? cardSource,
+    CardPlay? cardPlay)
   {
     return Decimal.MaxValue;
   }
 
-  protected virtual Decimal ModifyDamageCapC(
-    Creature? target,
-    ValueProp props,
-    Creature? dealer,
-    CardModel? cardSource,
-    CardPlay? cardPlay)
-  {
-    return ModifyDamageCapC(target, props, dealer, cardSource);
-  }
-
   protected virtual Decimal ModifyDamageMultiplicativeC(
     Creature? target,
     Decimal amount,
     ValueProp props,
     Creature? dealer,
-    CardModel? cardSource)
+    CardModel? cardSource,
+    CardPlay? cardPlay)
   {
     return 1M;
-  }
-
-  protected virtual Decimal ModifyDamageMultiplicativeC(
-    Creature? target,
-    Decimal amount,
-    ValueProp props,
-    Creature? dealer,
-    CardModel? cardSource,
-    CardPlay? cardPlay)
-  {
-    return ModifyDamageMultiplicativeC(target, amount, props, dealer, cardSource);
   }
 
   protected virtual Decimal ModifyEnergyGainC(Player player, Decimal amount) => amount;

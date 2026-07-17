@@ -101,7 +101,7 @@ public abstract partial class CardComponent : ICardComponent
 
     public virtual bool IsPlayable => true;
 
-    public virtual PileType? GetResultPileTypeForCardPlay()
+    public virtual CardLocation? GetResultLocationForCardPlay()
     {
         return null;
     }
