@@ -33,6 +33,12 @@ public static class MinionAnimCmd
         var room = NCombatRoom.Instance;
         if (room == null) return;
 
+        var validNodePositions = nodePositions
+            .Where(nodePosition => GodotObject.IsInstanceValid(nodePosition.Node))
+            .ToList();
+
+        if (validNodePositions.Count == 0) return;
+
         if (_activeTween != null && _activeTween.IsValid())
         {
             _activeTween.EmitSignal("finished");
@@ -41,14 +47,16 @@ public static class MinionAnimCmd
 
         var tween = room.CreateTween();
         tween.SetParallel();
-        foreach (var (node, position) in nodePositions)
-            if (GodotObject.IsInstanceValid(node))
-                tween.TweenProperty(node, "position", position, duration)
-                    .SetTrans(Tween.TransitionType.Quad)
-                    .SetEase(Tween.EaseType.Out);
+        foreach (var (node, position) in validNodePositions)
+            tween.TweenProperty(node, "position", position, duration)
+                .SetTrans(Tween.TransitionType.Quad)
+                .SetEase(Tween.EaseType.Out);
         _activeTween = tween;
 
         await room.ToSignal(tween, Tween.SignalName.Finished);
+
+        if (_activeTween == tween)
+            _activeTween = null;
     }
 
     public static async Task PlayBumpAttackAsync(Creature attacker, Creature target, System.Action? onHit = null)
