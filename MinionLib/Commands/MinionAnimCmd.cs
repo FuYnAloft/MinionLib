@@ -37,13 +37,16 @@ public static class MinionAnimCmd
             .Where(nodePosition => GodotObject.IsInstanceValid(nodePosition.Node))
             .ToList();
 
-        if (validNodePositions.Count == 0) return;
-
-        if (_activeTween != null && _activeTween.IsValid())
+        // Emitting Finished resumes the previous signal awaiter synchronously.
+        var activeTween = _activeTween;
+        _activeTween = null;
+        if (activeTween != null && activeTween.IsValid())
         {
-            _activeTween.EmitSignal("finished");
-            _activeTween.Kill();
+            activeTween.EmitSignal(Tween.SignalName.Finished);
+            activeTween.Kill();
         }
+
+        if (validNodePositions.Count == 0) return;
 
         var tween = room.CreateTween();
         tween.SetParallel();
