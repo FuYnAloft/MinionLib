@@ -220,7 +220,8 @@ public static class CustomTargetTypeCardPatch
         targetManager.Connect(NTargetManager.SignalName.CreatureUnhovered, onUnhover);
 
         targetManager.StartTargeting(targetType, cardNode, TargetMode.Controller,
-            () => !GodotObject.IsInstanceValid(cardPlay) || !(NControllerManager.Instance?.IsUsingController ?? false),
+            () => !GodotObject.IsInstanceValid(cardPlay) ||
+                  !(NControllerManager.Instance?.IsUsingDirectionalNavigation ?? false),
             null);
 
         var validTargets = card.CombatState.Creatures

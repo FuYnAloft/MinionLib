@@ -13,7 +13,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Sts2Version>0.109.0</Sts2Version>
+        <Sts2Version>0.110.1</Sts2Version>
         <IsSts2Beta>true</IsSts2Beta>
 
         <ReferencePackageVersion>$(Sts2Version)</ReferencePackageVersion>

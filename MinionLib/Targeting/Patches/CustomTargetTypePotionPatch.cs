@@ -102,7 +102,8 @@ public static class CustomTargetTypePotionPatch
         ICustomTargetType customType)
     {
         var targetManager = NTargetManager.Instance;
-        var isUsingController = NControllerManager.Instance?.IsUsingController ?? false;
+        var isUsingDirectionalNavigation =
+            NControllerManager.Instance?.IsUsingDirectionalNavigation ?? false;
         var startPosition = holder.GlobalPosition + Vector2.Right * holder.Size.X * 0.5f + Vector2.Down * 50f;
 
         Func<bool>? shouldCancel = null;
@@ -111,11 +112,11 @@ public static class CustomTargetTypePotionPatch
 
         // Use potion-specific filtering so owner-locked target types cannot select other players' minions.
         targetManager.StartTargeting(targetType, startPosition,
-            isUsingController ? TargetMode.Controller : TargetMode.ClickMouseToTarget,
+            isUsingDirectionalNavigation ? TargetMode.Controller : TargetMode.ClickMouseToTarget,
             shouldCancel,
             node => IsAllowedPotionTargetNode(node, potion, customType));
 
-        if (isUsingController && CombatManager.Instance.IsInProgress)
+        if (isUsingDirectionalNavigation && CombatManager.Instance.IsInProgress)
         {
             var combatState = potion.Owner.Creature.CombatState;
             if (combatState != null)
@@ -134,7 +135,7 @@ public static class CustomTargetTypePotionPatch
                 }
             }
         }
-        else if (isUsingController)
+        else if (isUsingDirectionalNavigation)
         {
             var multiplayerContainer = NRun.Instance?.GlobalUi.MultiplayerPlayerContainer;
             if (multiplayerContainer != null)
