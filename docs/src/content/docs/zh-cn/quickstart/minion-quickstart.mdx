@@ -25,6 +25,7 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
     <TabItem label="Vanilla">
 
         ```csharp
+        using MegaCrit.Sts2.Core.Entities.Cards;
         using MinionLib.Action;
         using MinionLib.Component;
         using MinionLib.Component.Core;
@@ -33,11 +34,11 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
         public abstract class MyMinionBase : MinionModel;
 
         public abstract class MyCardBase(
-        int cost,
-        CardType type,
-        CardRarity rarity,
-        TargetType target)
-        : ComponentsCardModel(cost, type, rarity, target);
+            int cost,
+            CardType type,
+            CardRarity rarity,
+            TargetType target)
+            : ComponentsCardModel(cost, type, rarity, target);
 
         public abstract class MyActionBase : ActionModel;
         ```
@@ -46,16 +47,17 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
     <TabItem label="BaseLib">
 
         ```csharp
+        using MegaCrit.Sts2.Core.Entities.Cards;
         using MyCoolMod.BaseLibAdapters;
 
         public abstract class MyMinionBase : CustomMinionModel;
 
         public abstract class MyCardBase(
-        int cost,
-        CardType type,
-        CardRarity rarity,
-        TargetType target)
-        : CustomComponentsCardModel(cost, type, rarity, target);
+            int cost,
+            CardType type,
+            CardRarity rarity,
+            TargetType target)
+            : CustomComponentsCardModel(cost, type, rarity, target);
 
         public abstract class MyActionBase : CustomActionModel;
         ```
@@ -64,16 +66,17 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
     <TabItem label="RitsuLib">
 
         ```csharp
+        using MegaCrit.Sts2.Core.Entities.Cards;
         using MyCoolMod.RitsuAdapters;
 
         public abstract class MyMinionBase : ModMinionTemplate;
 
         public abstract class MyCardBase(
-        int cost,
-        CardType type,
-        CardRarity rarity,
-        TargetType target)
-        : ModComponentsCardTemplate(cost, type, rarity, target);
+            int cost,
+            CardType type,
+            CardRarity rarity,
+            TargetType target)
+            : ModComponentsCardTemplate(cost, type, rarity, target);
 
         public abstract class MyActionBase : ModActionTemplate;
         ```
@@ -95,11 +98,9 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
 
         ```csharp
         using MegaCrit.Sts2.Core.Commands;
-        using MegaCrit.Sts2.Core.Entities.Creatures;
         using MegaCrit.Sts2.Core.Entities.Players;
         using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-        using MegaCrit.Sts2.Core.Models;
-        using MegaCrit.Sts2.Core.Powers;
+        using MegaCrit.Sts2.Core.Models.Powers;
         using MinionLib.Minion;
         using MinionLib.Powers;
 
@@ -108,24 +109,25 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
             public override int MinInitialHp => 6;
             public override int MaxInitialHp => 6;
             protected override string VisualsPath =>
-            "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn";
+                "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn";
 
             public override async Task OnSummon(
-            PlayerChoiceContext choiceContext,
-            Player owner,
-            MinionSummonOptions options)
-        {
-            var self = owner.PlayerCombatState?.Pets.FirstOrDefault(p => ReferenceEquals(p.Monster, this));
-            if (self == null) return;
+                PlayerChoiceContext choiceContext,
+                Player owner,
+                MinionSummonOptions options)
+            {
+                var self = Creature;
 
-            if (options.MaxHp is decimal maxHp)
-            await CreatureCmd.SetMaxAndCurrentHp(self, maxHp);
+                if (options.MaxHp is decimal maxHp)
+                    await CreatureCmd.SetMaxAndCurrentHp(self, maxHp);
 
-            if (options.PrimaryStatAmount is decimal strength && strength > 0m)
-            await PowerCmd.Apply<StrengthPower>(self, strength, owner.Creature, options.Source);
+                if (options.PrimaryStatAmount is decimal strength && strength > 0m)
+                    await PowerCmd.Apply<StrengthPower>(
+                        choiceContext, self, strength, owner.Creature, options.Source);
 
-            await PowerCmd.Apply<MinionGuardianPower>(self, 1m, owner.Creature, options.Source);
-        }
+                await PowerCmd.Apply<MinionGuardianPower>(
+                    choiceContext, self, 1m, owner.Creature, options.Source);
+            }
         }
         ```
 
@@ -134,11 +136,9 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
 
         ```csharp
         using MegaCrit.Sts2.Core.Commands;
-        using MegaCrit.Sts2.Core.Entities.Creatures;
         using MegaCrit.Sts2.Core.Entities.Players;
         using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-        using MegaCrit.Sts2.Core.Models;
-        using MegaCrit.Sts2.Core.Powers;
+        using MegaCrit.Sts2.Core.Models.Powers;
         using MinionLib.Minion;
         using MinionLib.Powers;
         using MyCoolMod.BaseLibAdapters;
@@ -148,24 +148,25 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
             public override int MinInitialHp => 6;
             public override int MaxInitialHp => 6;
             public override string? CustomVisualPath =>
-            "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn";
+                "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn";
 
             public override async Task OnSummon(
-            PlayerChoiceContext choiceContext,
-            Player owner,
-            MinionSummonOptions options)
-        {
-            var self = owner.PlayerCombatState?.Pets.FirstOrDefault(p => ReferenceEquals(p.Monster, this));
-            if (self == null) return;
+                PlayerChoiceContext choiceContext,
+                Player owner,
+                MinionSummonOptions options)
+            {
+                var self = Creature;
 
-            if (options.MaxHp is decimal maxHp)
-            await CreatureCmd.SetMaxAndCurrentHp(self, maxHp);
+                if (options.MaxHp is decimal maxHp)
+                    await CreatureCmd.SetMaxAndCurrentHp(self, maxHp);
 
-            if (options.PrimaryStatAmount is decimal strength && strength > 0m)
-            await PowerCmd.Apply<StrengthPower>(self, strength, owner.Creature, options.Source);
+                if (options.PrimaryStatAmount is decimal strength && strength > 0m)
+                    await PowerCmd.Apply<StrengthPower>(
+                        choiceContext, self, strength, owner.Creature, options.Source);
 
-            await PowerCmd.Apply<MinionGuardianPower>(self, 1m, owner.Creature, options.Source);
-        }
+                await PowerCmd.Apply<MinionGuardianPower>(
+                    choiceContext, self, 1m, owner.Creature, options.Source);
+            }
         }
         ```
 
@@ -174,11 +175,9 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
 
         ```csharp
         using MegaCrit.Sts2.Core.Commands;
-        using MegaCrit.Sts2.Core.Entities.Creatures;
         using MegaCrit.Sts2.Core.Entities.Players;
         using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-        using MegaCrit.Sts2.Core.Models;
-        using MegaCrit.Sts2.Core.Powers;
+        using MegaCrit.Sts2.Core.Models.Powers;
         using MinionLib.Minion;
         using MinionLib.Powers;
         using MyCoolMod.RitsuAdapters;
@@ -188,24 +187,25 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
             public override int MinInitialHp => 6;
             public override int MaxInitialHp => 6;
             public override string? CustomVisualsPath =>
-            "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn";
+                "res://Example/MinionTest/scenes/creature_visuals/pettest_attackaka.tscn";
 
             public override async Task OnSummon(
-            PlayerChoiceContext choiceContext,
-            Player owner,
-            MinionSummonOptions options)
-        {
-            var self = owner.PlayerCombatState?.Pets.FirstOrDefault(p => ReferenceEquals(p.Monster, this));
-            if (self == null) return;
+                PlayerChoiceContext choiceContext,
+                Player owner,
+                MinionSummonOptions options)
+            {
+                var self = Creature;
 
-            if (options.MaxHp is decimal maxHp)
-            await CreatureCmd.SetMaxAndCurrentHp(self, maxHp);
+                if (options.MaxHp is decimal maxHp)
+                    await CreatureCmd.SetMaxAndCurrentHp(self, maxHp);
 
-            if (options.PrimaryStatAmount is decimal strength && strength > 0m)
-            await PowerCmd.Apply<StrengthPower>(self, strength, owner.Creature, options.Source);
+                if (options.PrimaryStatAmount is decimal strength && strength > 0m)
+                    await PowerCmd.Apply<StrengthPower>(
+                        choiceContext, self, strength, owner.Creature, options.Source);
 
-            await PowerCmd.Apply<MinionGuardianPower>(self, 1m, owner.Creature, options.Source);
-        }
+                await PowerCmd.Apply<MinionGuardianPower>(
+                    choiceContext, self, 1m, owner.Creature, options.Source);
+            }
         }
         ```
 
@@ -213,8 +213,7 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
 </Tabs>
 
 <Aside type="note" title="解析随从实体">
-    `OnSummon` 的 `this` 是模型对象。需要操作战斗中的随从时，先从 `owner.PlayerCombatState.Pets` 中找到 `Monster` 引用当前模型的
-    `Creature`。
+    `OnSummon` 的 `this` 是模型对象；其继承的 `Creature` 属性可直接取得战斗中的可变随从实体。
 </Aside>
 
 ## 创建召唤牌
@@ -233,21 +232,21 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
         using MinionLib.Minion;
 
         public sealed class SummonMyMinionCard()
-        : ComponentsCardModel(1, CardType.Power, CardRarity.Rare, TargetType.Self)
+            : ComponentsCardModel(1, CardType.Power, CardRarity.Rare, TargetType.Self)
         {
             protected override async Task OnPlay(
-            PlayerChoiceContext choiceContext,
-            CardPlay cardPlay,
-            ComponentContext componentContext)
-        {
-            _ = await MinionCmd.AddMinion<MyMinion>(choiceContext, Owner, new MinionSummonOptions(
-            MaxHp: 8m,
-            PrimaryStatAmount: 2m,
-            Source: this,
-            Position: MinionPosition.Front));
-        }
+                PlayerChoiceContext choiceContext,
+                CardPlay cardPlay,
+                ComponentContext componentContext)
+            {
+                _ = await MinionCmd.AddMinion<MyMinion>(choiceContext, Owner, new MinionSummonOptions(
+                    MaxHp: 8m,
+                    PrimaryStatAmount: 2m,
+                    Source: this,
+                    Position: MinionPosition.Front));
+            }
 
-            protected override void OnUpgrade(ComponentContext componentContext) {}
+            protected override void OnUpgrade(ComponentContext componentContext) { }
         }
         ```
 
@@ -263,21 +262,21 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
         using MyCoolMod.BaseLibAdapters;
 
         public sealed class SummonMyMinionCard()
-        : CustomComponentsCardModel(1, CardType.Power, CardRarity.Rare, TargetType.Self)
+            : CustomComponentsCardModel(1, CardType.Power, CardRarity.Rare, TargetType.Self)
         {
             protected override async Task OnPlay(
-            PlayerChoiceContext choiceContext,
-            CardPlay cardPlay,
-            ComponentContext componentContext)
-        {
-            _ = await MinionCmd.AddMinion<MyMinion>(choiceContext, Owner, new MinionSummonOptions(
-            MaxHp: 8m,
-            PrimaryStatAmount: 2m,
-            Source: this,
-            Position: MinionPosition.Front));
-        }
+                PlayerChoiceContext choiceContext,
+                CardPlay cardPlay,
+                ComponentContext componentContext)
+            {
+                _ = await MinionCmd.AddMinion<MyMinion>(choiceContext, Owner, new MinionSummonOptions(
+                    MaxHp: 8m,
+                    PrimaryStatAmount: 2m,
+                    Source: this,
+                    Position: MinionPosition.Front));
+            }
 
-            protected override void OnUpgrade(ComponentContext componentContext) {}
+            protected override void OnUpgrade(ComponentContext componentContext) { }
         }
         ```
 
@@ -293,21 +292,21 @@ import {Aside, Tabs, TabItem} from '@astrojs/starlight/components';
         using MyCoolMod.RitsuAdapters;
 
         public sealed class SummonMyMinionCard()
-        : ModComponentsCardTemplate(1, CardType.Power, CardRarity.Rare, TargetType.Self)
+            : ModComponentsCardTemplate(1, CardType.Power, CardRarity.Rare, TargetType.Self)
         {
             protected override async Task OnPlay(
-            PlayerChoiceContext choiceContext,
-            CardPlay cardPlay,
-            ComponentContext componentContext)
-        {
-            _ = await MinionCmd.AddMinion<MyMinion>(choiceContext, Owner, new MinionSummonOptions(
-            MaxHp: 8m,
-            PrimaryStatAmount: 2m,
-            Source: this,
-            Position: MinionPosition.Front));
-        }
+                PlayerChoiceContext choiceContext,
+                CardPlay cardPlay,
+                ComponentContext componentContext)
+            {
+                _ = await MinionCmd.AddMinion<MyMinion>(choiceContext, Owner, new MinionSummonOptions(
+                    MaxHp: 8m,
+                    PrimaryStatAmount: 2m,
+                    Source: this,
+                    Position: MinionPosition.Front));
+            }
 
-            protected override void OnUpgrade(ComponentContext componentContext) {}
+            protected override void OnUpgrade(ComponentContext componentContext) { }
         }
         ```
 
@@ -323,9 +322,10 @@ Action 是一种可以点击触发的能力。把它应用到随从身上后，�
 
         ```csharp
         using MegaCrit.Sts2.Core.Commands;
+        using MegaCrit.Sts2.Core.Entities.Cards;
         using MegaCrit.Sts2.Core.Entities.Creatures;
+        using MegaCrit.Sts2.Core.Entities.Powers;
         using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-        using MegaCrit.Sts2.Core.Powers;
         using MegaCrit.Sts2.Core.ValueProps;
         using MinionLib.Action;
         using MinionLib.Commands;
@@ -338,15 +338,15 @@ Action 是一种可以点击触发的能力。把它应用到随从身上后，�
             public override PowerStackType StackType => PowerStackType.Counter;
 
             protected override async Task OnAct(
-            PlayerChoiceContext choiceContext,
-            Creature actor,
-            Creature? target)
-        {
-            if (target == null) return;
+                PlayerChoiceContext choiceContext,
+                Creature? target)
+            {
+                if (target == null) return;
+                var actor = Owner;
 
-            await MinionAnimCmd.PlayBumpAttackAsync(actor, target);
-            await CreatureCmd.Damage(choiceContext, target, 4m, ValueProp.Move, actor, null);
-        }
+                await MinionAnimCmd.PlayBumpAttackAsync(actor, target);
+                await CreatureCmd.Damage(choiceContext, target, 4m, ValueProp.Move, actor);
+            }
         }
         ```
 
@@ -355,9 +355,10 @@ Action 是一种可以点击触发的能力。把它应用到随从身上后，�
 
         ```csharp
         using MegaCrit.Sts2.Core.Commands;
+        using MegaCrit.Sts2.Core.Entities.Cards;
         using MegaCrit.Sts2.Core.Entities.Creatures;
+        using MegaCrit.Sts2.Core.Entities.Powers;
         using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-        using MegaCrit.Sts2.Core.Powers;
         using MegaCrit.Sts2.Core.ValueProps;
         using MinionLib.Commands;
         using MyCoolMod.BaseLibAdapters;
@@ -370,15 +371,15 @@ Action 是一种可以点击触发的能力。把它应用到随从身上后，�
             public override PowerStackType StackType => PowerStackType.Counter;
 
             protected override async Task OnAct(
-            PlayerChoiceContext choiceContext,
-            Creature actor,
-            Creature? target)
-        {
-            if (target == null) return;
+                PlayerChoiceContext choiceContext,
+                Creature? target)
+            {
+                if (target == null) return;
+                var actor = Owner;
 
-            await MinionAnimCmd.PlayBumpAttackAsync(actor, target);
-            await CreatureCmd.Damage(choiceContext, target, 4m, ValueProp.Move, actor, null);
-        }
+                await MinionAnimCmd.PlayBumpAttackAsync(actor, target);
+                await CreatureCmd.Damage(choiceContext, target, 4m, ValueProp.Move, actor);
+            }
         }
         ```
 
@@ -387,9 +388,10 @@ Action 是一种可以点击触发的能力。把它应用到随从身上后，�
 
         ```csharp
         using MegaCrit.Sts2.Core.Commands;
+        using MegaCrit.Sts2.Core.Entities.Cards;
         using MegaCrit.Sts2.Core.Entities.Creatures;
+        using MegaCrit.Sts2.Core.Entities.Powers;
         using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-        using MegaCrit.Sts2.Core.Powers;
         using MegaCrit.Sts2.Core.ValueProps;
         using MinionLib.Commands;
         using MyCoolMod.RitsuAdapters;
@@ -402,25 +404,25 @@ Action 是一种可以点击触发的能力。把它应用到随从身上后，�
             public override PowerStackType StackType => PowerStackType.Counter;
 
             protected override async Task OnAct(
-            PlayerChoiceContext choiceContext,
-            Creature actor,
-            Creature? target)
-        {
-            if (target == null) return;
+                PlayerChoiceContext choiceContext,
+                Creature? target)
+            {
+                if (target == null) return;
+                var actor = Owner;
 
-            await MinionAnimCmd.PlayBumpAttackAsync(actor, target);
-            await CreatureCmd.Damage(choiceContext, target, 4m, ValueProp.Move, actor, null);
-        }
+                await MinionAnimCmd.PlayBumpAttackAsync(actor, target);
+                await CreatureCmd.Damage(choiceContext, target, 4m, ValueProp.Move, actor);
+            }
         }
         ```
 
     </TabItem>
 </Tabs>
 
-可以在随从的`OnSummon` 中解析出`self` 后应用行动：
+可以在随从的 `OnSummon` 中取得 `Creature` 后应用行动：
 
 ```csharp
-await PowerCmd.Apply<MyAttackAction>(self, 1m, owner.Creature, options.Source);
+await PowerCmd.Apply<MyAttackAction>(choiceContext, self, 1m, owner.Creature, options.Source);
 ```
 
 ## 以随从为目标
@@ -431,7 +433,7 @@ MinionLib 提供`MinionTargetTypes`，可以直接用于卡牌目标。
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Powers;
+using MegaCrit.Sts2.Core.Models.Powers;
 using MinionLib.Component;
 using MinionLib.Component.Core;
 using MinionLib.Minion;
@@ -447,8 +449,8 @@ public sealed class EmpowerMinionCard()
     {
         if (cardPlay.Target is not { Monster: MinionModel } target) return;
 
-        await PowerCmd.Apply<StrengthPower>(target, 2m, Owner.Creature, this);
-        await PowerCmd.Apply<DexterityPower>(target, 2m, Owner.Creature, this);
+        await PowerCmd.Apply<StrengthPower>(choiceContext, target, 2m, Owner.Creature, this);
+        await PowerCmd.Apply<DexterityPower>(choiceContext, target, 2m, Owner.Creature, this);
     }
 }
 ```
@@ -464,7 +466,7 @@ public sealed class EmpowerMinionCard()
 内置`MinionGuardianPower` 可以让随从替玩家阻挡伤害：
 
 ```csharp
-await PowerCmd.Apply<MinionGuardianPower>(self, 1m, owner.Creature, options.Source);
+await PowerCmd.Apply<MinionGuardianPower>(choiceContext, self, 1m, owner.Creature, options.Source);
 ```
 
 召唤时可以指定站位：
