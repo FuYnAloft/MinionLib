@@ -49,9 +49,8 @@ public abstract partial class ComponentsCardModel(
     {
         get
         {
-            if (_components != null)
-                _componentStateBlob = CardComponentStateSerializer.Serialize(_components);
-
+            EnsureComponentsInitialized();
+            _componentStateBlob = CardComponentStateSerializer.Serialize(_components!);
             return _componentStateBlob;
         }
         set
