@@ -3772,7 +3772,7 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength)
+    public async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength)
     {
         EnsureComponentsInitialized();
 
@@ -8140,7 +8140,7 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override void AfterTransformedFrom()
+    public void AfterTransformedFrom()
     {
         EnsureComponentsInitialized();
 
@@ -8216,7 +8216,7 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public sealed override void AfterTransformedTo()
+    public void AfterTransformedTo()
     {
         EnsureComponentsInitialized();
 

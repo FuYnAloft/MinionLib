@@ -8,14 +8,15 @@ using MinionLib.Layout;
 
 namespace MinionLib.Minion.Patches;
 
-[HarmonyPatch(typeof(NCreature), nameof(NCreature.ToggleIsInteractable))]
+[HarmonyPatch(typeof(NCreature), "SetIsInteractableInternal")]
 public static class MinionInteractablePatch2
 {
     [HarmonyPrefix]
-    private static void Prefix(NCreature __instance, ref bool on)
+    private static void Prefix(NCreature __instance, ref bool on, bool ____interactionAllowedBecauseAlive)
     {
-        // Force local-owner companions/minions to stay clickable.
-        if (__instance.Entity.Monster is MinionModel && LocalContext.IsMe(__instance.Entity.PetOwner))
+        // Keep living local-owner minions clickable without overriding the death animation lock.
+        if (____interactionAllowedBecauseAlive && __instance.Entity.IsAlive
+            && __instance.Entity.Monster is MinionModel && LocalContext.IsMe(__instance.Entity.PetOwner))
             on = true;
     }
 }

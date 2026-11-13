@@ -13,7 +13,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Sts2Version>0.110.1</Sts2Version>
+        <Sts2Version>0.113.0</Sts2Version>
         <IsSts2Beta>true</IsSts2Beta>
 
         <ReferencePackageVersion>$(Sts2Version)</ReferencePackageVersion>
@@ -34,7 +34,6 @@
             <HintPath>$(Sts2DataDir)/sts2.dll</HintPath>
             <Private>false</Private>
         </Reference>
-        <PackageReference Include="FuYnAloft.Sts2.References" Version="$(ReferencePackageVersion)" GeneratePathProperty="true" PrivateAssets="all" ExcludeAssets="all"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(CI)' == 'true'">
