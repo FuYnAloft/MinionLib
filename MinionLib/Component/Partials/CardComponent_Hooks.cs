@@ -504,12 +504,12 @@ public abstract partial class CardComponent
         return Task.CompletedTask;
     }
     
-    public virtual Task AfterDeathPrefix(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
+    public virtual Task AfterDeathPrefix(PlayerChoiceContext choiceContext, Creature creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
     
-    public virtual Task AfterDeathPostfix(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
+    public virtual Task AfterDeathPostfix(PlayerChoiceContext choiceContext, Creature creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
@@ -1064,19 +1064,19 @@ public abstract partial class CardComponent
         return Task.CompletedTask;
     }
     
-    public virtual void AfterTransformedFromPrefix(ComponentContext componentContext)
+    public virtual void AfterThisWasTransformedIntoInternalPrefix(CardModel card, ComponentContext componentContext)
     {
     }
     
-    public virtual void AfterTransformedFromPostfix(ComponentContext componentContext)
+    public virtual void AfterThisWasTransformedIntoInternalPostfix(CardModel card, ComponentContext componentContext)
     {
     }
     
-    public virtual void AfterTransformedToPrefix(ComponentContext componentContext)
+    public virtual void AfterThisWasTransformedFromPrefix(CardModel card, ComponentContext componentContext)
     {
     }
     
-    public virtual void AfterTransformedToPostfix(ComponentContext componentContext)
+    public virtual void AfterThisWasTransformedFromPostfix(CardModel card, ComponentContext componentContext)
     {
     }
     

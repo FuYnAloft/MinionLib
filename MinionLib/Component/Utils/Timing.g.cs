@@ -112,6 +112,6 @@ public enum Timing
     AfterSideTurnStart,
     AfterSideTurnStartLate,
     AfterModifyingGoldGained,
-    AfterTransformedFrom,
-    AfterTransformedTo,
+    AfterThisWasTransformedIntoInternal,
+    AfterThisWasTransformedFrom,
 }

@@ -502,12 +502,12 @@ public partial interface ICardComponent
         return Task.CompletedTask;
     }
     
-    Task AfterDeathPrefix(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
+    Task AfterDeathPrefix(PlayerChoiceContext choiceContext, Creature creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
     
-    Task AfterDeathPostfix(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
+    Task AfterDeathPostfix(PlayerChoiceContext choiceContext, Creature creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
@@ -1062,19 +1062,19 @@ public partial interface ICardComponent
         return Task.CompletedTask;
     }
     
-    void AfterTransformedFromPrefix(ComponentContext componentContext)
+    void AfterThisWasTransformedIntoInternalPrefix(CardModel card, ComponentContext componentContext)
     {
     }
     
-    void AfterTransformedFromPostfix(ComponentContext componentContext)
+    void AfterThisWasTransformedIntoInternalPostfix(CardModel card, ComponentContext componentContext)
     {
     }
     
-    void AfterTransformedToPrefix(ComponentContext componentContext)
+    void AfterThisWasTransformedFromPrefix(CardModel card, ComponentContext componentContext)
     {
     }
     
-    void AfterTransformedToPostfix(ComponentContext componentContext)
+    void AfterThisWasTransformedFromPostfix(CardModel card, ComponentContext componentContext)
     {
     }
     
