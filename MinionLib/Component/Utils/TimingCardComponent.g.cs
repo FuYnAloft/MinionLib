@@ -1489,7 +1489,7 @@ public abstract partial class TimingCardComponent
         return Task.CompletedTask;
 
     }
-    public override Task AfterDeathPrefix(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
+    public override Task AfterDeathPrefix(PlayerChoiceContext choiceContext, Creature creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
     {
         if (Timings.Contains(Timing.AfterDeath))
         {
@@ -1497,6 +1497,7 @@ public abstract partial class TimingCardComponent
                 Timing.AfterDeath,
                 ChoiceContext: choiceContext,
                 Creature: creature,
+                Source: source,
                 WasRemovalPrevented: wasRemovalPrevented,
                 DeathAnimLength: deathAnimLength
             );
@@ -1506,7 +1507,7 @@ public abstract partial class TimingCardComponent
         return Task.CompletedTask;
 
     }
-    public override Task AfterDeathPostfix(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
+    public override Task AfterDeathPostfix(PlayerChoiceContext choiceContext, Creature creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
     {
         if (Timings.Contains(Timing.AfterDeath))
         {
@@ -1514,6 +1515,7 @@ public abstract partial class TimingCardComponent
                 Timing.AfterDeath,
                 ChoiceContext: choiceContext,
                 Creature: creature,
+                Source: source,
                 WasRemovalPrevented: wasRemovalPrevented,
                 DeathAnimLength: deathAnimLength
             );
@@ -3149,48 +3151,52 @@ public abstract partial class TimingCardComponent
         return Task.CompletedTask;
 
     }
-    public override void AfterTransformedFromPrefix(ComponentContext componentContext)
+    public override void AfterThisWasTransformedIntoInternalPrefix(CardModel card, ComponentContext componentContext)
     {
-        if (Timings.Contains(Timing.AfterTransformedFrom))
+        if (Timings.Contains(Timing.AfterThisWasTransformedIntoInternal))
         {
             var ctx = new OnTimingContext(
-                Timing.AfterTransformedFrom
+                Timing.AfterThisWasTransformedIntoInternal,
+                Card: card
             );
 
             OnTimingPrefix(ctx);
         }
 
     }
-    public override void AfterTransformedFromPostfix(ComponentContext componentContext)
+    public override void AfterThisWasTransformedIntoInternalPostfix(CardModel card, ComponentContext componentContext)
     {
-        if (Timings.Contains(Timing.AfterTransformedFrom))
+        if (Timings.Contains(Timing.AfterThisWasTransformedIntoInternal))
         {
             var ctx = new OnTimingContext(
-                Timing.AfterTransformedFrom
+                Timing.AfterThisWasTransformedIntoInternal,
+                Card: card
             );
 
             OnTimingPostfix(ctx);
         }
 
     }
-    public override void AfterTransformedToPrefix(ComponentContext componentContext)
+    public override void AfterThisWasTransformedFromPrefix(CardModel card, ComponentContext componentContext)
     {
-        if (Timings.Contains(Timing.AfterTransformedTo))
+        if (Timings.Contains(Timing.AfterThisWasTransformedFrom))
         {
             var ctx = new OnTimingContext(
-                Timing.AfterTransformedTo
+                Timing.AfterThisWasTransformedFrom,
+                Card: card
             );
 
             OnTimingPrefix(ctx);
         }
 
     }
-    public override void AfterTransformedToPostfix(ComponentContext componentContext)
+    public override void AfterThisWasTransformedFromPostfix(CardModel card, ComponentContext componentContext)
     {
-        if (Timings.Contains(Timing.AfterTransformedTo))
+        if (Timings.Contains(Timing.AfterThisWasTransformedFrom))
         {
             var ctx = new OnTimingContext(
-                Timing.AfterTransformedTo
+                Timing.AfterThisWasTransformedFrom,
+                Card: card
             );
 
             OnTimingPostfix(ctx);

@@ -54,13 +54,10 @@ namespace MinionLib.Component;
     for signature in signatures:
         args: str
         (name, modifier, args, arg_names, return_type, default_impl) = signature
-        # STS2 0.113 changed these game hooks. Keep the component dispatchers'
-        # existing signatures; ComponentsCardModel.Sts2113.cs bridges the new API.
-        override_modifier = "" if name in ("AfterDeath", "AfterTransformedFrom", "AfterTransformedTo") else "sealed override "
         Xxx = f"""\
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    {modifier} {override_modifier}{"async " if return_type == "Task" else ""}{return_type} {name}({args[:-2] if args.endswith(", ") else args})
+    {modifier} sealed override {"async " if return_type == "Task" else ""}{return_type} {name}({args[:-2] if args.endswith(", ") else args})
     {{
         EnsureComponentsInitialized();
 

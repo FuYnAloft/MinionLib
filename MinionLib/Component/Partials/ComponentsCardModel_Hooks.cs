@@ -3772,7 +3772,7 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength)
+    public sealed override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength)
     {
         EnsureComponentsInitialized();
 
@@ -3800,7 +3800,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if (component.ComponentsCard != this) continue;
-                            await component.AfterDeathPrefix(choiceContext, creature, wasRemovalPrevented, deathAnimLength, componentContext);
+                            await component.AfterDeathPrefix(choiceContext, creature, source, wasRemovalPrevented, deathAnimLength, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
 
@@ -3810,7 +3810,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if(component.ComponentsCard != this) continue;
-                            await component.AfterDeathPostfix(choiceContext, creature, wasRemovalPrevented, deathAnimLength, componentContext);
+                            await component.AfterDeathPostfix(choiceContext, creature, source, wasRemovalPrevented, deathAnimLength, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
 
@@ -3818,7 +3818,7 @@ public abstract partial class ComponentsCardModel
                     case ComponentPhase.Prime:
                     case ComponentPhase.Core:
                     case ComponentPhase.Final:
-                        await AfterDeathPhased(choiceContext, creature, wasRemovalPrevented, deathAnimLength, componentContext);
+                        await AfterDeathPhased(choiceContext, creature, source, wasRemovalPrevented, deathAnimLength, componentContext);
                         break;
                     case ComponentPhase.Init:
                     default:
@@ -3835,15 +3835,15 @@ public abstract partial class ComponentsCardModel
         }
     }
 
-    protected virtual Task AfterDeathPhased(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
+    protected virtual Task AfterDeathPhased(PlayerChoiceContext choiceContext, Creature creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
-            return AfterDeath(choiceContext, creature, wasRemovalPrevented, deathAnimLength, componentContext);
+            return AfterDeath(choiceContext, creature, source, wasRemovalPrevented, deathAnimLength, componentContext);
 
         return Task.CompletedTask;
     }
 
-    protected virtual Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
+    protected virtual Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength, ComponentContext componentContext)
     {
         return Task.CompletedTask;
     }
@@ -8140,7 +8140,7 @@ public abstract partial class ComponentsCardModel
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public void AfterTransformedFrom()
+    protected sealed override void AfterThisWasTransformedIntoInternal(CardModel card)
     {
         EnsureComponentsInitialized();
 
@@ -8168,7 +8168,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if (component.ComponentsCard != this) continue;
-                            component.AfterTransformedFromPrefix(componentContext);
+                            component.AfterThisWasTransformedIntoInternalPrefix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
 
@@ -8178,7 +8178,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if(component.ComponentsCard != this) continue;
-                            component.AfterTransformedFromPostfix(componentContext);
+                            component.AfterThisWasTransformedIntoInternalPostfix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
 
@@ -8186,7 +8186,7 @@ public abstract partial class ComponentsCardModel
                     case ComponentPhase.Prime:
                     case ComponentPhase.Core:
                     case ComponentPhase.Final:
-                        AfterTransformedFromPhased(componentContext);
+                        AfterThisWasTransformedIntoInternalPhased(card, componentContext);
                         break;
                     case ComponentPhase.Init:
                     default:
@@ -8203,20 +8203,20 @@ public abstract partial class ComponentsCardModel
         }
     }
 
-    protected virtual void AfterTransformedFromPhased(ComponentContext componentContext)
+    protected virtual void AfterThisWasTransformedIntoInternalPhased(CardModel card, ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
-            AfterTransformedFrom(componentContext);
+            AfterThisWasTransformedIntoInternal(card, componentContext);
 
     }
 
-    protected virtual void AfterTransformedFrom(ComponentContext componentContext)
+    protected virtual void AfterThisWasTransformedIntoInternal(CardModel card, ComponentContext componentContext)
     {
     }
     
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("This member is sealed. Try adding `ComponentContext componentContext` as the last parameter, or disable this warning if intended.", false)]
-    public void AfterTransformedTo()
+    public sealed override void AfterThisWasTransformedFrom(CardModel card)
     {
         EnsureComponentsInitialized();
 
@@ -8244,7 +8244,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if (component.ComponentsCard != this) continue;
-                            component.AfterTransformedToPrefix(componentContext);
+                            component.AfterThisWasTransformedFromPrefix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Prefix) break;
                         }
 
@@ -8254,7 +8254,7 @@ public abstract partial class ComponentsCardModel
                         {
                             var component = snapshot[i];
                             if(component.ComponentsCard != this) continue;
-                            component.AfterTransformedToPostfix(componentContext);
+                            component.AfterThisWasTransformedFromPostfix(card, componentContext);
                             if (componentContext.Phase != ComponentPhase.Postfix) break;
                         }
 
@@ -8262,7 +8262,7 @@ public abstract partial class ComponentsCardModel
                     case ComponentPhase.Prime:
                     case ComponentPhase.Core:
                     case ComponentPhase.Final:
-                        AfterTransformedToPhased(componentContext);
+                        AfterThisWasTransformedFromPhased(card, componentContext);
                         break;
                     case ComponentPhase.Init:
                     default:
@@ -8279,14 +8279,14 @@ public abstract partial class ComponentsCardModel
         }
     }
 
-    protected virtual void AfterTransformedToPhased(ComponentContext componentContext)
+    protected virtual void AfterThisWasTransformedFromPhased(CardModel card, ComponentContext componentContext)
     {
         if (componentContext.Phase == ComponentPhase.Core)
-            AfterTransformedTo(componentContext);
+            AfterThisWasTransformedFrom(card, componentContext);
 
     }
 
-    protected virtual void AfterTransformedTo(ComponentContext componentContext)
+    protected virtual void AfterThisWasTransformedFrom(CardModel card, ComponentContext componentContext)
     {
     }
     
