@@ -17,7 +17,7 @@ namespace MinionLib.Powers.Patches;
 public static class MinionGuardianOverkillPatch
 {
     private static readonly AsyncLocal<bool> IsHandling = new();
-    public static readonly AsyncLocal<Creature?> SuppressedOwner = new();
+    private static readonly AsyncLocal<PendingRedirect?> InitialRedirect = new();
 
     [HarmonyPrefix]
     private static bool Prefix(PlayerChoiceContext choiceContext, IEnumerable<DamageTargetData>? targetData, decimal amount,
@@ -48,6 +48,19 @@ public static class MinionGuardianOverkillPatch
         return target.Pets.Any(p => p.IsAlive && IsFrontGuardian(p));
     }
 
+    internal static bool TryDeferOwnerOverflow(Creature target, DamageResult? redirect)
+    {
+        var pending = InitialRedirect.Value;
+        if (pending?.Owner != target ||
+            redirect is not { OverkillDamage: > 0 } ||
+            !redirect.Receiver.CombatId.HasValue ||
+            redirect.Receiver.PetOwner != target.Player ||
+            !IsFrontGuardian(redirect.Receiver)) return false;
+
+        pending.Redirects.Add(redirect);
+        return true;
+    }
+
     private static async Task<IEnumerable<DamageResult>> HandleWithOverkillRedirect(PlayerChoiceContext choiceContext,
         IReadOnlyList<DamageTargetData> targets, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource,
         CardPlay? cardPlay, ModifyDamageHookType modifyDamageHookType)
@@ -65,35 +78,27 @@ public static class MinionGuardianOverkillPatch
                 .Select(p => p.CombatId!.Value)
                 .ToList();
 
-            SuppressedOwner.Value = owner;
+            var pending = new PendingRedirect(owner);
+            InitialRedirect.Value = pending;
             List<DamageResult> initialResults;
             try
             {
-                // Let base flow run once so owner's block and first guardian redirect still use vanilla math,
-                // but suppress fallback HP loss on owner (it will be redistributed below).
+                // Use the native block and first redirect calculations before routing the leftover damage.
                 initialResults = (await CreatureCmd.Damage(choiceContext, targets, amount, props, dealer, cardSource,
                         cardPlay, modifyDamageHookType))
                     .ToList();
             }
             finally
             {
-                SuppressedOwner.Value = null;
+                InitialRedirect.Value = null;
             }
 
-            // Dead guardians can lose powers before results are inspected.
-            // Snapshot combat ids let us still recognize the first redirected guardian reliably.
-            var firstGuardianResult = initialResults.FirstOrDefault(r =>
-                r.Receiver != owner &&
-                r.Receiver.PetOwner == owner.Player &&
-                (IsFrontGuardian(r.Receiver) ||
-                 (r.Receiver.CombatId is uint receiverId && guardianOrder.Contains(receiverId))));
-
-            if (firstGuardianResult is not { OverkillDamage: > 0 } ||
-                !firstGuardianResult.Receiver.CombatId.HasValue) return initialResults;
+            // Match the deferred native redirect after death processing can remove the guardian's power.
+            var firstGuardianResult = initialResults.FirstOrDefault(pending.Redirects.Contains);
+            if (firstGuardianResult?.Receiver.CombatId is not uint firstGuardianId) return initialResults;
 
             List<DamageResult> redirectedResults = [];
             decimal remaining = firstGuardianResult.OverkillDamage;
-            var firstGuardianId = firstGuardianResult.Receiver.CombatId.Value;
             var directProps = props | ValueProp.Unpowered;
             // Overflow is already calculated. Only retain damage caps requested by the caller;
             // do not reapply additive/multiplicative hooks or re-enable caps for None.
@@ -155,5 +160,11 @@ public static class MinionGuardianOverkillPatch
     {
         return creature.GetPower<MinionGuardianPower>() != null &&
                (creature.Monster is not MinionModel minion || minion.Position == MinionPosition.Front);
+    }
+
+    private sealed class PendingRedirect(Creature owner)
+    {
+        public Creature Owner { get; } = owner;
+        public HashSet<DamageResult> Redirects { get; } = [];
     }
 }
